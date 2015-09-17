@@ -10,7 +10,8 @@ def planck_function(wavelength, temperature):
         tempereature: Temperature in Kelvin
     
     Returns:
-        B_lambda: The specific intensity of the Planck function
+        B_lambda: The specific intensity of the Planck function in
+                  erg s^-1 cm^-2 sterad^-1 AA^-1
     """
     wavelength = u.Quantity(wavelength, unit=u.Angstrom)
     temperature = u.Quantity(temperature, unit=u.K)
