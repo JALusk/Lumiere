@@ -30,8 +30,5 @@ class SN(object):
     def read_hdf5(self):
         h5file = tb.open_file(hdf5_filename)
        
-        # Check that the desired SN is in the HDF5 file
-        if self.name in h5file.list_nodes('/sn')._v_name:
-            print "Yay!"
-        else:
-            print "Boo!"
+        # Get the desired node from the HDF5 file
+        sn_node = h5file.get_node('/sn', self.name)
