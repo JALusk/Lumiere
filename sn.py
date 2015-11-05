@@ -1,5 +1,5 @@
 import tables as tb
-hdf5_filename = 'hdf5/sn_data.h5'
+hdf5_filename = './hdf5/sn_data.h5'
 
 class SN(object):
     """A supernova is the explosion that ends the life of a star
@@ -14,9 +14,9 @@ class SN(object):
 
     Attributes
     ----------
-    name : Name of the supernova, "SN" followed by the year of first observation
+    name : Name of the supernova, "sn" followed by the year of first observation
            along with a letter designating the order of observation in that
-           year. "SN1987A" was the first SN observed in 1987. "SN2000cb" was the
+           year. "sn1987a" was the first SN observed in 1987. "sn2000cb" was the
            eightieth SN observed in 2000.
     """
 
@@ -28,7 +28,7 @@ class SN(object):
         self.read_hdf5()
 
     def read_hdf5(self):
-        h5file = tb.open_file(hdf5_filename)
+        h5file = tb.open_file(hdf5_filename, 'r')
        
         # Get the desired node from the HDF5 file
         sn_node = h5file.get_node('/sn', self.name)
