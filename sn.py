@@ -105,7 +105,18 @@ class SN(object):
         self.get_magnitudes()
         self.deredden_UBVRI_magnitudes()
         self.get_bc_epochs(filter1, filter2)
-        color_values = self.get_bc_colors(filter1, filter2)
+        self.distance_cm, self.distance_cm_err = self.get_distance_cm()
+        colors = self.get_bc_colors(filter1, filter2)
+        color_errs = self.get_bc_color_uncertainties(filter1, filter2)
+        v_mags = np.array([x['magnitude'] for x in self.photometry if x['jd']
+                           in self.bc_epochs and x['name'] == 'V'])
+        v_mag_errs = np.array([x['uncertainty'] for x in self.photometry if
+                              x['jd'] in self.bc_epochs and x['name'] == 'V'])
+        
+        for i in range(len(self.bc_epochs)):
+            lbol_bc, lbol_bc_err = calc_Lbol(colors[i], color_errs[i], filter1+"minus"+filter2, v_mags, v_mag_errs, self.distance_cm, self.distance_cm_err)
+            print lbol_bc, lbol_bc_err
+            
 
     def get_bc_colors(self, filter1, filter2):
         """Make an array of filter1 - filter 2 on each of the bc_epochs"""
@@ -116,6 +127,17 @@ class SN(object):
                             in self.bc_epochs and x['name'] == filter2])
 
         return f1_mags - f2_mags
+
+    def get_bc_color_uncertainties(self, filter1, filter2):
+        """Make an array of sqrt(dfilter1^2 - dfilter2^2) on each of the 
+           bc_epochs"""
+
+        f1_errs = np.array([x['uncertainty'] for x in self.photometry if x['jd']
+                            in self.bc_epochs and x['name'] == filter1])
+        f2_errs = np.array([x['uncertainty'] for x in self.photometry if x['jd']
+                            in self.bc_epochs and x['name'] == filter2])
+
+        return np.sqrt(f1_errs**2 + f2_errs**2)
 
     def get_magnitudes(self):
         dtype = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
