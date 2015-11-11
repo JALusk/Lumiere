@@ -99,9 +99,23 @@ class SN(object):
         self.lc = np.delete(self.lc, (0), axis=0)
 
     def lbol_bc_bh09(self, filter1, filter2):
+        """Calculate the bolometric lightcurve using the bolometric corrections
+           found in Bersten & Hamuy 2009 (2009ApJ...701..200B). These require 
+           specifying a color, taken to be filter1 - filter2"""
         self.get_magnitudes()
         self.deredden_UBVRI_magnitudes()
         self.get_bc_epochs(filter1, filter2)
+        color_values = self.get_bc_colors(filter1, filter2)
+
+    def get_bc_colors(self, filter1, filter2):
+        """Make an array of filter1 - filter 2 on each of the bc_epochs"""
+
+        f1_mags = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
+                            in self.bc_epochs and x['name'] == filter1])
+        f2_mags = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
+                            in self.bc_epochs and x['name'] == filter2])
+
+        return f1_mags - f2_mags
 
     def get_magnitudes(self):
         dtype = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
