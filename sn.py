@@ -98,11 +98,10 @@ class SN(object):
 
         self.lc = np.delete(self.lc, (0), axis=0)
 
-    def lbol_bc_bh09_BV(self):
+    def lbol_bc_bh09(self, filter1, filter2):
         self.get_magnitudes()
-        self.deredden_magnitudes()
-        self.get_bc_epochs('B', 'V')
-        
+        self.deredden_UBVRI_magnitudes()
+        self.get_bc_epochs(filter1, filter2)
 
     def get_magnitudes(self):
         dtype = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
@@ -120,8 +119,9 @@ class SN(object):
 
         self.photometry = np.delete(self.photometry, (0), axis=0)
 
-    def deredden_magnitudes(self):
-        """Apply the corrections from CCM89 (1989ApJ...345..245C), Table 3"""
+    def deredden_UBVRI_magnitudes(self):
+        """Apply the corrections from CCM89 (1989ApJ...345..245C), Table 3
+        IMPORTANT: This will only deredden the UBVRI magnitudes at the moment"""
         self.Av_gal = self.parameter_table.cols.Av_gal[0]
         self.Av_host = self.parameter_table.cols.Av_host[0]
         self.Av_tot = self.Av_gal + self.Av_host
@@ -131,6 +131,22 @@ class SN(object):
         for obs in self.photometry:
             if obs['name'] in ccm89_corr:
                 obs['magnitude'] = obs['magnitude'] - ccm89_corr[obs['name']] * self.Av_tot
+
+    def get_bc_epochs(self, filter1, filter2):
+        """Get epochs for which observations of both filter1 and filter2 exist"""
+        self.bc_epochs = np.array([])
+        
+        for jd_unique in np.unique(self.photometry['jd']):
+            has_filter1 = False
+            has_filter2 = False
+            for obs in self.photometry:
+                if obs['jd'] == jd_unique:
+                    if obs['name'] == filter1:
+                        has_filter1 = True
+                    elif obs['name'] == filter2:
+                        has_filter2 = True
+            if has_filter1 and has_filter2:
+                self.bc_epochs = np.append(self.bc_epochs, jd_unique)
 
     def get_distance_cm(self):
         mpc_to_cm = 3.08567758E24
