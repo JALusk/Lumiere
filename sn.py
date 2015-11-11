@@ -6,6 +6,7 @@ from fbol import integrate_fqbol as fqbol_trapezoidal
 from fbol import ir_correction, uv_correction_linear, uv_correction_blackbody
 from fit_blackbody import bb_fit_parameters
 from fit_blackbody import bb_flux_nounits
+from luminosity import calc_Lbol
 from specutils import extinction
 hdf5_filename = './hdf5/sn_data.h5'
 
@@ -114,7 +115,7 @@ class SN(object):
                               x['jd'] in self.bc_epochs and x['name'] == 'V'])
         
         for i in range(len(self.bc_epochs)):
-            lbol_bc, lbol_bc_err = calc_Lbol(colors[i], color_errs[i], filter1+"minus"+filter2, v_mags, v_mag_errs, self.distance_cm, self.distance_cm_err)
+            lbol_bc, lbol_bc_err = calc_Lbol(colors[i], color_errs[i], filter1+"minus"+filter2, v_mags[i], v_mag_errs[i], self.distance_cm, self.distance_cm_err)
             print lbol_bc, lbol_bc_err
             
 
