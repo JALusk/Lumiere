@@ -39,10 +39,17 @@ def integrate_fqbol(wavelengths, fluxes, flux_uncertainties):
 
     return fqbol, fqbol_uncertainty
 
-def ir_correction(temperature, angular_radius, longest_wl):
+def ir_correction(temperature, T_err, angular_radius, rad_err, longest_wl):
     ir_correction = integrate.quad(bb_flux_nounits, longest_wl, np.inf,
-                                   args=(temperature, angular_radius)) 
-    return ir_correction
+                                   args=(temperature, angular_radius))
+
+    T_errterm = integrate.quad(dBB_dT_nounits, longest_wl, np.inf,
+                               args=(temperature, angular_radius)) * T_err
+    rad_errterm = 2 * ir_correction / angular_radius * rad_err
+
+    ir_corr_err = np.sqrt(T_errterm**2 + rad_errterm**2)
+
+    return ir_correction, ir_corr_err
 
 def uv_correction_blackbody(temperature, angular_radius, shortest_wl):
     uv_correction = integrate.quad(bb_flux_nounits, 0, shortest_wl, 
