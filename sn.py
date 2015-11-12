@@ -124,7 +124,7 @@ class SN(object):
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
 
             lqbol = fqbol * 4.0 * np.pi * self.distance_cm**2.0
-            lbqol_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fqbol_err)**2
+            lqbol_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fqbol_err)**2
                               +(8.0*np.pi * fqbol * self.distance_cm * self.distance_cm_err)**2)
 
             self.qbol_lc = np.append(self.qbol_lc, [[jd, lqbol, lqbol_err]], axis=0)
