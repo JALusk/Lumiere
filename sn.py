@@ -79,8 +79,10 @@ class SN(object):
             shortest_flux = fluxes[np.argmin(wavelengths)]
             longest_wl = np.amax(wavelengths)
 
-            ir_corr, ir_corr_err = ir_correction(temperature, 
-                                                 angular_radius, 
+            ir_corr, ir_corr_err = ir_correction(temperature,
+                                                 temperature_err,
+                                                 angular_radius,
+                                                 angular_radius_err,
                                                  longest_wl)
 
 #            if shortest_flux < bb_flux_nounits(shortest_wl,
