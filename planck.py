@@ -42,7 +42,7 @@ def dplanck_dT(wavelength, temperature):
     C2 = const.h.cgs * const.c.cgs / const.k_B.cgs
 
     exp_term = np.exp(C2 / (wavelength * temperature))
-    dB_lambda_dT = (C1 * C2 * exp_term) / (wavelength**6 * temperature**2 * (exp_term - 1))
+    dB_lambda_dT = (C1 * C2 * exp_term) / (wavelength**6 * temperature**2 * (exp_term - 1)) / u.sr
     dB_lambda_dT = dB_lambda_dT.to(u.erg / (u.s * u.cm**2 * u.AA * u.sr * u.K))
 
     return dB_lambda_dT
