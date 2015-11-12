@@ -69,9 +69,12 @@ class SN(object):
             flux_errs = self.get_flux_errs(jd)
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
-            temperature, angular_radius, chisq = bb_fit_parameters(wavelengths,
+            temperature, angular_radius, perr = bb_fit_parameters(wavelengths,
                                                                    fluxes,
                                                                    flux_errs)
+            temperature_err = perr[0]
+            angular_radius_err = perr[1]
+
             shortest_wl = np.amin(wavelengths)
             shortest_flux = fluxes[np.argmin(wavelengths)]
             longest_wl = np.amax(wavelengths)

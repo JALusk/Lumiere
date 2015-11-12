@@ -18,10 +18,12 @@ def calculate_chisq(y_data, y_data_uncertainties, x_data, func, parameters):
     return chisq
     
 def bb_fit_parameters(wavelengths, fluxes, flux_uncertainties):
-    popt, pcov = curve_fit(bb_flux_nounits, wavelengths, fluxes, p0=[5000, 1.0e-10])
+    popt, pcov = curve_fit(bb_flux_nounits, wavelengths, fluxes, p0=[5000, 1.0e-10], sigma = flux_uncertainties, absolute_sigma=True)
     temperature = popt[0]
     angular_radius = popt[1]
+    perr = np.sqrt(np.diag(pcov))
+    
 
     chisq = calculate_chisq(fluxes, flux_uncertainties, wavelengths, bb_flux_nounits, popt)
 
-    return temperature, angular_radius, chisq
+    return temperature, angular_radius, perr
