@@ -219,7 +219,6 @@ class SN(object):
     def get_distance_cm(self):
         mpc_to_cm = 3.08567758E24
         distance_cm = self.parameter_table.cols.distance_Mpc[0] * mpc_to_cm
-        print distance_cm
         distance_cm_err = self.parameter_table.cols.distance_Mpc_err[0] * mpc_to_cm
         return distance_cm, distance_cm_err
 
