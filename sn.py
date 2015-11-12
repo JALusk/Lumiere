@@ -114,7 +114,7 @@ class SN(object):
         self.get_lbol_epochs()
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
         
-        self.lc = np.array([[0.0, 0.0, 0.0]])
+        self.qbol_lc = np.array([[0.0, 0.0, 0.0]])
         
         for jd in self.lbol_epochs:
             wavelengths = self.get_wavelengths(jd)
@@ -122,43 +122,13 @@ class SN(object):
             flux_errs = self.get_flux_errs(jd)
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
-            temperature, angular_radius, perr = bb_fit_parameters(wavelengths,
-                                                                   fluxes,
-                                                                   flux_errs)
-            temperature_err = perr[0]
-            angular_radius_err = perr[1]
 
-            shortest_wl = np.amin(wavelengths)
-            shortest_flux = fluxes[np.argmin(wavelengths)]
-            longest_wl = np.amax(wavelengths)
+            lqbol = fqbol * 4.0 * np.pi * self.distance_cm**2.0
+            lbqol_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fqbol_err)**2
+                              +(8.0*np.pi * fqbol * self.distance_cm * self.distance_cm_err)**2)
 
-            ir_corr, ir_corr_err = ir_correction(temperature, 
-                                                 angular_radius, 
-                                                 longest_wl)
-
-#            if shortest_flux < bb_flux_nounits(shortest_wl,
-#                                               temperature, 
-#                                               angular_radius):
-#                uv_corr = uv_correction_linear(shortest_wl, shortest_flux) 
-#                uv_corr_err = 0.0 #FIXME
-#            else:
-#                uv_corr, uv_corr_err = uv_correction_blackbody(temperature,
-#                                                               angular_radius,
-#                                                               shortest_wl)
-            uv_corr, uv_corr_err = uv_correction_blackbody(temperature,
-                                                           angular_radius,
-                                                           shortest_wl)
-
-            fbol = fqbol + ir_corr + uv_corr
-            fbol_err = np.sqrt(np.sum(x*x for x in [fqbol_err, ir_corr_err, uv_corr_err]))
-            lum = fbol * 4.0 * np.pi * self.distance_cm**2.0
-            lum_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fbol_err)**2
-                              +(8.0*np.pi * fbol * self.distance_cm * self.distance_cm_err)**2)
-
-            self.lc = np.append(self.lc, [[jd, lum, lum_err]], axis=0)
-
-        self.lc = np.delete(self.lc, (0), axis=0)
-
+            self.qbol_lc = np.append(self.qbol_lc, [[jd, lqbol, lqbol_err]], axis=0)
+        self.qbol_lc = np.delete(self.qbol_lc, (0), axis=0)
 
     def lbol_bc_bh09(self, filter1, filter2):
         """Calculate the bolometric lightcurve using the bolometric corrections
