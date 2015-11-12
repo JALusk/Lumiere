@@ -41,10 +41,10 @@ def integrate_fqbol(wavelengths, fluxes, flux_uncertainties):
 
 def ir_correction(temperature, T_err, angular_radius, rad_err, longest_wl):
     ir_correction = integrate.quad(bb_flux_nounits, longest_wl, np.inf,
-                                   args=(temperature, angular_radius))
+                                   args=(temperature, angular_radius))[0]
 
     T_errterm = integrate.quad(dBB_dT_nounits, longest_wl, np.inf,
-                               args=(temperature, angular_radius)) * T_err
+                               args=(temperature, angular_radius))[0] * T_err
     rad_errterm = 2 * ir_correction / angular_radius * rad_err
 
     ir_corr_err = np.sqrt(T_errterm**2 + rad_errterm**2)
