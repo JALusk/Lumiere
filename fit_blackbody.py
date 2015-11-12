@@ -21,7 +21,7 @@ def dBB_dT(wavelength, temperature, angular_radius):
 def dBB_dT_nounits(wavelength, temperature, angular_radius):
     dBB_dT_nounits = dBB_dT(wavelength, temperature, angular_radius)
 
-    return dBB_dT_nounits
+    return dBB_dT_nounits.value
 
 def calculate_chisq(y_data, y_data_uncertainties, x_data, func, parameters):
     chisq = np.sum(((y_data - func(x_data, *parameters))/y_data_uncertainties)**2)
