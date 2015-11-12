@@ -55,7 +55,7 @@ class SN(object):
 
     def lbol_direct_bh09(self):
         """Calculate the bolometric lightcurve using the direct integration
-           method published in Bersten & Hamuy 2009 (2005MNRAS.360..950P)"""
+           method published in Bersten & Hamuy 2009 (2009ApJ...701..200B)"""
         self.get_observations()
         self.deredden_fluxes()
         self.get_lbol_epochs()
