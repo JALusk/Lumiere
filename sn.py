@@ -57,16 +57,24 @@ class SN(object):
         """Calculate the bolometric lightcurve using the direct integration
            method published in Bersten & Hamuy 2009 (2009ApJ...701..200B)"""
         self.get_observations()
+        self.convert_magnitudes_to_fluxes()
         self.deredden_fluxes()
         self.get_lbol_epochs()
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
         
         self.lc = np.array([[0.0, 0.0, 0.0]])
-        
+
+
+
         for jd in self.lbol_epochs:
-            wavelengths = self.get_wavelengths(jd)
-            fluxes = self.get_fluxes(jd)
-            flux_errs = self.get_flux_errs(jd)
+            names = np.array([x['name'] for x in self.converted_obs 
+                              if x['jd'] == jd])
+            wavelengths = np.array([x['wavelength'] for x in self.converted_obs
+                                    if x['jd'] == jd])
+            fluxes = np.array([x['flux'] for x in self.converted_obs
+                               if x['jd'] == jd])
+            flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
+                                  if x['jd'] == jd])
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
             temperature, angular_radius, perr = bb_fit_parameters(wavelengths,
@@ -76,7 +84,8 @@ class SN(object):
             angular_radius_err = perr[1]
 
             shortest_wl = np.amin(wavelengths)
-            shortest_flux = fluxes[np.argmin(wavelengths)]
+            shortest_flux = np.amin(fluxes)
+            shortest_flux_err = np.amin(flux_errs)
             longest_wl = np.amax(wavelengths)
 
             ir_corr, ir_corr_err = ir_correction(temperature,
@@ -84,21 +93,28 @@ class SN(object):
                                                  angular_radius,
                                                  angular_radius_err,
                                                  longest_wl)
-
-#            if shortest_flux < bb_flux_nounits(shortest_wl,
-#                                               temperature, 
-#                                               angular_radius):
-#                uv_corr = uv_correction_linear(shortest_wl, shortest_flux) 
-#                uv_corr_err = 0.0 #FIXME
-#            else:
-#                uv_corr, uv_corr_err = uv_correction_blackbody(temperature,
-#                                                               angular_radius,
-#                                                               shortest_wl)
-            uv_corr, uv_corr_err = uv_correction_blackbody(temperature,
-                                                           temperature_err,
-                                                           angular_radius,
-                                                           angular_radius_err,
-                                                           shortest_wl)
+            if 'U' in names:
+                idx = np.nonzero(names == 'U')[0][0]
+                U_flux = fluxes[idx]
+                U_wl = wavelengths[idx]
+                if U_flux < bb_flux_nounits(U_wl,
+                                            temperature, 
+                                            angular_radius):
+                    uv_corr, uv_corr_err = uv_correction_linear(shortest_wl, 
+                                                                shortest_flux, 
+                                                                shortest_flux_err) 
+                else:
+                    uv_corr, uv_corr_err = uv_correction_blackbody(temperature,
+                                                             temperature_err,
+                                                             angular_radius,
+                                                             angular_radius_err,
+                                                             shortest_wl)
+            else:
+                uv_corr, uv_corr_err = uv_correction_blackbody(temperature,
+                                                               temperature_err,
+                                                               angular_radius,
+                                                               angular_radius_err,
+                                                               shortest_wl)
 
             fbol = fqbol + ir_corr + uv_corr
             fbol_err = np.sqrt(np.sum(x*x for x in [fqbol_err, ir_corr_err, uv_corr_err]))
@@ -266,6 +282,29 @@ class SN(object):
                     num_obs += 1
             if num_obs >= self.min_num_obs:
                 self.lbol_epochs = np.append(self.lbol_epochs, jd_unique)
+
+    def convert_magnitudes_to_fluxes(self):
+        dtype = [('jd', '>f8'), ('name', 'S1'), ('wavelength', '>f8'), ('flux', '>f8'), ('uncertainty', '>f8')]
+        self.converted_obs = np.array([(0.0,'0.0',0.0,0.0,0.0)], dtype=dtype)
+        
+        for obs in self.phot_table.iterrows():
+            filterid = obs['filter_id']
+            for filt in self.filter_table.where('(filter_id == filterid)'):
+                flux, flux_err = mag2flux(obs['magnitude'], 
+                                          obs['uncertainty'], 
+                                          filt['eff_wl'], 
+                                          filt['flux_zeropoint'])
+                
+                self.converted_obs = np.append(self.converted_obs, 
+                                               np.array([(obs['jd'], 
+                                                          filt['name'],
+                                                          filt['eff_wl'],
+                                                          flux, 
+                                                          flux_err)],
+                                                        dtype=dtype))
+
+        self.converted_obs = np.delete(self.converted_obs, (0), axis=0)
+
 
     def get_observations(self):
         self.observations = np.array([[0.0,0.0,0.0,0.0]])
