@@ -8,7 +8,7 @@ from fit_blackbody import bb_fit_parameters
 from fit_blackbody import bb_flux_nounits
 from luminosity import calc_Lbol
 from specutils import extinction
-hdf5_filename = './hdf5/sn_data.h5'
+
 
 class SN(object):
     """A supernova is the explosion that ends the life of a star
@@ -37,6 +37,7 @@ class SN(object):
         self.read_hdf5()
 
     def read_hdf5(self):
+        hdf5_filename = './hdf5/sn_data.h5'
         h5file = tb.open_file(hdf5_filename, 'r')
         
         self.filter_table = h5file.root.filters
@@ -54,13 +55,13 @@ class SN(object):
 
     def lbol_direct_bh09(self):
         """Calculate the bolometric lightcurve using the direct integration
-           method published in Bersten & Hamuy 2009 (2005MNRAS.360..950P)"""
+           method published in Bersten & Hamuy 2009 (2009ApJ...701..200B)"""
         self.get_observations()
         self.deredden_fluxes()
         self.get_lbol_epochs()
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
         
-        self.lc = np.array([[0.0, 0.0]])
+        self.lc = np.array([[0.0, 0.0, 0.0]])
         
         for jd in self.lbol_epochs:
             wavelengths = self.get_wavelengths(jd)
@@ -68,15 +69,20 @@ class SN(object):
             flux_errs = self.get_flux_errs(jd)
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
-            temperature, angular_radius, chisq = bb_fit_parameters(wavelengths,
+            temperature, angular_radius, perr = bb_fit_parameters(wavelengths,
                                                                    fluxes,
                                                                    flux_errs)
+            temperature_err = perr[0]
+            angular_radius_err = perr[1]
+
             shortest_wl = np.amin(wavelengths)
             shortest_flux = fluxes[np.argmin(wavelengths)]
             longest_wl = np.amax(wavelengths)
 
-            ir_corr, ir_corr_err = ir_correction(temperature, 
-                                                 angular_radius, 
+            ir_corr, ir_corr_err = ir_correction(temperature,
+                                                 temperature_err,
+                                                 angular_radius,
+                                                 angular_radius_err,
                                                  longest_wl)
 
 #            if shortest_flux < bb_flux_nounits(shortest_wl,
@@ -89,15 +95,43 @@ class SN(object):
 #                                                               angular_radius,
 #                                                               shortest_wl)
             uv_corr, uv_corr_err = uv_correction_blackbody(temperature,
+                                                           temperature_err,
                                                            angular_radius,
+                                                           angular_radius_err,
                                                            shortest_wl)
 
             fbol = fqbol + ir_corr + uv_corr
             fbol_err = np.sqrt(np.sum(x*x for x in [fqbol_err, ir_corr_err, uv_corr_err]))
             lum = fbol * 4.0 * np.pi * self.distance_cm**2.0
-            self.lc = np.append(self.lc, [[jd, lum]], axis=0)
+            lum_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fbol_err)**2
+                              +(8.0*np.pi * fbol * self.distance_cm * self.distance_cm_err)**2)
+            self.lc = np.append(self.lc, [[jd, lum, lum_err]], axis=0)
 
         self.lc = np.delete(self.lc, (0), axis=0)
+
+    def lqbol(self):
+        """Calculate the quasi-bolometric lightcurve using direct integration
+           with trapezoidal integration of the fluxes"""
+        self.get_observations()
+        self.deredden_fluxes()
+        self.get_lbol_epochs()
+        self.distance_cm, self.distance_cm_err = self.get_distance_cm()
+        
+        self.qbol_lc = np.array([[0.0, 0.0, 0.0]])
+        
+        for jd in self.lbol_epochs:
+            wavelengths = self.get_wavelengths(jd)
+            fluxes = self.get_fluxes(jd)
+            flux_errs = self.get_flux_errs(jd)
+
+            fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
+
+            lqbol = fqbol * 4.0 * np.pi * self.distance_cm**2.0
+            lqbol_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fqbol_err)**2
+                              +(8.0*np.pi * fqbol * self.distance_cm * self.distance_cm_err)**2)
+
+            self.qbol_lc = np.append(self.qbol_lc, [[jd, lqbol, lqbol_err]], axis=0)
+        self.qbol_lc = np.delete(self.qbol_lc, (0), axis=0)
 
     def lbol_bc_bh09(self, filter1, filter2):
         """Calculate the bolometric lightcurve using the bolometric corrections
@@ -188,7 +222,6 @@ class SN(object):
     def get_distance_cm(self):
         mpc_to_cm = 3.08567758E24
         distance_cm = self.parameter_table.cols.distance_Mpc[0] * mpc_to_cm
-        print distance_cm
         distance_cm_err = self.parameter_table.cols.distance_Mpc_err[0] * mpc_to_cm
         return distance_cm, distance_cm_err
 
