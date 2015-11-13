@@ -95,7 +95,9 @@ class SN(object):
 #                                                               angular_radius,
 #                                                               shortest_wl)
             uv_corr, uv_corr_err = uv_correction_blackbody(temperature,
+                                                           temperature_err,
                                                            angular_radius,
+                                                           angular_radius_err,
                                                            shortest_wl)
 
             fbol = fqbol + ir_corr + uv_corr
@@ -103,7 +105,6 @@ class SN(object):
             lum = fbol * 4.0 * np.pi * self.distance_cm**2.0
             lum_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fbol_err)**2
                               +(8.0*np.pi * fbol * self.distance_cm * self.distance_cm_err)**2)
-
             self.lc = np.append(self.lc, [[jd, lum, lum_err]], axis=0)
 
         self.lc = np.delete(self.lc, (0), axis=0)
