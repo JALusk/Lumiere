@@ -166,8 +166,6 @@ class SN(object):
         
         for i in range(len(self.bc_epochs)):
             lbol_bc, lbol_bc_err = calc_Lbol(colors[i], color_errs[i], filter1+"minus"+filter2, v_mags[i], v_mag_errs[i], self.distance_cm, self.distance_cm_err)
-            print lbol_bc, lbol_bc_err
-            
 
     def get_bc_colors(self, filter1, filter2):
         """Make an array of filter1 - filter 2 on each of the bc_epochs"""
