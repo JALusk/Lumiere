@@ -62,7 +62,7 @@ class SN(object):
         self.get_lbol_epochs()
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
         
-        self.lc = np.array([[0.0, 0.0, 0.0]])
+        self.lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
 
 
 
@@ -121,9 +121,13 @@ class SN(object):
             lum = fbol * 4.0 * np.pi * self.distance_cm**2.0
             lum_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fbol_err)**2
                               +(8.0*np.pi * fbol * self.distance_cm * self.distance_cm_err)**2)
-            self.lc = np.append(self.lc, [[jd, lum, lum_err]], axis=0)
+            phase = jd - self.parameter_table.cols.explosion_JD[0]
+            phase_err = self.parameter_table.cols.explosion_JD_err[0]
+            self.lc = np.append(self.lc, [[jd, phase, phase_err, lum, lum_err]], axis=0)
 
         self.lc = np.delete(self.lc, (0), axis=0)
+
+        self.write_lbol_plaintext(self.lc)
 
     def lqbol(self):
         """Calculate the quasi-bolometric lightcurve using direct integration
@@ -351,5 +355,5 @@ class SN(object):
 
         filename = "lbol_" + self.name + ".dat"
         lc_file = open(filename, 'w')
-        np.savetxt(lc_file, lightcurve, header = sn_parameters.sn_name+": JD, Phase, Lbol, err")
+        np.savetxt(lc_file, lightcurve, header = self.name+": JD, Phase, Lbol, err")
         lc_file.close()
