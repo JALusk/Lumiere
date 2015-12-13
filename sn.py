@@ -163,6 +163,9 @@ class SN(object):
         self.deredden_UBVRI_magnitudes()
         self.get_bc_epochs(filter1, filter2)
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
+
+        self.bc_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
+
         colors = self.get_bc_colors(filter1, filter2)
         color_errs = self.get_bc_color_uncertainties(filter1, filter2)
         v_mags = np.array([x['magnitude'] for x in self.photometry if x['jd']
@@ -171,7 +174,14 @@ class SN(object):
                               x['jd'] in self.bc_epochs and x['name'] == 'V'])
         
         for i in range(len(self.bc_epochs)):
-            lbol_bc, lbol_bc_err = calc_Lbol(colors[i], color_errs[i], filter1+"minus"+filter2, v_mags[i], v_mag_errs[i], self.distance_cm, self.distance_cm_err)
+            lbol_bc, lbol_bc_err = calc_Lbol(colors[i], color_errs[i], filter1+"minus"+filter2, v_mags[i], v_mag_errs[i], self.distance_cm, self.distance_cm_err)            
+            jd = self.bc_epochs[i]
+            phase = jd - self.parameter_table.cols.explosion_JD[0]
+            phase_err = self.parameter_table.cols.explosion_JD_err[0]
+            self.bc_lc = np.append(self.bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
+
+        self.bc_lc = np.delete(self.bc_lc, (0), axis=0)
+        self.write_lbol_plaintext(self.bc_lc)
 
     def get_bc_colors(self, filter1, filter2):
         """Make an array of filter1 - filter 2 on each of the bc_epochs"""
