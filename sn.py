@@ -137,7 +137,7 @@ class SN(object):
         self.get_lbol_epochs()
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
         
-        self.qbol_lc = np.array([[0.0, 0.0, 0.0]])
+        self.qbol_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
         
         for jd in self.lbol_epochs:
             wavelengths = self.get_wavelengths(jd)
@@ -149,9 +149,11 @@ class SN(object):
             lqbol = fqbol * 4.0 * np.pi * self.distance_cm**2.0
             lqbol_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fqbol_err)**2
                               +(8.0*np.pi * fqbol * self.distance_cm * self.distance_cm_err)**2)
-
-            self.qbol_lc = np.append(self.qbol_lc, [[jd, lqbol, lqbol_err]], axis=0)
+            phase = jd - self.parameter_table.cols.explosion_JD[0]
+            phase_err = self.parameter_table.cols.explosion_JD_err[0]
+            self.qbol_lc = np.append(self.qbol_lc, [[jd, phase, phase_err, lqbol, lqbol_err]], axis=0)
         self.qbol_lc = np.delete(self.qbol_lc, (0), axis=0)
+        self.write_lbol_plaintext(self.qbol_lc)
 
     def lbol_bc_bh09(self, filter1, filter2):
         """Calculate the bolometric lightcurve using the bolometric corrections
