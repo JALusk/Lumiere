@@ -127,7 +127,7 @@ class SN(object):
 
         self.lc = np.delete(self.lc, (0), axis=0)
 
-        self.write_lbol_plaintext(self.lc)
+        self.write_lbol_plaintext(self.lc, 'direct')
 
     def lqbol(self):
         """Calculate the quasi-bolometric lightcurve using direct integration
@@ -153,7 +153,7 @@ class SN(object):
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
             self.qbol_lc = np.append(self.qbol_lc, [[jd, phase, phase_err, lqbol, lqbol_err]], axis=0)
         self.qbol_lc = np.delete(self.qbol_lc, (0), axis=0)
-        self.write_lbol_plaintext(self.qbol_lc)
+        self.write_lbol_plaintext(self.qbol_lc, 'qbol')
 
     def lbol_bc_bh09(self, filter1, filter2):
         """Calculate the bolometric lightcurve using the bolometric corrections
@@ -181,7 +181,7 @@ class SN(object):
             self.bc_lc = np.append(self.bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
 
         self.bc_lc = np.delete(self.bc_lc, (0), axis=0)
-        self.write_lbol_plaintext(self.bc_lc)
+        self.write_lbol_plaintext(self.bc_lc, 'bc')
 
     def get_bc_colors(self, filter1, filter2):
         """Make an array of filter1 - filter 2 on each of the bc_epochs"""
@@ -362,10 +362,10 @@ class SN(object):
 
         return fqbol_trapezoidal(wavelengths, fluxes, flux_err)
 
-    def write_lbol_plaintext(self, lightcurve):
-        """Write the lightcurve to a file"""
+    def write_lbol_plaintext(self, lightcurve, suffix):
+        """Write the lightcurve to a file. Append suffix to filename"""
 
-        filename = "lbol_" + self.name + ".dat"
+        filename = "lbol_" + self.name + "_" + suffix + ".dat"
         lc_file = open(filename, 'w')
         np.savetxt(lc_file, lightcurve, header = self.name+": JD, Phase, Lbol, err")
         lc_file.close()
