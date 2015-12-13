@@ -345,3 +345,11 @@ class SN(object):
                 flux_err = np.append(flux_err, obs[3])
 
         return fqbol_trapezoidal(wavelengths, fluxes, flux_err)
+
+    def write_lbol_plaintext(self, lightcurve):
+        """Write the lightcurve to a file"""
+
+        filename = "lbol_" + self.name + ".dat"
+        lc_file = open(filename, 'w')
+        np.savetxt(lc_file, lightcurve, header = sn_parameters.sn_name+": JD, Phase, Lbol, err")
+        lc_file.close()
