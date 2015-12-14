@@ -62,7 +62,7 @@ class SN(object):
         self.get_lbol_epochs()
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
         
-        self.lc = np.array([[0.0, 0.0, 0.0]])
+        self.lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
 
 
 
@@ -121,9 +121,13 @@ class SN(object):
             lum = fbol * 4.0 * np.pi * self.distance_cm**2.0
             lum_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fbol_err)**2
                               +(8.0*np.pi * fbol * self.distance_cm * self.distance_cm_err)**2)
-            self.lc = np.append(self.lc, [[jd, lum, lum_err]], axis=0)
+            phase = jd - self.parameter_table.cols.explosion_JD[0]
+            phase_err = self.parameter_table.cols.explosion_JD_err[0]
+            self.lc = np.append(self.lc, [[jd, phase, phase_err, lum, lum_err]], axis=0)
 
         self.lc = np.delete(self.lc, (0), axis=0)
+
+        self.write_lbol_plaintext(self.lc, 'direct')
 
     def lqbol(self):
         """Calculate the quasi-bolometric lightcurve using direct integration
@@ -133,7 +137,7 @@ class SN(object):
         self.get_lbol_epochs()
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
         
-        self.qbol_lc = np.array([[0.0, 0.0, 0.0]])
+        self.qbol_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
         
         for jd in self.lbol_epochs:
             wavelengths = self.get_wavelengths(jd)
@@ -145,9 +149,11 @@ class SN(object):
             lqbol = fqbol * 4.0 * np.pi * self.distance_cm**2.0
             lqbol_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fqbol_err)**2
                               +(8.0*np.pi * fqbol * self.distance_cm * self.distance_cm_err)**2)
-
-            self.qbol_lc = np.append(self.qbol_lc, [[jd, lqbol, lqbol_err]], axis=0)
+            phase = jd - self.parameter_table.cols.explosion_JD[0]
+            phase_err = self.parameter_table.cols.explosion_JD_err[0]
+            self.qbol_lc = np.append(self.qbol_lc, [[jd, phase, phase_err, lqbol, lqbol_err]], axis=0)
         self.qbol_lc = np.delete(self.qbol_lc, (0), axis=0)
+        self.write_lbol_plaintext(self.qbol_lc, 'qbol')
 
     def lbol_bc_bh09(self, filter1, filter2):
         """Calculate the bolometric lightcurve using the bolometric corrections
@@ -157,6 +163,9 @@ class SN(object):
         self.deredden_UBVRI_magnitudes()
         self.get_bc_epochs(filter1, filter2)
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
+
+        self.bc_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
+
         colors = self.get_bc_colors(filter1, filter2)
         color_errs = self.get_bc_color_uncertainties(filter1, filter2)
         v_mags = np.array([x['magnitude'] for x in self.photometry if x['jd']
@@ -165,9 +174,14 @@ class SN(object):
                               x['jd'] in self.bc_epochs and x['name'] == 'V'])
         
         for i in range(len(self.bc_epochs)):
-            lbol_bc, lbol_bc_err = calc_Lbol(colors[i], color_errs[i], filter1+"minus"+filter2, v_mags[i], v_mag_errs[i], self.distance_cm, self.distance_cm_err)
-            print lbol_bc, lbol_bc_err
-            
+            lbol_bc, lbol_bc_err = calc_Lbol(colors[i], color_errs[i], filter1+"minus"+filter2, v_mags[i], v_mag_errs[i], self.distance_cm, self.distance_cm_err)            
+            jd = self.bc_epochs[i]
+            phase = jd - self.parameter_table.cols.explosion_JD[0]
+            phase_err = self.parameter_table.cols.explosion_JD_err[0]
+            self.bc_lc = np.append(self.bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
+
+        self.bc_lc = np.delete(self.bc_lc, (0), axis=0)
+        self.write_lbol_plaintext(self.bc_lc, 'bc')
 
     def get_bc_colors(self, filter1, filter2):
         """Make an array of filter1 - filter 2 on each of the bc_epochs"""
@@ -347,3 +361,11 @@ class SN(object):
                 flux_err = np.append(flux_err, obs[3])
 
         return fqbol_trapezoidal(wavelengths, fluxes, flux_err)
+
+    def write_lbol_plaintext(self, lightcurve, suffix):
+        """Write the lightcurve to a file. Append suffix to filename"""
+
+        filename = "lbol_" + self.name + "_" + suffix + ".dat"
+        lc_file = open(filename, 'w')
+        np.savetxt(lc_file, lightcurve, header = self.name+": JD, Phase, Lbol, err")
+        lc_file.close()
