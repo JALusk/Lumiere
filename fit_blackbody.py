@@ -4,7 +4,7 @@ from astropy import units as u
 from planck import planck_function, dplanck_dT
 
 def bb_flux(wavelength, temperature, angular_radius):
-    bb_flux = (np.pi) * planck_function(wavelength, temperature) * (angular_radius)**2
+    bb_flux = (np.pi * u.sr) * planck_function(wavelength, temperature) * (angular_radius)**2
 
     return bb_flux
 
