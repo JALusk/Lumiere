@@ -326,15 +326,17 @@ class SN(object):
         for obs in self.phot_table.iterrows():
             filterid = obs['filter_id']
             for filt in self.filter_table.where('(filter_id == filterid)'):
-                flux, flux_err = mag2flux(obs['magnitude'], 
-                                          obs['uncertainty'], 
-                                          filt['eff_wl'], 
-                                          filt['flux_zeropoint'])
-                self.observations = np.append(self.observations, [[obs['jd'], 
-                                                               filt['eff_wl'], 
-                                                               flux, 
-                                                               flux_err]],
-                                            axis=0)
+                if 909.09 <= filt['eff_wl'] <= 33333.33:
+                    flux, flux_err = mag2flux(obs['magnitude'], 
+                                              obs['uncertainty'], 
+                                              filt['eff_wl'], 
+                                              filt['flux_zeropoint'])
+                    self.observations = np.append(self.observations, 
+                                                  [[obs['jd'], 
+                                                    filt['eff_wl'], 
+                                                    flux, 
+                                                    flux_err]],
+                                                  axis=0)
 
         self.observations = np.delete(self.observations, (0), axis=0)
 
