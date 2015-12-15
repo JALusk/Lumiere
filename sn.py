@@ -56,7 +56,6 @@ class SN(object):
     def lbol_direct_bh09(self):
         """Calculate the bolometric lightcurve using the direct integration
            method published in Bersten & Hamuy 2009 (2009ApJ...701..200B)"""
-        self.get_observations()
         self.convert_magnitudes_to_fluxes()
         self.deredden_fluxes()
         self.get_lbol_epochs()
@@ -308,14 +307,14 @@ class SN(object):
                                           obs['uncertainty'], 
                                           filt['eff_wl'], 
                                           filt['flux_zeropoint'])
-                
-                self.converted_obs = np.append(self.converted_obs, 
-                                               np.array([(obs['jd'], 
-                                                          filt['name'],
-                                                          filt['eff_wl'],
-                                                          flux, 
-                                                          flux_err)],
-                                                        dtype=dtype))
+                if 909.09 <= filt['eff_wl'] <= 33333.33:
+                    self.converted_obs = np.append(self.converted_obs, 
+                                                   np.array([(obs['jd'], 
+                                                              filt['name'],
+                                                              filt['eff_wl'],
+                                                              flux, 
+                                                              flux_err)],
+                                                            dtype=dtype))
 
         self.converted_obs = np.delete(self.converted_obs, (0), axis=0)
 
@@ -326,11 +325,11 @@ class SN(object):
         for obs in self.phot_table.iterrows():
             filterid = obs['filter_id']
             for filt in self.filter_table.where('(filter_id == filterid)'):
+                flux, flux_err = mag2flux(obs['magnitude'], 
+                                          obs['uncertainty'], 
+                                          filt['eff_wl'], 
+                                          filt['flux_zeropoint'])
                 if 909.09 <= filt['eff_wl'] <= 33333.33:
-                    flux, flux_err = mag2flux(obs['magnitude'], 
-                                              obs['uncertainty'], 
-                                              filt['eff_wl'], 
-                                              filt['flux_zeropoint'])
                     self.observations = np.append(self.observations, 
                                                   [[obs['jd'], 
                                                     filt['eff_wl'], 
