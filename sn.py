@@ -184,7 +184,7 @@ class SN(object):
             self.bc_lc = np.append(self.bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
 
         self.bc_lc = np.delete(self.bc_lc, (0), axis=0)
-        self.write_lbol_plaintext(self.bc_lc, 'bc')
+        self.write_lbol_plaintext(self.bc_lc, 'bc_' + filter1 + '-' + filter2)
 
     def get_bc_colors(self, filter1, filter2):
         """Make an array of filter1 - filter 2 on each of the bc_epochs"""
