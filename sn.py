@@ -323,26 +323,6 @@ class SN(object):
         self.converted_obs = np.delete(self.converted_obs, (0), axis=0)
 
 
-    def get_observations(self):
-        self.observations = np.array([[0.0,0.0,0.0,0.0]])
-        
-        for obs in self.phot_table.iterrows():
-            filterid = obs['filter_id']
-            for filt in self.filter_table.where('(filter_id == filterid)'):
-                flux, flux_err = mag2flux(obs['magnitude'], 
-                                          obs['uncertainty'], 
-                                          filt['eff_wl'], 
-                                          filt['flux_zeropoint'])
-                if 909.09 <= filt['eff_wl'] <= 33333.33:
-                    self.observations = np.append(self.observations, 
-                                                  [[obs['jd'], 
-                                                    filt['eff_wl'], 
-                                                    flux, 
-                                                    flux_err]],
-                                                  axis=0)
-
-        self.observations = np.delete(self.observations, (0), axis=0)
-
     def deredden_fluxes(self):
         self.Av_gal = self.parameter_table.cols.Av_gal[0]
         self.Av_host = self.parameter_table.cols.Av_host[0]
