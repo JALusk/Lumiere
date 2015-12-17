@@ -130,7 +130,7 @@ class SN(object):
     def lqbol(self):
         """Calculate the quasi-bolometric lightcurve using direct integration
            with trapezoidal integration of the fluxes"""
-        self.get_observations()
+        self.convert_magnitudes_to_fluxes()
         self.deredden_fluxes()
         self.get_lbol_epochs()
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
@@ -138,9 +138,14 @@ class SN(object):
         self.qbol_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
         
         for jd in self.lbol_epochs:
-            wavelengths = self.get_wavelengths(jd)
-            fluxes = self.get_fluxes(jd)
-            flux_errs = self.get_flux_errs(jd)
+            names = np.array([x['name'] for x in self.converted_obs 
+                              if x['jd'] == jd])
+            wavelengths = np.array([x['wavelength'] for x in self.converted_obs
+                                    if x['jd'] == jd])
+            fluxes = np.array([x['flux'] for x in self.converted_obs
+                               if x['jd'] == jd])
+            flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
+                                  if x['jd'] == jd])
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
 
@@ -287,10 +292,10 @@ class SN(object):
         """Get only epochs with enough photometric data to calculate Lbol"""
         self.lbol_epochs = np.array([])
         
-        for jd_unique in np.unique(self.observations[:,0]):
+        for jd_unique in np.unique(self.converted_obs['jd']):
             num_obs = 0
-            for obs in self.observations:
-                if obs[0] == jd_unique:
+            for obs in self.converted_obs:
+                if obs['jd'] == jd_unique:
                     num_obs += 1
             if num_obs >= self.min_num_obs:
                 self.lbol_epochs = np.append(self.lbol_epochs, jd_unique)
@@ -343,8 +348,8 @@ class SN(object):
         self.Av_host = self.parameter_table.cols.Av_host[0]
         self.Av_tot = self.Av_gal + self.Av_host
 
-        for obs in self.observations:
-            obs[2] = obs[2] * extinction.reddening(obs[1] * u.AA, self.Av_tot, model='ccm89')
+        for obs in self.converted_obs:
+            obs['flux'] = obs['flux'] * extinction.reddening(obs['wavelength'] * u.AA, self.Av_tot, model='ccm89')
 
     def get_fqbol_trapezoidal(self, jd):
         """Return the quasi-bolometric flux of the supernova on date [jd] using
