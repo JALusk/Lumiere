@@ -32,11 +32,12 @@ class SN(object):
     def __init__(self, name):
         """Initializes the SN with supplied value for [name]"""
         self.name = name
-        self.min_num_obs = 3
+        self.min_num_obs = 4
 
         self.read_hdf5()
 
     def read_hdf5(self):
+        """Reads the hdf5 file and returns data on supernova matching [name]"""
         hdf5_filename = './hdf5/sn_data.h5'
         h5file = tb.open_file(hdf5_filename, 'r')
         
@@ -62,9 +63,7 @@ class SN(object):
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
         
         self.lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
-
-
-
+        
         for jd in self.lbol_epochs:
             names = np.array([x['name'] for x in self.converted_obs 
                               if x['jd'] == jd])
