@@ -168,17 +168,16 @@ class SN(object):
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
 
         self.bc_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
-
-        colors = self.get_bc_colors(filter1, filter2)
-        color_errs = self.get_bc_color_uncertainties(filter1, filter2)
-        v_mags = np.array([x['magnitude'] for x in self.photometry if x['jd']
-                           in self.bc_epochs and x['name'] == 'V'])
-        v_mag_errs = np.array([x['uncertainty'] for x in self.photometry if
-                              x['jd'] in self.bc_epochs and x['name'] == 'V'])
         
         for i in range(len(self.bc_epochs)):
-            lbol_bc, lbol_bc_err = calc_Lbol(colors[i], color_errs[i], filter1+"minus"+filter2, v_mags[i], v_mag_errs[i], self.distance_cm, self.distance_cm_err)            
             jd = self.bc_epochs[i]
+            color = self.get_bc_color(jd, filter1, filter2)
+            color_err = self.get_bc_color_uncertainty(jd, filter1, filter2) 
+            v_mag = np.array([x['magnitude'] for x in self.photometry 
+                               if x['jd'] == jd and x['name'] == 'V'])
+            v_mag_err = np.array([x['uncertainty'] for x in self.photometry 
+                                if x['jd'] == jd and x['name'] == 'V'])      
+            lbol_bc, lbol_bc_err = calc_Lbol(color, color_err, filter1+"minus"+filter2, v_mag, v_mag_err, self.distance_cm, self.distance_cm_err)            
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
             self.bc_lc = np.append(self.bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
@@ -186,26 +185,26 @@ class SN(object):
         self.bc_lc = np.delete(self.bc_lc, (0), axis=0)
         self.write_lbol_plaintext(self.bc_lc, 'bc_' + filter1 + '-' + filter2)
 
-    def get_bc_colors(self, filter1, filter2):
+    def get_bc_color(self, jd, filter1, filter2):
         """Make an array of filter1 - filter 2 on each of the bc_epochs"""
 
-        f1_mags = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
-                            in self.bc_epochs and x['name'] == filter1])
-        f2_mags = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
-                            in self.bc_epochs and x['name'] == filter2])
+        f1_mag = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
+                            == jd and x['name'] == filter1])
+        f2_mag = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
+                            == jd and x['name'] == filter2])
 
-        return f1_mags - f2_mags
+        return f1_mag - f2_mag
 
-    def get_bc_color_uncertainties(self, filter1, filter2):
+    def get_bc_color_uncertainty(self, jd, filter1, filter2):
         """Make an array of sqrt(dfilter1^2 - dfilter2^2) on each of the 
            bc_epochs"""
 
-        f1_errs = np.array([x['uncertainty'] for x in self.photometry if x['jd']
-                            in self.bc_epochs and x['name'] == filter1])
-        f2_errs = np.array([x['uncertainty'] for x in self.photometry if x['jd']
-                            in self.bc_epochs and x['name'] == filter2])
+        f1_err = np.array([x['uncertainty'] for x in self.photometry if x['jd']
+                            == jd and x['name'] == filter1])
+        f2_err = np.array([x['uncertainty'] for x in self.photometry if x['jd']
+                            == jd and x['name'] == filter2])
 
-        return np.sqrt(f1_errs**2 + f2_errs**2)
+        return np.sqrt(f1_err**2 + f2_err**2)
 
     def get_magnitudes(self):
         dtype = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
