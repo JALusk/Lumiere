@@ -38,7 +38,7 @@ def calc_Fbol(color_value, color_err, color_type, v_magnitude,
     else:
         Fbol = 10**(-0.4 * (bolometric_correction + v_magnitude +
                             constants.mbol_zeropoint))
-        Fbol_uncertainty = (math.sqrt(2) * 0.4 * math.log(10) * Fbol * 
+        Fbol_uncertainty = (0.4 * math.log(10) * Fbol * 
                             math.sqrt(bc_err**2 + v_magnitude_err**2))
  
     return Fbol, Fbol_uncertainty
