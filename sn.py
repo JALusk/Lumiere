@@ -45,13 +45,7 @@ class SN(object):
         
         self.sn_node = h5file.get_node('/sn', self.name)
         
-        self.get_phot_table()
-        self.get_parameter_table()
-
-    def get_phot_table(self):
         self.phot_table = self.sn_node.phot
-
-    def get_parameter_table(self):
         self.parameter_table = self.sn_node.parameters
 
     def lbol_direct_bh09(self):
