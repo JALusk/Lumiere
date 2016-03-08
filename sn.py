@@ -302,22 +302,6 @@ class SN(object):
         for obs in self.converted_obs:
             obs['flux'] = obs['flux'] * extinction.reddening(obs['wavelength'] * u.AA, self.Av_tot, model='ccm89')
 
-    def get_fqbol_trapezoidal(self, jd):
-        """Return the quasi-bolometric flux of the supernova on date [jd] using
-           trapezoidal integration between the observed fluxes"""
-
-        wavelengths = np.array([])
-        fluxes = np.array([])
-        flux_err = np.array([])
-
-        for obs in self.observations:
-            if obs[0] == jd:
-                wavelengths = np.append(wavelengths, obs[1])
-                fluxes = np.append(fluxes, obs[2])
-                flux_err = np.append(flux_err, obs[3])
-
-        return fqbol_trapezoidal(wavelengths, fluxes, flux_err)
-
     def write_lbol_plaintext(self, lightcurve, suffix):
         """Write the lightcurve to a file. Append suffix to filename"""
 
