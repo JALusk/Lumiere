@@ -39,7 +39,7 @@ def ir_correction(temperature, T_err, angular_radius, rad_err, longest_wl):
     return ir_correction, ir_corr_err
 
 def uv_correction_blackbody(temperature, T_err, angular_radius, rad_err, shortest_wl):
-    uv_correction = integrate.quad(bb_flux_nounits, 0.0, shortest_wl, 
+    uv_correction = integrate.quad(bb_flux_nounits, 100.0, shortest_wl, 
                                    args=(temperature, angular_radius))[0]
 
     T_errterm = integrate.quad(dBB_dT_nounits, 500.0, shortest_wl,

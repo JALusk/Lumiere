@@ -62,7 +62,7 @@ class SN(object):
         self.get_lbol_epochs()
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
         
-        self.lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
+        self.lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
         
         for jd in self.lbol_epochs:
             names = np.array([x['name'] for x in self.converted_obs 
@@ -73,6 +73,11 @@ class SN(object):
                                if x['jd'] == jd])
             flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
                                   if x['jd'] == jd])
+
+            sort_indices = np.argsort(wavelengths)
+            wavelengths = wavelengths[sort_indices]
+            fluxes = fluxes[sort_indices]
+            flux_errs = flux_errs[sort_indices]
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
             temperature, angular_radius, perr = bb_fit_parameters(wavelengths,
@@ -121,7 +126,7 @@ class SN(object):
                               +(8.0*np.pi * fbol * self.distance_cm * self.distance_cm_err)**2)
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
-            self.lc = np.append(self.lc, [[jd, phase, phase_err, lum, lum_err]], axis=0)
+            self.lc = np.append(self.lc, [[jd, phase, phase_err, lum, lum_err, temperature, angular_radius]], axis=0)
 
         self.lc = np.delete(self.lc, (0), axis=0)
 
@@ -146,6 +151,11 @@ class SN(object):
                                if x['jd'] == jd])
             flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
                                   if x['jd'] == jd])
+
+            sort_indices = np.argsort(wavelengths)
+            wavelengths = wavelengths[sort_indices]
+            fluxes = fluxes[sort_indices]
+            flux_errs = flux_errs[sort_indices]
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
 
