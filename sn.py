@@ -137,8 +137,6 @@ class SN(object):
         self.qbol_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
         
         for jd in self.lbol_epochs:
-            names = np.array([x['name'] for x in self.converted_obs 
-                              if x['jd'] == jd])
             wavelengths = np.array([x['wavelength'] for x in self.converted_obs
                                     if x['jd'] == jd])
             fluxes = np.array([x['flux'] for x in self.converted_obs
