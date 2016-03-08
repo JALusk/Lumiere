@@ -259,36 +259,6 @@ class SN(object):
         distance_cm_err = self.parameter_table.cols.distance_Mpc_err[0] * mpc_to_cm
         return distance_cm, distance_cm_err
 
-    def get_wavelengths(self, jd):
-        """Get an array of wavelengths observed on [jd]"""
-        wavelengths = np.array([])
-
-        for obs in self.observations:
-            if obs[0] == jd:
-                wavelengths = np.append(wavelengths, obs[1])
-
-        return wavelengths
-
-    def get_fluxes(self, jd):
-        """Get an array of fluxes observed on [jd]"""
-        fluxes = np.array([])
-
-        for obs in self.observations:
-            if obs[0] == jd:
-                fluxes = np.append(fluxes, obs[2])
-
-        return fluxes
-
-    def get_flux_errs(self, jd):
-        """Get an array of flux uncertainties observed on [jd]"""
-        flux_errs = np.array([])
-
-        for obs in self.observations:
-            if obs[0] == jd:
-                flux_errs = np.append(flux_errs, obs[3])
-
-        return flux_errs
-
     def get_lbol_epochs(self):
         """Get only epochs with enough photometric data to calculate Lbol"""
         self.lbol_epochs = np.array([])
