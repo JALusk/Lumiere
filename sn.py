@@ -77,7 +77,7 @@ class SN(object):
             sort_indices = np.argsort(wavelengths)
             wavelengths = wavelengths[sort_indices]
             fluxes = fluxes[sort_indices]
-            flux_errs = fluxes[sort_indices]
+            flux_errs = flux_errs[sort_indices]
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
             temperature, angular_radius, perr = bb_fit_parameters(wavelengths,
@@ -155,7 +155,7 @@ class SN(object):
             sort_indices = np.argsort(wavelengths)
             wavelengths = wavelengths[sort_indices]
             fluxes = fluxes[sort_indices]
-            flux_errs = fluxes[sort_indices]
+            flux_errs = flux_errs[sort_indices]
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
 
