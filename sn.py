@@ -60,13 +60,13 @@ class SN(object):
         
         for jd in self.lbol_epochs:
             names = np.array([x['name'] for x in self.converted_obs 
-                              if x['jd'] == jd])
+                              if x['jd'] == jd and x['name'] != 'z'])
             wavelengths = np.array([x['wavelength'] for x in self.converted_obs
-                                    if x['jd'] == jd])
+                                    if x['jd'] == jd and x['name'] != 'z'])
             fluxes = np.array([x['flux'] for x in self.converted_obs
-                               if x['jd'] == jd])
+                               if x['jd'] == jd and x['name'] != 'z'])
             flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
-                                  if x['jd'] == jd])
+                                  if x['jd'] == jd and x['name'] != 'z'])
 
             sort_indices = np.argsort(wavelengths)
             wavelengths = wavelengths[sort_indices]
@@ -77,9 +77,12 @@ class SN(object):
             temperature, angular_radius, perr = bb_fit_parameters(wavelengths,
                                                                    fluxes,
                                                                    flux_errs)
+
             temperature_err = perr[0]
             angular_radius_err = perr[1]
 
+            print angular_radius
+            
             shortest_wl = np.amin(wavelengths)
             shortest_flux = np.amin(fluxes)
             shortest_flux_err = np.amin(flux_errs)
@@ -138,11 +141,11 @@ class SN(object):
         
         for jd in self.lbol_epochs:
             wavelengths = np.array([x['wavelength'] for x in self.converted_obs
-                                    if x['jd'] == jd])
+                                    if x['jd'] == jd and x['name'] != 'z'])
             fluxes = np.array([x['flux'] for x in self.converted_obs
-                               if x['jd'] == jd])
+                               if x['jd'] == jd and x['name'] != 'z'])
             flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
-                                  if x['jd'] == jd])
+                                  if x['jd'] == jd and x['name'] != 'z'])
 
             sort_indices = np.argsort(wavelengths)
             wavelengths = wavelengths[sort_indices]
