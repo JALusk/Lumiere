@@ -81,8 +81,6 @@ class SN(object):
             temperature_err = perr[0]
             angular_radius_err = perr[1]
 
-            print angular_radius
-            
             shortest_wl = np.amin(wavelengths)
             shortest_flux = np.amin(fluxes)
             shortest_flux_err = np.amin(flux_errs)
