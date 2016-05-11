@@ -139,16 +139,19 @@ class SN(object):
         
         for jd in self.lbol_epochs:
             wavelengths = np.array([x['wavelength'] for x in self.converted_obs
-                                    if x['jd'] == jd and x['name'] != 'z'])
+                                    if x['jd'] == jd])
             fluxes = np.array([x['flux'] for x in self.converted_obs
-                               if x['jd'] == jd and x['name'] != 'z'])
+                               if x['jd'] == jd])
             flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
-                                  if x['jd'] == jd and x['name'] != 'z'])
+                                  if x['jd'] == jd])
+            names = np.array([x['name'] for x in self.converted_obs
+                                  if x['jd'] == jd])
 
             sort_indices = np.argsort(wavelengths)
             wavelengths = wavelengths[sort_indices]
             fluxes = fluxes[sort_indices]
             flux_errs = flux_errs[sort_indices]
+            names = names[sort_indices]
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
 
@@ -157,7 +160,9 @@ class SN(object):
                               +(8.0*np.pi * fqbol * self.distance_cm * self.distance_cm_err)**2)
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
-            self.qbol_lc = np.append(self.qbol_lc, [[jd, phase, phase_err, lqbol, lqbol_err]], axis=0)
+            # Quick and dirty fix for IR-only nights (don't want those in qbol calc)
+            if min(wavelengths) < 10000.0:
+                self.qbol_lc = np.append(self.qbol_lc, [[jd, phase, phase_err, lqbol, lqbol_err]], axis=0)
         self.qbol_lc = np.delete(self.qbol_lc, (0), axis=0)
         self.write_lbol_plaintext(self.qbol_lc, 'qbol')
 
