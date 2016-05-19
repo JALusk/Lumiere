@@ -2,8 +2,9 @@ import unittest
 import numpy as np
 from astropy import units as u
 from scipy.optimize import curve_fit
-from planck import planck_function
-from fit_blackbody import *
+from .context import snobol
+from snobol.planck import planck_function
+from snobol.fit_blackbody import *
 
 class TestFitBlackbody(unittest.TestCase):
 

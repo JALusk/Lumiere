@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-SPEC_DIRECTORY=test
+SPEC_DIRECTORY=tests
 
 if ! command -v python &>/dev/null; then
   echo "python command not found, please ensure python is installed and in your PATH." 1>&2

@@ -1,6 +1,7 @@
 import unittest
-import bc_polynomial as bc_polynomial
-import constants as constants
+from .context import snobol
+import snobol.bc_polynomial as bc_polynomial
+import snobol.constants as constants
 
 class TestSetConstants(unittest.TestCase):
 
