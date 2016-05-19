@@ -2,3 +2,10 @@
 *.swo
 *.swp
 *.pyc
+
+# Distribution / pagkaging
+dist/
+build/
+
+# Sphinx documentation
+docs/build/
