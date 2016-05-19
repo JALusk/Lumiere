@@ -7,7 +7,7 @@ setup(
     author='Jeremy A. Lusk',
     author_email='jeremy.lusk@gmail.com',
     url='https://github.com/JALusk/SNoBoL',
-    packages=['snobol',],
-    package_data=['data/sn_data.h5']
+    packages=['snobol'],
+    package_data={'snobol' : ['data/sn_data.h5']},
     license='MIT License',
     )   
