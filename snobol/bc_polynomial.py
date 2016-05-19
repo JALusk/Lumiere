@@ -43,16 +43,16 @@ def valid_color(color_value, range_min, range_max):
     make sure that the color we are feeding in is inside that range.
 
     Args:
-        color_value: B-V, V-I, or B-I color of the supernova in
+        color_value (float): B-V, V-I, or B-I color of the supernova in
             magnitudes (corrected for reddening and extinction from the
             host and MWG.)
-        range_min: Minumum value of the color range over which the fit
+        range_min (float): Minumum value of the color range over which the fit
             is valid
-        range_max: Maxumum value of the color range over which the fit
+        range_max (float): Maxumum value of the color range over which the fit
             is valid
 
     Returns:
-        True if the color value is within the valid range.
+        bool: True if the color value is within the valid range.
         False if the volor value is outside the valid range.
    """
     if range_min <= color_value <= range_max:
