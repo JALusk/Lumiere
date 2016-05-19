@@ -5,11 +5,11 @@ def set_constants(color_type):
     """Sets the coefficients, validty range, and rms error of fit.
 
     Args:
-        color_type: A string specifying the color combination. Must be
+        color_type (str): A string specifying the color combination. Must be
             "BminusV" for B-V, "VminusI" for V-I, or "BminusI" for B-I.
 
     Returns:
-        A tuple containing the list of coefficients for the polynomial
+        tuple: A tuple containing the list of coefficients for the polynomial
         fit which correspond to the supplied color, the minimum value of
         the color for which the polynomial is valid, the maximum value
         of the color for which the polynomial is valid, and the rms
@@ -64,17 +64,17 @@ def calculate_polynomial_term(coefficient, variable, order):
     """Calculates a term in a polynomial.
 
     Args:
-        coefficient: float which is the coefficient to use in
+        coefficient (float): The coefficient to use in
             calculating the polynomial term.
-        variable: float to plug in for the variable in the polynomial
+        variable (float): Value to plug in for the variable in the polynomial
             term.
-        order: integer to use as the order of the polynomial term.
+        order (int): Integer to use as the order of the polynomial term.
 
     Returns:
-        foat which is the result of coefficient * variable**(order)
+        float: The result of coefficient * variable**(order)
 
     Raises:
-        TypeError if a non-integer order is given.
+        TypeError: A non-integer order is given.
     """
     if type(order) != int:
         raise TypeError('Non-integer order in polynomial term')
@@ -85,12 +85,12 @@ def calculate_polynomial(coefficients, variable):
     """Calculates a polynomial.
 
     Args:
-        coefficients: list of polynomial coefficients. The length
+        coefficients (list): list of polynomial coefficients. The length
             of the list will be used as the order of the polynomial.
-        variable: float to plug in for the variable in the polynomial.
+        variable (float): float to plug in for the variable in the polynomial.
 
     Returns:
-        float, which is the result of summing the polynomial terms
+        float: The result of summing the polynomial terms
         calculated from the coefficients and variable given.
     """
     polynomial = 0.0
@@ -106,23 +106,23 @@ def calculate_polynomial_derivative_term(coefficient, variable, order):
     """Calculates the derivative of the nth order term of a polynomial.
 
     Args:
-        coefficient: The coefficient of the nth order term in the
+        coefficient (float): The coefficient of the nth order term in the
             polynomial
-        variable: float to plug in for the variable in the polynomial
-        order: order of the nth order term in the polynomial (so, n.)
+        variable (float): float to plug in for the variable in the polynomial
+        order (int): order of the nth order term in the polynomial (so, n.)
 
     Returns:
-        float, which is the result of taking the derivative of the nth
+        float: The result of taking the derivative of the nth
         order term a polynomial,
 
-        n * coefficient * variable**(n-1).
+        :math:`n \\cdot \\text{coefficient} \\cdot \\text{variable}^{n-1}`
 
         So, the edge case of taking the derivative of the zeroth-order
         term is taken care of, since you explicity multiply by the
         order of the polynomial (which is zero in the n = 0 case.)
 
     Raises:
-        TypeError: if a non-integer was passed as the order.
+        TypeError: A non-integer was passed as the order.
     """
     if type(order) != int:
         raise TypeError('Non-integer order in polynomial term')
@@ -133,12 +133,12 @@ def calculate_polynomial_derivative(coefficients, variable):
     """Calculates the derivative of a polynomial.
 
     Args:
-        coefficients: list of polynomial coefficients. The length
+        coefficients (list): List of polynomial coefficients. The length
             of the list will be used as the order of the polynomial.
-        variable: float to plug in for the variable in the polynomial.
+        variable (float): Value to plug in for the variable in the polynomial.
 
     Returns:
-        float, which is the result of summing the derivatives of
+        float: The result of summing the derivatives of
         the polynomial terms calculated from the coefficients and 
         variable given.
     """
@@ -152,6 +152,13 @@ def calculate_polynomial_derivative(coefficients, variable):
 
 def quadrature_sum(x, y):
     """Calculate the quadrature sum of two variables x and y.
+
+    Args:
+        x (float): Variable to include in the quadrature sum
+        y (float): Variable to include in the quadrature sum
+
+    Returns:
+        float: Result of calculating :math:`\\sqrt{x^2 + y^2}`
     """
     return math.sqrt(x**2 + y**2)
 
@@ -166,12 +173,15 @@ def calc_bolometric_correction_err(color_value, color_err, color_type):
     Bersten & Hamuy (2009.)
 
     Args:
-        color_value: B-V, V-I, or B-I color of the supernova in
+        color_value (float): B-V, V-I, or B-I color of the supernova in
             magnitudes (corrected for reddening and extinction from
             the host and MWG.)
-        color_err: Uncertainty in the photometric color.
-        color_type: String signifying which color color_value
+        color_err (float): Uncertainty in the photometric color.
+        color_type (str): String signifying which color color_value
             represents.
+
+    Returns:
+        float: Uncertainty in the value of the bolometric correction
    """
     coefficients = set_constants(color_type)[0]
     rms_err = set_constants(color_type)[3]
@@ -188,16 +198,16 @@ def calc_bolometric_correction(color_value, color_err, color_type):
     """Calculates the bolometric correction, using a polynomial fit.
 
     Args:
-        color_value: B-V, V-I, or B-I color of the supernova in
+        color_value (float): B-V, V-I, or B-I color of the supernova in
             magnitudes (corrected for reddening and extinction from the
             host and MWG.)
-        color_err: Uncertainty in the photometric color.
-        color_type: String signifying which color color_value represents.
+        color_err (float): Uncertainty in the photometric color.
+        color_type (str): String signifying which color color_value represents.
             Valid values are "BminusV" for B-V, "VminusI" for V-I, and
             "BminusI" for B-I.
  
     Returns:
-        A tuple containing the bolometric correction for use in 
+        tuple: A tuple containing the bolometric correction for use in 
         calculating the bolometric luminosity of the supernova, and the
         uncertainty in that bolometric correction (if the color given
         is within the valid range of the polynomial fit.)
