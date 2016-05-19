@@ -38,7 +38,7 @@ class SN(object):
 
     def read_hdf5(self):
         """Reads the hdf5 file and returns data on supernova matching [name]"""
-        hdf5_filename = './hdf5/sn_data.h5'
+        hdf5_filename = './data/sn_data.h5'
         h5file = tb.open_file(hdf5_filename, 'r')
         
         self.filter_table = h5file.root.filters
