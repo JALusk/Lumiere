@@ -6,6 +6,24 @@ from specutils import extinction
 from fit_blackbody import *
 
 def integrate_fqbol(wavelengths, fluxes, flux_uncertainties):
+    """Calculate the trapezoidal rule integral of the observed `fluxes`, and the uncertainty in that integration.
+    
+    The trapezoidal rule integrates the data by assuming the function is linear between observed points, and then integrates under those line segments.
+    The numpy function `trapz` is used to perform the integration, but the uncertainty in the integral due to uncertainties in the observed flux is calculated by hand using standard error propagation techniques.
+
+    Args:
+        wavelengths (list): List of wavelengths at which the flux was observed.
+        fluxes (list): List of observed fluxes.
+        flux_uncertainties (list): List of uncertainties in each observed flux.
+
+    Returns:
+        tuple: 2-tuple of floats.
+
+        * The value of the integral
+        * The uncertainty in the integral due to uncertainties in the fluxes.
+
+        (fqbol, fqbol_uncertainty)
+    """
     fqbol = np.trapz(fluxes, wavelengths)
 
     quad_terms = np.array([])
@@ -27,6 +45,8 @@ def integrate_fqbol(wavelengths, fluxes, flux_uncertainties):
     return fqbol, fqbol_uncertainty
 
 def ir_correction(temperature, T_err, angular_radius, rad_err, longest_wl):
+    """
+    """
     ir_correction = bb_total_flux(temperature, angular_radius) - bb_flux_integrated(longest_wl, temperature, angular_radius)
 
     T_errterm = (dbb_total_flux_dT(temperature, angular_radius) - dbb_flux_integrated_dT(longest_wl, temperature, angular_radius)) * T_err

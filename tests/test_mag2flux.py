@@ -2,7 +2,8 @@ import unittest
 import numpy as np
 from astropy import constants as const
 from astropy import units as u
-from mag2flux import *
+from .context import snobol
+from snobol.mag2flux import *
 from yaml import load
 
 class TestMag2Flux(unittest.TestCase):

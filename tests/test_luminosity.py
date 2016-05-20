@@ -1,7 +1,8 @@
 import unittest
-from bc_polynomial import calc_bolometric_correction as bc
-import luminosity as luminosity
-import constants as constants
+from .context import snobol
+from snobol.bc_polynomial import calc_bolometric_correction as bc
+import snobol.luminosity as luminosity
+import snobol.constants as constants
 import math
 
 

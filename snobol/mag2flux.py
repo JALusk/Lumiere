@@ -5,17 +5,18 @@ def mag2flux(magnitude, uncertainty, effective_wl, flux_at_zero_mag):
     """Converts an observed magnitude in a filter band to an average flux.
 
     Args:
-        magnitude: FloatType - Apparent magnitude.
-        uncertainty: FloatType - Apparent magnitude uncertainty.
-        effective_wl: FloatType - Effective wavelength of the filter.
-        flux_at_zero_mag: FloatType - Flux at zero magnitude of the filter.
+        magnitude (float):  Apparent magnitude.
+        uncertainty (float): Apparent magnitude uncertainty.
+        effective_wl (float): Effective wavelength of the filter.
+        flux_at_zero_mag (float): Flux at zero magnitude of the filter.
 
     Returns:
-        a tuple of two astropy quantities:
-            * the flux in erg/s/cm^2/A, 
-            * the flux uncertainty in erg/s/cm^2/A
+        tuple: A tuple of two floats:
 
-        (flux, flux_uncertainty, effective_wl)
+        * the flux in :math:`erg \\; s^{-1} cm^{-2} Angstrom^{-1}`
+        * the flux uncertainty in :math:`erg \\; s^{-1} cm^{-2} Angstrom^{-1}`
+
+        (flux, flux_uncertainty)
     """
     effective_wl = effective_wl * u.AA
     flux_at_zero_mag = flux_at_zero_mag * (u.erg / (u.s * u.cm**2 * u.AA)) 

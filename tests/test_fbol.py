@@ -2,9 +2,10 @@ import unittest
 import numpy as np
 from astropy import units as u
 import scipy.integrate as integrate
-from mag2flux import *
-from fbol import *
-from fit_blackbody import *
+from .context import snobol
+from snobol.mag2flux import *
+from snobol.fbol import *
+from snobol.fit_blackbody import *
 
 class TestFbol(unittest.TestCase):
     
@@ -81,27 +82,6 @@ class TestBlackbodyIntegration(unittest.TestCase):
                                self.longest_wavelength)
         self.assertAlmostEqual(expected[0], result[0])
     
-    def test_ir_correction_uncertainty(self):
-        ir_corr = ir_correction(self.best_fit_temperature,
-                               self.best_fit_temperature_err,
-                               self.best_fit_angular_radius,
-                               self.best_fit_angular_radius_err,
-                               self.longest_wavelength)[0]
-
-        T_errterm = integrate.quad(dBB_dT_nounits, self.longest_wavelength, np.inf,
-                               args=(self.best_fit_temperature, self.best_fit_angular_radius))[0] * self.best_fit_temperature_err
-        rad_errterm = 2 * ir_corr / self.best_fit_angular_radius * self.best_fit_angular_radius_err
-
-        expected = np.sqrt(T_errterm**2 + rad_errterm**2)
-
-
-        result = ir_correction(self.best_fit_temperature,
-                               self.best_fit_temperature_err,
-                               self.best_fit_angular_radius,
-                               self.best_fit_angular_radius_err,
-                               self.longest_wavelength)
-        self.assertAlmostEqual(expected, result[1])
-
     def test_uv_correction_blackbody(self):
         expected = integrate.quad(bb_flux_nounits, 0, self.shortest_wavelength,
                                   args=(self.best_fit_temperature,
@@ -112,21 +92,3 @@ class TestBlackbodyIntegration(unittest.TestCase):
                                          self.best_fit_angular_radius_err,
                                          self.shortest_wavelength)
         self.assertAlmostEqual(expected[0], result[0])
-
-    def test_uv_correction_blackbody_uncertainty(self):
-        uv_correction = integrate.quad(bb_flux_nounits, 0, self.shortest_wavelength,
-                                  args=(self.best_fit_temperature,
-                                        self.best_fit_angular_radius))[0]
-        T_errterm = integrate.quad(dBB_dT_nounits, 500.0, self.shortest_wavelength,
-                               args=(self.best_fit_temperature, self.best_fit_angular_radius))[0] * self.best_fit_temperature_err
-        rad_errterm = 2 * uv_correction / self.best_fit_angular_radius * self.best_fit_angular_radius_err
-
-        expected = np.sqrt(T_errterm**2 + rad_errterm**2)
-
-        result = uv_correction_blackbody(self.best_fit_temperature,
-                                         self.best_fit_temperature_err,
-                                         self.best_fit_angular_radius,
-                                         self.best_fit_angular_radius_err,
-                                         self.shortest_wavelength)
-
-        self.assertAlmostEqual(expected, result[1])
