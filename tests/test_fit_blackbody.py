@@ -52,36 +52,3 @@ class TestFitBlackbody(unittest.TestCase):
                                                        self.flux_array.value, self.flux_uncertainties.value)
         self.assertEqual((expected_temp, expected_radius, expected_perr[0], expected_perr[1]), 
                          (result_temp, result_radius, result_perr[0], result_perr[1]))
-
-class TestChiSquared(unittest.TestCase):
-
-    def setUp(self):
-        self.y_data = np.array([1, 2, 3, 4.5, 5])
-        self.y_data_uncertainty = np.array([0.1, 0.1, 0.1, 0.1, 0.1])
-        self.x_data = np.array([1, 2, 3, 4, 5])
-        self.parameters = [1,0]
-        
-    def test_chi_squared_calculation(self):
-        expected = 25.0
-
-        def func(x, *parameters):
-            m = parameters[0]
-            b = parameters[1]
-            return m * x + b
-
-        result = calculate_chisq(self.y_data, self.y_data_uncertainty, self.x_data, func, self.parameters)
-
-        self.assertEqual(expected, result)
-
-    def test_chi_squared_quadratic(self):
-        expected = 57225.0
-
-        def func(x, *parameters):
-            a = parameters[0]
-            b = 0
-            c = parameters[1]
-
-            return a * x**2 + b * x + c
-
-        result = calculate_chisq(self.y_data, self.y_data_uncertainty, self.x_data, func, self.parameters)
-        self.assertEqual(expected, result)

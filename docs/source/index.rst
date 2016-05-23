@@ -5,6 +5,8 @@
 
 Welcome to SNoBoL's documentation!
 ==================================
+.. include:: ../../README
+
 
 Contents:
 
@@ -19,4 +21,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

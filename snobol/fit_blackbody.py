@@ -37,7 +37,7 @@ def bb_flux_integrated(wavelength, temperature, angular_radius):
         angular_radius (float): Angular radius :math:`(\\theta = \\frac{R}{D})`
 
     Returns:
-        float: Value of the integrated flux.
+        float: Value of the integrated flux in :math:`erg \\; s^{-1} cm^{-2}`
     """
     bb_flux_integrated = (np.pi * u.sr) * planck_integral(wavelength, temperature) * (angular_radius)**2
 
