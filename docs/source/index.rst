@@ -5,7 +5,7 @@
 
 Welcome to SNoBoL's documentation!
 ==================================
-.. include:: ../../README
+.. include:: ../../README.rst
 
 
 Contents:
