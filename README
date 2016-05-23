@@ -47,6 +47,8 @@ If you do not have root priviliges on your machine, then use::
 Documentation
 =============
 
+Documentation is hosted at `ReadTheDocs <http://snobol.readthedocs.io>`_.
+
 Documentation is automatically generated via Sphinx.
 To generate the documentation locally, navigate to the ``docs/`` directory and use::
 
