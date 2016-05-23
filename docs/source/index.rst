@@ -5,6 +5,8 @@
 
 Welcome to SNoBoL's documentation!
 ==================================
+.. include:: ../../README
+
 
 Contents:
 
