@@ -18,16 +18,39 @@ class SN(object):
     by SNoBoL. Once there, simply create a supernova by calling the constructor
     with the name of the SN as a string of the form "sn[YEAR][Letter(s)]"
 
-    For example:
-    sn1987A = SN('sn1987a')
-    sn1999em = SN('sn1999em')
+    Attributes:
+        name (str): Name of the supernova, "sn" followed by the year of first 
+            observation along with a letter designating the order of observation
+            in that year. "sn1987a" was the first SN observed in 1987. 
+            "sn2000cb" was the eightieth SN observed in 2000.
 
-    Attributes
-    ----------
-    name : Name of the supernova, "sn" followed by the year of first observation
-           along with a letter designating the order of observation in that
-           year. "sn1987a" was the first SN observed in 1987. "sn2000cb" was the
-           eightieth SN observed in 2000.
+    Examples:
+        An example which calculates the quasi-bolometric luminosity using
+        trapezoidal integration:
+
+        >>> my_supernova = SN('sn1998a')
+        >>> my_supernova.lqbol()
+
+        In order to coorect for unobserved flux in the UV and IR, using the
+        method of Bersten & Hamuy (2009), do the following:
+
+        >>> my_supernova.lbol_direct_bh09()
+
+        Finally, to calculate the bolometric luminosity using bolometric
+        corrections based on two-filter colors as in Bersten & Hamuy (2009):
+
+        >>> my_supernova.lbol_bc_bh09(filter1, filter2)
+
+        where `filter1` and `filter2` are strings designating the filter to use.
+        The acceptable filter combinations at this time are limited to
+
+        =====  =========  =========
+        Color  `filter1`  `filter2`
+        =====  =========  =========
+        B-V    "B"        "V"
+        V-I    "V"        "I"
+        B-I    "B"        "I"
+        =====  =========  =========
     """
 
     def __init__(self, name):
@@ -40,7 +63,6 @@ class SN(object):
     def read_hdf5(self):
         """Reads the hdf5 file and returns data on supernova matching [name]"""
         path_to_data = resource_filename('snobol', 'data/sn_data.h5')
-#        hdf5_filename = './data/sn_data.h5'
         h5file = tb.open_file(path_to_data, 'r')
         
         self.filter_table = h5file.root.filters
@@ -52,7 +74,8 @@ class SN(object):
 
     def lbol_direct_bh09(self):
         """Calculate the bolometric lightcurve using the direct integration
-           method published in Bersten & Hamuy 2009 (2009ApJ...701..200B)"""
+        method published in Bersten & Hamuy 2009 (2009ApJ...701..200B)
+        """
         self.convert_magnitudes_to_fluxes()
         self.deredden_fluxes()
         self.get_lbol_epochs()
@@ -131,7 +154,8 @@ class SN(object):
 
     def lqbol(self):
         """Calculate the quasi-bolometric lightcurve using direct integration
-           with trapezoidal integration of the fluxes"""
+        with trapezoidal integration of the fluxes
+        """
         self.convert_magnitudes_to_fluxes()
         self.deredden_fluxes()
         self.get_lbol_epochs()
@@ -170,8 +194,8 @@ class SN(object):
 
     def lbol_bc_bh09(self, filter1, filter2):
         """Calculate the bolometric lightcurve using the bolometric corrections
-           found in Bersten & Hamuy 2009 (2009ApJ...701..200B). These require 
-           specifying a color, taken to be filter1 - filter2"""
+        found in Bersten & Hamuy 2009 (2009ApJ...701..200B). These require 
+        specifying a color, taken to be filter1 - filter2"""
         self.get_magnitudes()
         self.deredden_UBVRI_magnitudes()
         self.get_bc_epochs(filter1, filter2)
@@ -196,7 +220,16 @@ class SN(object):
         self.write_lbol_plaintext(self.bc_lc, 'bc_' + filter1 + '-' + filter2)
 
     def get_bc_color(self, jd, filter1, filter2):
-        """Make an array of filter1 - filter 2 on each of the bc_epochs"""
+        """Make an array of `filter1` - `filter2` on each of the bc_epochs
+
+        Args:
+            jd (float): Julian Date of the observation
+            filter1 (str): Sring designation for filter 1 ("B", for example)
+            filter2 (str): String designation for filter 2 ("V", for example)
+
+        Returns:
+            float: Magnitude of filter 1 minus the magnitude of filter 2.
+        """
 
         f1_mag = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
                             == jd and x['name'] == filter1])
@@ -206,8 +239,18 @@ class SN(object):
         return f1_mag - f2_mag
 
     def get_bc_color_uncertainty(self, jd, filter1, filter2):
-        """Make an array of sqrt(dfilter1^2 - dfilter2^2) on each of the 
-           bc_epochs"""
+        """Make an array of :math:`\\sqrt{(\\delta \\text{filter1})^2 - (\\delta
+        \\text{filter2})^2}` on each of the bc_epochs
+
+        Args:
+            jd (float): Julian Date of the observation
+            filter1 (str): Sring designation for filter 1 ("B", for example)
+            filter2 (str): String designation for filter 2 ("V", for example)
+
+        Returns:
+            float: Quadrature sum of the uncertainties in the magnitudes of
+            filter 1 and filter 2.
+        """
 
         f1_err = np.array([x['uncertainty'] for x in self.photometry if x['jd']
                             == jd and x['name'] == filter1])
@@ -217,6 +260,9 @@ class SN(object):
         return np.sqrt(f1_err**2 + f2_err**2)
 
     def get_magnitudes(self):
+        """Build a numpy array of [`jd`, `name`, `magnitude`, `uncertainty`]
+        from the data contained within the HDF5 file.
+        """
         dtype = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
         self.photometry = np.array([(0.0,'0.0',0.0,0.0)], dtype=dtype)
         
@@ -233,7 +279,9 @@ class SN(object):
         self.photometry = np.delete(self.photometry, (0), axis=0)
 
     def deredden_UBVRI_magnitudes(self):
-        """Apply the corrections from CCM89 (1989ApJ...345..245C), Table 3
+        """Apply the corrections from CCM89 (1989ApJ...345..245C), Table 3 to
+        the observed photometric magnitudes.
+
         IMPORTANT: This will only deredden the UBVRI magnitudes at the moment"""
         self.Av_gal = self.parameter_table.cols.Av_gal[0]
         self.Av_host = self.parameter_table.cols.Av_host[0]
@@ -262,13 +310,25 @@ class SN(object):
                 self.bc_epochs = np.append(self.bc_epochs, jd_unique)
 
     def get_distance_cm(self):
+        """Get the distance to the supernova in centimeters from the HDF5 file.
+
+        Returns:
+            tuple: 2-tuple
+            
+            * (float) distance to the supernova in cm
+            * (float) uncertainty in the distance to the supernova in cm
+        """
         mpc_to_cm = 3.08567758E24
         distance_cm = self.parameter_table.cols.distance_Mpc[0] * mpc_to_cm
         distance_cm_err = self.parameter_table.cols.distance_Mpc_err[0] * mpc_to_cm
         return distance_cm, distance_cm_err
 
     def get_lbol_epochs(self):
-        """Get only epochs with enough photometric data to calculate Lbol"""
+        """Get only epochs with enough photometric data to calculate Lbol
+
+        The minimum number of filters needed to calculate a luminosity is set in
+        the __init__ mehod.
+        """
         self.lbol_epochs = np.array([])
         
         for jd_unique in np.unique(self.converted_obs['jd']):
@@ -280,6 +340,10 @@ class SN(object):
                 self.lbol_epochs = np.append(self.lbol_epochs, jd_unique)
 
     def convert_magnitudes_to_fluxes(self):
+        """Perform the magnitude to flux conversion.
+
+        Creates an array of [`jd`, `name`, `wavelength`, `flux`, `uncertainty`]
+        """
         dtype = [('jd', '>f8'), ('name', 'S1'), ('wavelength', '>f8'), ('flux', '>f8'), ('uncertainty', '>f8')]
         self.converted_obs = np.array([(0.0,'0.0',0.0,0.0,0.0)], dtype=dtype)
         
@@ -303,6 +367,11 @@ class SN(object):
 
 
     def deredden_fluxes(self):
+        """Deredden the observed fluxes using the ccm89 model
+
+        The dereddening procedure is handled by the extinction.reddening method
+        from specutils.
+        """
         self.Av_gal = self.parameter_table.cols.Av_gal[0]
         self.Av_host = self.parameter_table.cols.Av_host[0]
         self.Av_tot = self.Av_gal + self.Av_host
@@ -312,7 +381,6 @@ class SN(object):
 
     def write_lbol_plaintext(self, lightcurve, suffix):
         """Write the lightcurve to a file. Append suffix to filename"""
-
         filename = "lbol_" + self.name + "_" + suffix + ".dat"
         lc_file = open(filename, 'w')
         np.savetxt(lc_file, lightcurve, header = self.name+": JD, Phase, Lbol, err")

@@ -62,7 +62,7 @@ def ir_correction(temperature, T_err, angular_radius, rad_err, longest_wl):
     Returns:
         tuple: 2-tuple
 
-        * (float): The IR correction in :math:`erg \; s^{-1} cm^{-2}'
+        * (float): The IR correction in :math:`erg \\; s^{-1} cm^{-2}`
         * (float): The uncertainty in the IR correction in the same units
     """
     ir_correction = bb_total_flux(temperature, angular_radius) - bb_flux_integrated(longest_wl, temperature, angular_radius)
@@ -92,7 +92,7 @@ def uv_correction_blackbody(temperature, T_err, angular_radius, rad_err, shortes
     Returns:
         tuple: 2-tuple
 
-        * (float): The UV correction in :math:`erg \; s^{-1} cm^{-2}'
+        * (float): The UV correction in :math:`erg \\; s^{-1} cm^{-2}`
         * (float): The uncertainty in the UV correction in the same units    
     """
     uv_correction = bb_flux_integrated(shortest_wl, temperature, angular_radius)
@@ -120,7 +120,7 @@ def uv_correction_linear(shortest_wl, shortest_flux, shortest_flux_err):
     Returns:
         tuple: 2-tuple
 
-        * (float): The UV correction in :math:`erg \; s^{-1} cm^{-2}'
+        * (float): The UV correction in :math:`erg \\; s^{-1} cm^{-2}`
         * (float): The uncertainty in the UV correction in the same units    
     """
     fluxes = [0.0, shortest_flux]
