@@ -146,7 +146,7 @@ class SN(object):
                               +(8.0*np.pi * fbol * self.distance_cm * self.distance_cm_err)**2)
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
-            self.lc = np.append(self.lc, [[jd, phase, phase_err, lum, lum_err, temperature, angular_radius]], axis=0)
+            self.lc = np.append(self.lc, [[jd, phase, phase_err, lum, lum_err]], axis=0)
 
         self.lc = np.delete(self.lc, (0), axis=0)
 
@@ -383,5 +383,5 @@ class SN(object):
         """Write the lightcurve to a file. Append suffix to filename"""
         filename = "lbol_" + self.name + "_" + suffix + ".dat"
         lc_file = open(filename, 'w')
-        np.savetxt(lc_file, lightcurve, header = self.name+": JD, Phase, Lbol, err")
+        np.savetxt(lc_file, lightcurve, header = self.name+": JD, Phase (days), Phase err (days), Lbol (erg/s), Lbol err (erg/s)")
         lc_file.close()
