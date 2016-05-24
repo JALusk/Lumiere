@@ -1,9 +1,6 @@
 snobol package
 ==============
 
-Submodules
-----------
-
 snobol.bc_polynomial module
 ---------------------------
 
@@ -64,15 +61,6 @@ snobol.sn module
 ----------------
 
 .. automodule:: snobol.sn
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: snobol
     :members:
     :undoc-members:
     :show-inheritance:

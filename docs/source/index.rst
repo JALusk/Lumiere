@@ -8,11 +8,13 @@ Welcome to SNoBoL's documentation!
 .. include:: ../../README.rst
 
 
-Contents:
+Reference
+=========
 
 .. toctree::
    :maxdepth: 2
 
+   snobol
 
 
 Indices and tables
