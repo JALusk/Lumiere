@@ -2,7 +2,7 @@
 SNoBoL: SuperNova Bolometric Lightcurves
 ========================================
 
-Version 0.1
+Version 0.2
 
 SNoBoL is a python package for calculating the bolometric lightcurves of Type II
 supernovae using observed photometry. Three different methods for calculating
