@@ -1,3 +1,6 @@
+"""Constants for use by the bolometric correction routine
+"""
+
 # Coefficients for polynomial fit to bolometric correction - color relation
 coeff_BminusV = [-0.823, 5.027, -13.409, 20.133, -18.096, 9.084, -1.950]
 coeff_VminusI = [-1.355, 6.262, -2.676, -22.973, 35.524, -15.340]

@@ -8,20 +8,20 @@ def calc_Fbol(color_value, color_err, color_type, v_magnitude,
     """Calculates the bolometric flux of a Type II-P supernova.
 
     Args:
-        color_value: B-V, V-I, or B-I color of the supernova in 
+        color_value (float): B-V, V-I, or B-I color of the supernova in 
             magnitudes (corrected for reddening and extinction from 
             the host and MWG.)
-        color_err: Uncertainty in the photometric color.
-        color_type: String signifying which color color_value 
+        color_err (float): Uncertainty in the photometric color.
+        color_type (str): String signifying which color color_value 
             represents. Valid values are "BminusV" for B-V, "VminusI"
             for V-I, and "BminusI" for B-I.
-        v_magnitude: Photometric magnitude in the V band, corrected for
+        v_magnitude (float): Photometric magnitude in the V band, corrected for
             host + MWG extinction.
-        v_magnitude_err: Uncertainty in the V band magnitude after 
+        v_magnitude_err (float): Uncertainty in the V band magnitude after 
             correction for host + MWG extinction.
 
     Returns:
-        A tuple containing the bolometric flux used when calculating the
+        tuple: A tuple containing the bolometric flux used when calculating the
         bolometric luminosity, and the uncertainty in that number.
 
         (Fbol, uncertainty)
@@ -38,20 +38,20 @@ def calc_Fbol(color_value, color_err, color_type, v_magnitude,
     else:
         Fbol = 10**(-0.4 * (bolometric_correction + v_magnitude +
                             constants.mbol_zeropoint))
-        Fbol_uncertainty = (math.sqrt(2) * 0.4 * math.log(10) * Fbol * 
+        Fbol_uncertainty = (0.4 * math.log(10) * Fbol * 
                             math.sqrt(bc_err**2 + v_magnitude_err**2))
  
     return Fbol, Fbol_uncertainty
 
 def calc_4piDsquared(distance, distance_err):
-    """Calculates 4*pi*D^2, to convert flux to luminosity.
+    """Calculates :math:`4\\pi D^2`, to convert flux to luminosity.
 
     Args:
-        distance: The distance to the supernova.
-        distance_err: The uncertainty in the distance to the supernova.
+        distance (float): The distance to the supernova in centimeters.
+        distance_err (float): The uncertainty in the distance to the supernova.
 
     Returns:
-        A tuple containing the 4*pi*D^2, and the uncertainty of this number.
+        tuple: A tuple containing the :math:`4 \\pi D^2`, and the uncertainty of this number.
 
         (4piDsquared, uncertainty)
     """
@@ -65,22 +65,22 @@ def calc_Lbol(color_value, color_err, color_type, v_magnitude,
     """Calculates the bolometric luminosity of a Type II-P Supernova.
 
     Args:
-        color_value: B-V, V-I, or B-I color of the supernova in
+        color_value (float): B-V, V-I, or B-I color of the supernova in
             magnitudes (corrected for reddening and extinction from
             the host and MWG.)
-        color_err: Uncertainty in the photometric color.
-        color_type: String signifying which color color_value
+        color_err (float): Uncertainty in the photometric color.
+        color_type (str): String signifying which color color_value
             represents. Valid values are "BminusV" for B-V, "VminusI"
             for V-I, and "BminusI" for B-I.
-        v_magnitude: Photometric magnitude in the V band, corrected for
+        v_magnitude (float): Photometric magnitude in the V band, corrected for
             host + MWG extinction.
-        v_magnitude_err: Uncertainty in the V band magnitude after 
+        v_magnitude_err (float): Uncertainty in the V band magnitude after 
             correction for host + MWG extinction.
-        distance: The distance to the supernova in centimeters.
-        distance_err: The uncertainty in the distance to the supernova.
+        distance (float): The distance to the supernova in centimeters.
+        distance_err (float): The uncertainty in the distance to the supernova.
  
     Returns:
-        A tuple containing the bolometric luminosity in ergs per second, 
+        tuple: A tuple containing the bolometric luminosity in ergs per second, 
         and the uncertainty in that value.
 
         (Lbol, uncertainty)
