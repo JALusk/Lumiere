@@ -58,3 +58,36 @@ This will generate html files in the ``docs/build/html/`` directory.
 Double-clicking the ``index.html`` file should open the documentation in your
 web browser.
 
+Development
+===========
+
+Bug reports, feature requests, and contributions are welcome.
+
+Please issue bug reports and feature requests using https://github.com/JALusk/SNoBoL/issues - signing up for a GitHub account is free and easy.
+
+To contribute code, please use the following procedure:
+
+* Fork the SNoBoL repository on GitHub (follow the steps here:
+  https://help.github.com/articles/fork-a-repo/)
+
+* Create a branch off of ``develop`` with a descriptive name::
+
+    git checkout -b my_feature develop
+
+* Make your changes and additions
+
+* Write documentation for classes and functions using the Google style guide:
+  http://www.sphinx-doc.org/en/stable/ext/example_google.html#example-google
+
+* Write new unit tests for your new code
+
+* Run the test suite using::
+
+    make test
+
+* Issue a pull request (https://help.github.com/articles/using-pull-requests/)
+  to the ``develop`` branch on GitHub
+
+* Your pull request will be reviewed and, after any conflicts are resolved,
+  merged into the ``develop`` branch and eventually into the next release!
+
