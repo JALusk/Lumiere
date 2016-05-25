@@ -1,9 +1,13 @@
 from setuptools import setup
 
+with open('README.rst') as file:
+        long_description = file.read()
+
 setup(
     name='SuperBoL',
-    version='0.3.0',
+    version='0.3.1',
     description='Supernova Bolometric Lightcurves',
+    long_description = long_description,
     author='Jeremy A. Lusk',
     author_email='jeremy.lusk@gmail.com',
     url='https://github.com/JALusk/SuperBoL',

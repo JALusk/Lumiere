@@ -2,9 +2,9 @@ import unittest
 import numpy as np
 from astropy import units as u
 from scipy.optimize import curve_fit
-from .context import snobol
-from snobol.planck import planck_function
-from snobol.fit_blackbody import *
+from .context import superbol
+from superbol.planck import planck_function
+from superbol.fit_blackbody import *
 
 class TestFitBlackbody(unittest.TestCase):
 
@@ -44,7 +44,8 @@ class TestFitBlackbody(unittest.TestCase):
 
     def test_bb_fit_parameters_returns_expected_parameters(self):
         popt, pcov = curve_fit(bb_flux_nounits, self.eff_wl_array.value, self.flux_array.value,
-                               p0=[5000, 1.0e-10])
+                               p0=[5000, 1.0e-10], sigma=self.flux_uncertainties.value,
+                               absolute_sigma=True)
         expected_temp = popt[0]
         expected_radius = popt[1]
         expected_perr = np.sqrt(np.diag(pcov))

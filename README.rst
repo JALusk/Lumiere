@@ -1,8 +1,7 @@
-========================================
 SuperBoL: Supernova Bolometric Lightcurves
-========================================
+==========================================
 
-Version 0.3.0
+Version 0.3.1
 
 SuperBoL is a python package for calculating the bolometric lightcurves of Type II
 supernovae using observed photometry. Three different methods for calculating
@@ -24,9 +23,9 @@ Typical usage often looks like this::
     from superbol import sn
 
     my_supernova = sn.SN('sn1998a')
-    my_supernova.lqbol()            # quasi-bolometric lightcurve
-    my_supernova.lbol_direct_bh09() # direct lightcurve
-    my_supernova.lbol_bc_bh09()     # bolometric correction lightcurve
+    my_supernova.lqbol()                # quasi-bolometric lightcurve
+    my_supernova.lbol_direct_bh09()     # direct lightcurve
+    my_supernova.lbol_bc_bh09('B', 'V') # B-V bolometric correction lightcurve
 
 SuperBoL propagates uncertainties in the input data through the calculations made
 by the code, allowing for errorbars to be included in plots of the lightcurve.

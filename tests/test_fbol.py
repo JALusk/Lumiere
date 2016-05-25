@@ -2,10 +2,10 @@ import unittest
 import numpy as np
 from astropy import units as u
 import scipy.integrate as integrate
-from .context import snobol
-from snobol.mag2flux import *
-from snobol.fbol import *
-from snobol.fit_blackbody import *
+from .context import superbol
+from superbol.mag2flux import *
+from superbol.fbol import *
+from superbol.fit_blackbody import *
 
 class TestFbol(unittest.TestCase):
     
