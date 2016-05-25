@@ -2,8 +2,8 @@ import unittest
 import numpy as np
 from astropy import constants as const
 from astropy import units as u
-from .context import snobol
-from snobol.planck import planck_function, planck_integral
+from .context import superbol
+from superbol.planck import planck_function, planck_integral
 
 class TestPlanckFunctionExtrema(unittest.TestCase):
 
