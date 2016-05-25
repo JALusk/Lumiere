@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='SNoBoL',
@@ -10,4 +10,10 @@ setup(
     packages=['snobol'],
     package_data={'snobol' : ['data/sn_data.h5']},
     license='MIT License',
+    install_requires=[
+        "astropy",
+        "scipy>=0.14",
+        "numpy",
+        "specutils"
+    ],
     )   
