@@ -1,7 +1,7 @@
-snobol
-======
+superbol
+========
 
 .. toctree::
    :maxdepth: 4
 
-   snobol
+   superbol

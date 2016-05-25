@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to SNoBoL's documentation!
+Welcome to SuperBoL's documentation!
 ==================================
 .. include:: ../../README.rst
 
@@ -14,7 +14,7 @@ Reference
 .. toctree::
    :maxdepth: 2
 
-   snobol
+   superbol
 
 
 Indices and tables

@@ -1,66 +1,66 @@
-snobol package
+superbol package
 ==============
 
-snobol.bc_polynomial module
+superbol.bc_polynomial module
 ---------------------------
 
-.. automodule:: snobol.bc_polynomial
+.. automodule:: superbol.bc_polynomial
     :members:
     :undoc-members:
     :show-inheritance:
 
-snobol.constants module
+superbol.constants module
 -----------------------
 
-.. automodule:: snobol.constants
+.. automodule:: superbol.constants
     :members:
     :undoc-members:
     :show-inheritance:
 
-snobol.fbol module
+superbol.fbol module
 ------------------
 
-.. automodule:: snobol.fbol
+.. automodule:: superbol.fbol
     :members:
     :undoc-members:
     :show-inheritance:
 
-snobol.fit_blackbody module
+superbol.fit_blackbody module
 ---------------------------
 
-.. automodule:: snobol.fit_blackbody
+.. automodule:: superbol.fit_blackbody
     :members:
     :undoc-members:
     :show-inheritance:
 
-snobol.luminosity module
+superbol.luminosity module
 ------------------------
 
-.. automodule:: snobol.luminosity
+.. automodule:: superbol.luminosity
     :members:
     :undoc-members:
     :show-inheritance:
 
-snobol.mag2flux module
+superbol.mag2flux module
 ----------------------
 
-.. automodule:: snobol.mag2flux
+.. automodule:: superbol.mag2flux
     :members:
     :undoc-members:
     :show-inheritance:
 
-snobol.planck module
+superbol.planck module
 --------------------
 
-.. automodule:: snobol.planck
+.. automodule:: superbol.planck
     :members:
     :undoc-members:
     :show-inheritance:
 
-snobol.sn module
+superbol.sn module
 ----------------
 
-.. automodule:: snobol.sn
+.. automodule:: superbol.sn
     :members:
     :undoc-members:
     :show-inheritance:
