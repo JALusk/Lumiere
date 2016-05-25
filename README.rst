@@ -1,10 +1,10 @@
 ========================================
-SNoBoL: SuperNova Bolometric Lightcurves
+SuperBoL: Supernova Bolometric Lightcurves
 ========================================
 
 Version 0.2.1
 
-SNoBoL is a python package for calculating the bolometric lightcurves of Type II
+SuperBoL is a python package for calculating the bolometric lightcurves of Type II
 supernovae using observed photometry. Three different methods for calculating
 the bolometric luminosity are currently included. Those are:
 
@@ -21,22 +21,22 @@ the bolometric luminosity are currently included. Those are:
 
 Typical usage often looks like this::
 
-    from snobol import sn
+    from superbol import sn
 
     my_supernova = sn.SN('sn1998a')
     my_supernova.lqbol()            # quasi-bolometric lightcurve
     my_supernova.lbol_direct_bh09() # direct lightcurve
     my_supernova.lbol_bc_bh09()     # bolometric correction lightcurve
 
-SNoBoL propagates uncertainties in the input data through the calculations made
+SuperBoL propagates uncertainties in the input data through the calculations made
 by the code, allowing for errorbars to be included in plots of the lightcurve.
 
 Installation
 ============
 
-Source code can be found at https://github.com/JALusk/SNoBoL
+Source code can be found at https://github.com/JALusk/SuperBoL
 
-In order to install SNoBoL system-wide, use::
+In order to install SuperBoL system-wide, use::
 
     python setup.py install
 
@@ -47,7 +47,7 @@ If you do not have root priviliges on your machine, then use::
 Documentation
 =============
 
-Documentation is hosted at `ReadTheDocs <http://snobol.readthedocs.io>`_.
+Documentation is hosted at `ReadTheDocs <http://superbol.readthedocs.io>`_.
 
 Documentation is automatically generated via Sphinx.
 To generate the documentation locally, navigate to the ``docs/`` directory and use::
@@ -63,11 +63,11 @@ Development
 
 Bug reports, feature requests, and contributions are welcome.
 
-Please issue bug reports and feature requests using https://github.com/JALusk/SNoBoL/issues - signing up for a GitHub account is free and easy.
+Please issue bug reports and feature requests using https://github.com/JALusk/SuperBoL/issues - signing up for a GitHub account is free and easy.
 
 To contribute code, please use the following procedure:
 
-* Fork the SNoBoL repository on GitHub (follow the steps here:
+* Fork the SuperBoL repository on GitHub (follow the steps here:
   https://help.github.com/articles/fork-a-repo/)
 
 * Create a branch off of ``develop`` with a descriptive name::
