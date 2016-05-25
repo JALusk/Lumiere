@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='SNoBoL',
-    version='0.2',
+    version='0.2.1',
     description='Supernova Bolometric Lightcurves',
     author='Jeremy A. Lusk',
     author_email='jeremy.lusk@gmail.com',
