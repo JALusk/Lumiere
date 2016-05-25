@@ -81,7 +81,7 @@ class SN(object):
         self.get_lbol_epochs()
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
         
-        self.lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
+        self.lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
         
         for jd in self.lbol_epochs:
             names = np.array([x['name'] for x in self.converted_obs 
