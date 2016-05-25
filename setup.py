@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='SuperBoL',
-    version='0.2.1',
+    version='0.3.0',
     description='Supernova Bolometric Lightcurves',
     author='Jeremy A. Lusk',
     author_email='jeremy.lusk@gmail.com',
