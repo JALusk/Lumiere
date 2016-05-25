@@ -1,7 +1,7 @@
 SuperBoL: Supernova Bolometric Lightcurves
 ==========================================
 
-Version 0.3.0
+Version 0.3.1
 
 SuperBoL is a python package for calculating the bolometric lightcurves of Type II
 supernovae using observed photometry. Three different methods for calculating
