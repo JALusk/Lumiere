@@ -106,7 +106,7 @@ def bb_fit_parameters(wavelengths, fluxes, flux_uncertainties):
 
         (temperature, angular_radius, perr)
     """
-    popt, pcov = curve_fit(bb_flux_nounits, wavelengths, fluxes, p0=[5000, 1.0e-10])
+    popt, pcov = curve_fit(bb_flux_nounits, wavelengths, fluxes, p0=[5000, 1.0e-10], sigma=flux_uncertainties, absolute_sigma=True)
     temperature = popt[0]
     angular_radius = popt[1]
     perr = np.sqrt(np.diag(pcov))
