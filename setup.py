@@ -2,13 +2,13 @@ from setuptools import setup
 
 setup(
     name='SuperBoL',
-    version='0.2.1',
+    version='0.3.0',
     description='Supernova Bolometric Lightcurves',
     author='Jeremy A. Lusk',
     author_email='jeremy.lusk@gmail.com',
     url='https://github.com/JALusk/SuperBoL',
-    packages=['snobol'],
-    package_data={'snobol' : ['data/sn_data.h5']},
+    packages=['superbol'],
+    package_data={'superbol' : ['data/sn_data.h5']},
     license='MIT License',
     classifiers=[
         "Development Status :: 4 - Beta",
