@@ -62,7 +62,7 @@ class SN(object):
 
     def read_hdf5(self):
         """Reads the hdf5 file and returns data on supernova matching [name]"""
-        path_to_data = resource_filename('snobol', 'data/sn_data.h5')
+        path_to_data = resource_filename('superbol', 'data/sn_data.h5')
         h5file = tb.open_file(path_to_data, 'r')
         
         self.filter_table = h5file.root.filters

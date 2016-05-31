@@ -5,7 +5,7 @@ with open('README.rst') as file:
 
 setup(
     name='SuperBoL',
-    version='0.3.1',
+    version='0.3.2',
     description='Supernova Bolometric Lightcurves',
     long_description = long_description,
     author='Jeremy A. Lusk',
