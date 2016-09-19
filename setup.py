@@ -26,6 +26,7 @@ setup(
         "astropy",
         "scipy>=0.14",
         "numpy",
-        "specutils"
+        "specutils",
+	"tables"
     ],
     )   
