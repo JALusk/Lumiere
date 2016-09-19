@@ -1,0 +1,28 @@
+# This plain text data file is used to hold the observations from a single
+# supernova made with a single filter.
+# To add a full set of observations in multiple filters, copy this data file
+# once for each filter you would like to add.
+
+sn_name = '' # lowercase SN identifier: i.e. 'sn1987a'
+filter_name = '' # One-letter filter name such as 'U' or 'g'
+
+# If your know the effective wavelength and flux zeropoint of your
+# filter, add them below. If you don't, then leave them set to None
+# and default values will be applied based on your filter_name.
+# Flux zeropoints correspond to the flux-at-zero-magnitude in 
+# ergs/s/cm2/A
+
+filter_eff_wl = None
+filter_flux_zeropoint = None
+
+# Bibcode reference if this is previously published photometry
+ref = '' # ex: '2005MNRAS.360..950P'
+
+# Add your name if you like
+note = 'User submitted'
+
+# Enter your photometric observations made in the format below:
+# jd         mag    err
+# START_DATA
+
+# END_DATA
