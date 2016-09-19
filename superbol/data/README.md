@@ -17,7 +17,7 @@ Once you have edited copies of the `sn_filter.dat` and `sn_parameters.dat`
 files, you need to run the included scripts to actually include that data
 in the HDF5 file.
 
-1. To add the parameters to the HDF5 file, run
+To add the parameters to the HDF5 file, run
 
 `python add_sn_parameters.py your_sn_parameters_file.dat`
 
@@ -28,7 +28,7 @@ This will prompt you to look over the data and confirm it is as you expect.
 Once you verify the data and type `y`, your data will be added to the HDF5
 file.
 
-2. To add your photometry to the HDF5 file, run
+To add your photometry to the HDF5 file, run
 
 `python add_sn_filter.py your_sn_filter1.dat your_sn_filter2.dat ...`
 
