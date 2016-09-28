@@ -1,6 +1,6 @@
 import argparse
 import sys
-import hdf5_io
+import superbol.data.hdf5_io as hdf5_io
 
 parser = argparse.ArgumentParser(description='Add SN photometry to SuperBoL')
 parser.add_argument('input_files', metavar='filename', type=str, nargs='+',
