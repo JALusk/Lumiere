@@ -1,6 +1,6 @@
-from bc_polynomial import calc_bolometric_correction as bc
-import bc_polynomial
-import constants
+from .bc_polynomial import calc_bolometric_correction as bc
+import superbol.bc_polynomial as bc_polynomial
+import superbol.constants as constants
 import math
 
 def calc_Fbol(color_value, color_err, color_type, v_magnitude,

@@ -2,12 +2,12 @@ from pkg_resources import resource_filename, Requirement
 import tables as tb
 import numpy as np
 from astropy import units as u
-from mag2flux import mag2flux
-from fbol import integrate_fqbol as fqbol_trapezoidal
-from fbol import ir_correction, uv_correction_linear, uv_correction_blackbody
-from fit_blackbody import bb_fit_parameters
-from fit_blackbody import bb_flux_nounits
-from luminosity import calc_Lbol
+from .mag2flux import mag2flux
+from .fbol import integrate_fqbol as fqbol_trapezoidal
+from .fbol import ir_correction, uv_correction_linear, uv_correction_blackbody
+from .fit_blackbody import bb_fit_parameters
+from .fit_blackbody import bb_flux_nounits
+from .luminosity import calc_Lbol
 from specutils import extinction
 
 
