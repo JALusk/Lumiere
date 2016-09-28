@@ -4,7 +4,6 @@ from astropy import constants as const
 from astropy import units as u
 from .context import superbol
 from superbol.mag2flux import *
-from yaml import load
 
 class TestMag2Flux(unittest.TestCase):
 
