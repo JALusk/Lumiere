@@ -93,6 +93,13 @@ for filename in args.input_files:
         # Have user affirm adding data to HDF5 file
         print("\n")
         print("Enter above information into HDF5 file? (y/n)")
+
+        # WORKAROUND BECAUSE PYTHON 3 CHANGED raw_input() to just input()
+        try:
+            input = raw_input
+        except NameError:
+            pass
+
         s = input('--> ')
         if s == 'y':
             hdf5_io.add_sn_parameters(sn_name, Av_gal, Av_gal_ref, Av_host,
