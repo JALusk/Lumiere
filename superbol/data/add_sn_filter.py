@@ -1,6 +1,6 @@
 import argparse
 import sys
-import superbol.data.hdf5_io as hdf5_io
+import hdf5_io
 
 parser = argparse.ArgumentParser(description='Add SN photometry to SuperBoL')
 parser.add_argument('input_files', metavar='filename', type=str, nargs='+',
@@ -66,29 +66,35 @@ for filename in args.input_files:
                 err.append(obs[2])
 
         # Have user check over data
-        print "Please examine the input data for any errors:\n"
-        print "sn_name = ", sn_name
-        print "filter_name = ", filter_name
-        print "filter_eff_wl = ", filter_eff_wl
-        print "filter_flux_zeropoint = ", filter_flux_zeropoint
-        print "reference = ", ref
-        print "note = ", note
-        print "\n"
-        print "Data:"
+        print("Please examine the input data for any errors:\n")
+        print("sn_name = ", sn_name)
+        print("filter_name = ", filter_name)
+        print("filter_eff_wl = ", filter_eff_wl)
+        print("filter_flux_zeropoint = ", filter_flux_zeropoint)
+        print("reference = ", ref)
+        print("note = ", note)
+        print("\n")
+        print("Data:")
         for i in range(len(jd)):
-            print jd[i], mag[i], err[i]
+            print(jd[i], mag[i], err[i])
 
         # Have user affirm adding data to HDF5 file
-        print "\n"
-        print "Enter above information into HDF5 file? (y/n)"
-        s = raw_input('--> ')
+        print("\n")
+        print("Enter above information into HDF5 file? (y/n)")
+
+        try:
+            input = raw_input
+        except NameError:
+            pass
+           
+        s = input('--> ')
         if s == 'y':
             hdf5_io.add_sn_filter_photometry(sn_name, filter_name,
                                              filter_eff_wl,
                                              filter_flux_zeropoint, ref, note,
                                              jd, mag, err)
         elif s == 'n':
-            "Make changes to .dat file and re-run script. Exiting..."
+            print("Make changes to .dat file and re-run script. Exiting...")
             sys.exit()
         else:
             sys.stdout.write('Please respond with \'y\' or \'n\'.\n')
