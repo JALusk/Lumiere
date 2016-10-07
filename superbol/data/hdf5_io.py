@@ -80,7 +80,7 @@ def set_new_filter_id():
 def get_old_filter_id(filter_name):
     # If no filter is specified, use the parameters already stored in SuperBoL
     filter_table = h5file.root.filters
-    filter_id = min([x['filter_id'] for x in filter_table.iterrows() if x['name'] == filter_name])
+    filter_id = min([x['filter_id'] for x in filter_table.iterrows() if x['name'].decode('ascii') == filter_name])
     return filter_id
 
 def make_new_observation_entry(filter_id, jd, magnitude, uncertainty, reference, note, phot_table):
