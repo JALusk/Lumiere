@@ -110,7 +110,7 @@ for filename in args.input_files:
                                       heliocentric_v_kms_err,
                                       heliocentric_v_kms_ref)
         elif s == 'n':
-            "Make changes to .dat file and re-run script. Exiting..."
+            print("Make changes to .dat file and re-run script. Exiting...")
             sys.exit()
         else:
             sys.stdout.write('Please respond with \'y\' or \'n\'.\n')
