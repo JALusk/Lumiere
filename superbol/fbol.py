@@ -1,9 +1,9 @@
 import numpy as np
 from astropy import units as u
 import scipy.integrate as integrate
-from mag2flux import *
+from .mag2flux import *
 from specutils import extinction
-from fit_blackbody import *
+from .fit_blackbody import *
 
 def integrate_fqbol(wavelengths, fluxes, flux_uncertainties):
     """Calculate the trapezoidal rule integral of the observed `fluxes`.

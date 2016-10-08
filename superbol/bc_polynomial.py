@@ -1,4 +1,4 @@
-import constants
+import superbol.constants as constants
 import math
 
 def set_constants(color_type):

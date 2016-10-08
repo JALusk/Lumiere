@@ -2,12 +2,12 @@ from pkg_resources import resource_filename, Requirement
 import tables as tb
 import numpy as np
 from astropy import units as u
-from mag2flux import mag2flux
-from fbol import integrate_fqbol as fqbol_trapezoidal
-from fbol import ir_correction, uv_correction_linear, uv_correction_blackbody
-from fit_blackbody import bb_fit_parameters
-from fit_blackbody import bb_flux_nounits
-from luminosity import calc_Lbol
+from .mag2flux import mag2flux
+from .fbol import integrate_fqbol as fqbol_trapezoidal
+from .fbol import ir_correction, uv_correction_linear, uv_correction_blackbody
+from .fit_blackbody import bb_fit_parameters
+from .fit_blackbody import bb_flux_nounits
+from .luminosity import calc_Lbol
 from specutils import extinction
 
 
@@ -382,6 +382,6 @@ class SN(object):
     def write_lbol_plaintext(self, lightcurve, suffix):
         """Write the lightcurve to a file. Append suffix to filename"""
         filename = "lbol_" + self.name + "_" + suffix + ".dat"
-        lc_file = open(filename, 'w')
+        lc_file = open(filename, 'wb')
         np.savetxt(lc_file, lightcurve, header = self.name+": JD, Phase (days), Phase err (days), Lbol (erg/s), Lbol err (erg/s)")
         lc_file.close()

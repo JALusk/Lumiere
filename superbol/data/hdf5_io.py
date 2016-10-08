@@ -15,22 +15,22 @@ def get_parameters_table_description():
 def make_new_sn_group(sn_name):
     # Make a new group to hold the SN data, if it doesn't already exist
     if h5file.__contains__("/sn/"+sn_name):
-        print "Found existing HDF5 group /sn/"+sn_name
-        print "Skipping group creation"
+        print("Found existing HDF5 group /sn/"+sn_name)
+        print("Skipping group creation")
     else:
-        print "Creating HDF5 group /sn/"+sn_name
+        print("Creating HDF5 group /sn/"+sn_name)
         group = h5file.create_group(h5file.root.sn, sn_name)
 
 def make_new_sn_phot_table(sn_name):
     phot_description = get_phot_table_description()
     # Make a table to hold the photometry, if it doesn't aleady exist
     if h5file.__contains__("/sn/"+sn_name+"/phot"):
-        print "Found existing HDF5 table /sn/"+sn_name + "/phot"
-        print "Skipping table creation"
+        print("Found existing HDF5 table /sn/"+sn_name + "/phot")
+        print("Skipping table creation")
         phot_table = h5file.get_node("/sn/"+sn_name+"/phot")
         return phot_table
     else:
-        print "Creating HDF5 table /sn/"+sn_name+"/phot"
+        print("Creating HDF5 table /sn/"+sn_name+"/phot")
         phot_table = h5file.create_table("/sn/"+sn_name, "phot", phot_description)
         return phot_table
 
@@ -38,12 +38,12 @@ def make_new_sn_parameters_table(sn_name):
     parameters_description = get_parameters_table_description()
     # Make a table to hold the photometry, if it doesn't aleady exist
     if h5file.__contains__("/sn/"+sn_name+"/parameters"):
-        print "Found existing HDF5 table /sn/"+sn_name + "/parameters"
-        print "Skipping table creation"
+        print("Found existing HDF5 table /sn/"+sn_name + "/parameters")
+        print("Skipping table creation")
         parameters_table = h5file.get_node("/sn/"+sn_name+"/parameters")
         return parameters_table
     else:
-        print "Creating HDF5 table /sn/"+sn_name+"/parameters"
+        print("Creating HDF5 table /sn/"+sn_name+"/parameters")
         parameters_table = h5file.create_table("/sn/"+sn_name, "parameters", parameters_description)
         return parameters_table
 
@@ -74,13 +74,13 @@ def set_new_filter_id():
     # users try to merge HDF5 changes back in to the github repo. Find a
     # better way to do this in the future!
     largest_id = max([x['filter_id'] for x in filter_table.iterrows()]) + 1
-    print "Adding new filter with id", largest_id
+    print("Adding new filter with id", largest_id)
     return largest_id
 
 def get_old_filter_id(filter_name):
     # If no filter is specified, use the parameters already stored in SuperBoL
     filter_table = h5file.root.filters
-    filter_id = min([x['filter_id'] for x in filter_table.iterrows() if x['name'] == filter_name])
+    filter_id = min([x['filter_id'] for x in filter_table.iterrows() if x['name'].decode('ascii') == filter_name])
     return filter_id
 
 def make_new_observation_entry(filter_id, jd, magnitude, uncertainty, reference, note, phot_table):

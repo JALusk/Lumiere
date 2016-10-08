@@ -74,26 +74,33 @@ for filename in args.input_files:
                 heliocentric_v_kms_ref = " ".join(heliocentric_v_kms_ref).lstrip('\'').rstrip('\'')
 
         # Have user check over data
-        print "Please examine the input data for any errors:\n"
-        print "sn_name = ", sn_name
-        print "distance_Mpc = ", distance_Mpc
-        print "distance_Mpc_err = ", distance_Mpc_err
-        print "distance_Mpc_ref = ", distance_Mpc_ref
-        print "Av_gal = ", Av_gal
-        print "Av_gal_ref = ", Av_gal_ref
-        print "Av_host = ", Av_host
-        print "Av_host_ref = ", Av_host_ref
-        print "explosion_JD = ", explosion_JD
-        print "explosion_JD_err = ", explosion_JD_err
-        print "explosion_JD_ref = ", explosion_JD_ref
-        print "heliocentric_v_kms = ", heliocentric_v_kms
-        print "heliocentric_V_kms_err = ", heliocentric_v_kms_err
-        print "heliocentric_v_kms_ref = ", heliocentric_v_kms_ref
+        print("Please examine the input data for any errors:\n")
+        print("sn_name = ", sn_name)
+        print("distance_Mpc = ", distance_Mpc)
+        print("distance_Mpc_err = ", distance_Mpc_err)
+        print("distance_Mpc_ref = ", distance_Mpc_ref)
+        print("Av_gal = ", Av_gal)
+        print("Av_gal_ref = ", Av_gal_ref)
+        print("Av_host = ", Av_host)
+        print("Av_host_ref = ", Av_host_ref)
+        print("explosion_JD = ", explosion_JD)
+        print("explosion_JD_err = ", explosion_JD_err)
+        print("explosion_JD_ref = ", explosion_JD_ref)
+        print("heliocentric_v_kms = ", heliocentric_v_kms)
+        print("heliocentric_V_kms_err = ", heliocentric_v_kms_err)
+        print("heliocentric_v_kms_ref = ", heliocentric_v_kms_ref)
 
         # Have user affirm adding data to HDF5 file
-        print "\n"
-        print "Enter above information into HDF5 file? (y/n)"
-        s = raw_input('--> ')
+        print("\n")
+        print("Enter above information into HDF5 file? (y/n)")
+
+        # WORKAROUND BECAUSE PYTHON 3 CHANGED raw_input() to just input()
+        try:
+            input = raw_input
+        except NameError:
+            pass
+
+        s = input('--> ')
         if s == 'y':
             hdf5_io.add_sn_parameters(sn_name, Av_gal, Av_gal_ref, Av_host,
                                       Av_host_ref, distance_Mpc,
@@ -103,7 +110,7 @@ for filename in args.input_files:
                                       heliocentric_v_kms_err,
                                       heliocentric_v_kms_ref)
         elif s == 'n':
-            "Make changes to .dat file and re-run script. Exiting..."
+            print("Make changes to .dat file and re-run script. Exiting...")
             sys.exit()
         else:
             sys.stdout.write('Please respond with \'y\' or \'n\'.\n')

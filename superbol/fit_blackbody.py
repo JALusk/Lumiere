@@ -2,7 +2,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 from astropy import units as u
 from astropy import constants as const
-from planck import *
+from .planck import *
 
 def bb_flux(wavelength, temperature, angular_radius):
     """Observed flux at `wavelength` from a blackbody of `temperature` and `angular_radius` in cgs units
