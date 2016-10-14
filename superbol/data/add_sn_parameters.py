@@ -7,6 +7,8 @@ parser.add_argument('input_files', metavar='filename', type=str, nargs='+',
                     help='One or more edited copies of sn_parameters.dat')
 args = parser.parse_args()
 
+hdf5_filename = 'sn_data.h5'
+
 for filename in args.input_files:
     with open(filename, 'r') as f:
         for line in f:
@@ -102,7 +104,7 @@ for filename in args.input_files:
 
         s = input('--> ')
         if s == 'y':
-            hdf5_io.add_sn_parameters(sn_name, Av_gal, Av_gal_ref, Av_host,
+            hdf5_io.add_sn_parameters(hdf5_filename, sn_name, Av_gal, Av_gal_ref, Av_host,
                                       Av_host_ref, distance_Mpc,
                                       distance_Mpc_err, distance_Mpc_ref,
                                       explosion_JD, explosion_JD_err,
