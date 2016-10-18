@@ -50,8 +50,8 @@ def make_new_filter_entry(filter_table, filter_name, filter_eff_wl, filter_flux_
     # If the user provided eff_wl and flux_zeropoint, make a new filter entry
     new_filter = filter_table.row
     
-    largest_id = set_new_filter_id()
-    new_filter['filter_id'] = largest_id
+    new_filter_id = set_new_filter_id()
+    new_filter['filter_id'] = new_filter_id
     new_filter['name'] = filter_name
     new_filter['eff_wl'] = filter_eff_wl
     new_filter['flux_zeropoint'] = filter_flux_zeropoint
@@ -60,14 +60,14 @@ def make_new_filter_entry(filter_table, filter_name, filter_eff_wl, filter_flux_
     
     return new_filter, largest_id
 
-def set_new_filter_id():
+def set_new_filter_id(filter_table):
     # Give new filter a unique ID larger than the largest ID in the HDF5 file
     # NOTE: JLusk <jeremy.lusk@ou.edu> This will cause problems if two
     # users try to merge HDF5 changes back in to the github repo. Find a
     # better way to do this in the future!
     largest_id = max([x['filter_id'] for x in filter_table.iterrows()]) + 1
     print("Adding new filter with id", largest_id)
-    return largest_id
+    return largest_id 
 
 def get_old_filter_id(filter_table, filter_name):
     # If no filter is specified, use the parameters already stored in SuperBoL
@@ -87,12 +87,6 @@ def make_new_observation_entry(filter_id, jd, magnitude, uncertainty, reference,
 
     return new_observation
 
-def append_new_observation(new_observation):
-    new_observation.append()
-
-def write_photometry_table():
-    phot_table.flush()
-    
 def add_sn_filter_photometry(hdf5_filename, sn_name, filter_name, filter_eff_wl,
                              filter_flux_zeropoint, ref, note, jd, mag, err):
     
