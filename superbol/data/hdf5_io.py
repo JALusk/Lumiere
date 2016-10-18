@@ -1,18 +1,16 @@
 import tables as tb
 
-h5file = tb.open_file('sn_data.h5', 'a')
-
-def get_phot_table_description():
+def get_phot_table_description(h5file):
     # The data fields for this will be the same as those for the other SNe
     phot_description = h5file.root.sn.sn1998a.phot.description
     return phot_description
 
-def get_parameters_table_description():
+def get_parameters_table_description(h5file):
     # The data fields for this will be the same as those for the other SNe
     parameters_description = h5file.root.sn.sn1998a.parameters.description
     return parameters_description
 
-def make_new_sn_group(sn_name):
+def make_new_sn_group(h5file, sn_name):
     # Make a new group to hold the SN data, if it doesn't already exist
     if h5file.__contains__("/sn/"+sn_name):
         print("Found existing HDF5 group /sn/"+sn_name)
@@ -21,8 +19,8 @@ def make_new_sn_group(sn_name):
         print("Creating HDF5 group /sn/"+sn_name)
         group = h5file.create_group(h5file.root.sn, sn_name)
 
-def make_new_sn_phot_table(sn_name):
-    phot_description = get_phot_table_description()
+def make_new_sn_phot_table(h5file, sn_name):
+    phot_description = get_phot_table_description(h5file)
     # Make a table to hold the photometry, if it doesn't aleady exist
     if h5file.__contains__("/sn/"+sn_name+"/phot"):
         print("Found existing HDF5 table /sn/"+sn_name + "/phot")
@@ -34,8 +32,8 @@ def make_new_sn_phot_table(sn_name):
         phot_table = h5file.create_table("/sn/"+sn_name, "phot", phot_description)
         return phot_table
 
-def make_new_sn_parameters_table(sn_name):
-    parameters_description = get_parameters_table_description()
+def make_new_sn_parameters_table(h5file, sn_name):
+    parameters_description = get_parameters_table_description(h5file)
     # Make a table to hold the photometry, if it doesn't aleady exist
     if h5file.__contains__("/sn/"+sn_name+"/parameters"):
         print("Found existing HDF5 table /sn/"+sn_name + "/parameters")
@@ -47,13 +45,13 @@ def make_new_sn_parameters_table(sn_name):
         parameters_table = h5file.create_table("/sn/"+sn_name, "parameters", parameters_description)
         return parameters_table
 
-def make_new_filter_entry(filter_name, filter_eff_wl, filter_flux_zeropoint,
+def make_new_filter_entry(filter_table, filter_name, filter_eff_wl, filter_flux_zeropoint,
                           note, ref):
     # If the user provided eff_wl and flux_zeropoint, make a new filter entry
     new_filter = filter_table.row
     
-    largest_id = set_new_filter_id()
-    new_filter['filter_id'] = largest_id
+    new_filter_id = set_new_filter_id()
+    new_filter['filter_id'] = new_filter_id
     new_filter['name'] = filter_name
     new_filter['eff_wl'] = filter_eff_wl
     new_filter['flux_zeropoint'] = filter_flux_zeropoint
@@ -62,24 +60,17 @@ def make_new_filter_entry(filter_name, filter_eff_wl, filter_flux_zeropoint,
     
     return new_filter, largest_id
 
-def append_new_filter(new_filter):
-    new_filter.append()
-
-def write_filter_table():
-    filter_table.flush()
-    
-def set_new_filter_id():
+def set_new_filter_id(filter_table):
     # Give new filter a unique ID larger than the largest ID in the HDF5 file
     # NOTE: JLusk <jeremy.lusk@ou.edu> This will cause problems if two
     # users try to merge HDF5 changes back in to the github repo. Find a
     # better way to do this in the future!
     largest_id = max([x['filter_id'] for x in filter_table.iterrows()]) + 1
     print("Adding new filter with id", largest_id)
-    return largest_id
+    return largest_id 
 
-def get_old_filter_id(filter_name):
+def get_old_filter_id(filter_table, filter_name):
     # If no filter is specified, use the parameters already stored in SuperBoL
-    filter_table = h5file.root.filters
     filter_id = min([x['filter_id'] for x in filter_table.iterrows() if x['name'].decode('ascii') == filter_name])
     return filter_id
 
@@ -96,29 +87,25 @@ def make_new_observation_entry(filter_id, jd, magnitude, uncertainty, reference,
 
     return new_observation
 
-def append_new_observation(new_observation):
-    new_observation.append()
-
-def write_photometry_table():
-    phot_table.flush()
-    
-def add_sn_filter_photometry(sn_name, filter_name, filter_eff_wl,
+def add_sn_filter_photometry(hdf5_filename, sn_name, filter_name, filter_eff_wl,
                              filter_flux_zeropoint, ref, note, jd, mag, err):
-
-    make_new_sn_group(sn_name)
-    phot_table = make_new_sn_phot_table(sn_name)
+    
+    h5file = tb.open_file(hdf5_filename, 'a')
+    make_new_sn_group(h5file, sn_name)
+    phot_table = make_new_sn_phot_table(h5file, sn_name)
 
     filter_table = h5file.root.filters
 
     if filter_eff_wl is not None and filter_flux_zeropoint is not None:
-        new_filter, filter_id = make_new_filter_entry(filter_name,
+        new_filter, filter_id = make_new_filter_entry(filter_table,
+                                                      filter_name,
                                                       filter_eff_wl,
                                                       filter_flux_zeropoint,
                                                       note, ref)
-        append_new_filter(new_filter)
-        write_filter_table()        
+        new_filter.append()
+        filter_table.flush()      
     else:
-        filter_id = get_old_filter_id(filter_name)
+        filter_id = get_old_filter_id(filter_table, filter_name)
 
     for i in range(len(jd)):
         new_observation = phot_table.row
@@ -136,14 +123,15 @@ def add_sn_filter_photometry(sn_name, filter_name, filter_eff_wl,
 
     h5file.close()
 
-def add_sn_parameters(sn_name, Av_gal, Av_gal_ref, Av_host, Av_host_ref,
+def add_sn_parameters(hdf5_filename, sn_name, Av_gal, Av_gal_ref, Av_host, Av_host_ref,
                       distance_Mpc, distance_Mpc_err, distance_Mpc_ref,
                       explosion_JD, explosion_JD_err, explosion_JD_ref,
                       heliocentric_v_kms, heliocentric_v_kms_err,
                       heliocentric_v_kms_ref):
 
-    make_new_sn_group(sn_name)
-    parameters_table = make_new_sn_parameters_table(sn_name)
+    h5file = tb.open_file(hdf5_filename, 'a')
+    make_new_sn_group(h5file, sn_name)
+    parameters_table = make_new_sn_parameters_table(h5file, sn_name)
 
     new_parameters = parameters_table.row
     new_parameters['Av_gal'] = Av_gal

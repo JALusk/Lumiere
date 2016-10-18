@@ -1,11 +1,14 @@
 import argparse
 import sys
 import hdf5_io
+import tables as tb
 
 parser = argparse.ArgumentParser(description='Add SN photometry to SuperBoL')
 parser.add_argument('input_files', metavar='filename', type=str, nargs='+',
                     help='One or more edited copies of sn_filter.dat')
 args = parser.parse_args()
+
+hdf5_filename = 'sn_data.h5'
 
 for filename in args.input_files:
     with open(filename, 'r') as f:
@@ -89,7 +92,7 @@ for filename in args.input_files:
            
         s = input('--> ')
         if s == 'y':
-            hdf5_io.add_sn_filter_photometry(sn_name, filter_name,
+            hdf5_io.add_sn_filter_photometry(hdf5_filename, sn_name, filter_name,
                                              filter_eff_wl,
                                              filter_flux_zeropoint, ref, note,
                                              jd, mag, err)
