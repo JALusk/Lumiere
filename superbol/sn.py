@@ -53,24 +53,29 @@ class SN(object):
         =====  =========  =========
     """
 
-    def __init__(self, name):
+    def __init__(self, name, source=None):
         """Initializes the SN with supplied value for [name]"""
         self.name = name
+        self.source = source
         self.min_num_obs = 4
 
-        self.read_hdf5()
+        #self.read_hdf5()
 
-    def read_hdf5(self):
-        """Reads the hdf5 file and returns data on supernova matching [name]"""
-        path_to_data = resource_filename('superbol', 'data/sn_data.h5')
+    def open_source_h5file(self):
+        """Reads the hdf5 file and returns pytables File object"""
+        if self.source == None:
+            path_to_data = resource_filename('superbol', 'data/sn_data.h5')
+            #self.filter_table = h5file.root.filters
+        
+            #self.sn_node = h5file.get_node('/sn', self.name)
+        
+            #self.phot_table = self.sn_node.phot
+            #self.parameter_table = self.sn_node.parameters
+        else:
+            path_to_data = self.source
+            
         h5file = tb.open_file(path_to_data, 'r')
-        
-        self.filter_table = h5file.root.filters
-        
-        self.sn_node = h5file.get_node('/sn', self.name)
-        
-        self.phot_table = self.sn_node.phot
-        self.parameter_table = self.sn_node.parameters
+        return h5file 
 
     def lbol_direct_bh09(self):
         """Calculate the bolometric lightcurve using the direct integration
