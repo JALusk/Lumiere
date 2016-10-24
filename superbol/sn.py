@@ -57,12 +57,17 @@ class SN(object):
         """Initializes the SN with supplied value for [name]"""
         self.name = name
         self.source = source
+        
+        self.filter_table = None
+        self.phot_table = None
+        self.parameter_table = None
+
         self.min_num_obs = 4
 
         #self.read_hdf5()
 
     def open_source_h5file(self):
-        """Reads the hdf5 file and returns pytables File object"""
+        """Opens the hdf5 file and returns pytables File object"""
         if self.source == None:
             path_to_data = resource_filename('superbol', 'data/sn_data.h5')
             #self.filter_table = h5file.root.filters
@@ -75,12 +80,22 @@ class SN(object):
             path_to_data = self.source
             
         h5file = tb.open_file(path_to_data, 'r')
-        return h5file 
+        return h5file
+
+    def import_hdf5_tables(self, h5file):
+        """Reads the hdf5 file and sets up Table objects containing data"""
+        sn_node = h5file.get_node('/sn', self.name)
+        self.filter_table = h5file.root.filters
+        self.phot_table = sn_node.phot
+        self.parameter_table = sn_node.parameters
 
     def lbol_direct_bh09(self):
         """Calculate the bolometric lightcurve using the direct integration
         method published in Bersten & Hamuy 2009 (2009ApJ...701..200B)
         """
+        h5file = self.open_source_file()
+        self.import_hdf5_tables(h5file)
+
         self.convert_magnitudes_to_fluxes()
         self.deredden_fluxes()
         self.get_lbol_epochs()
@@ -156,11 +171,15 @@ class SN(object):
         self.lc = np.delete(self.lc, (0), axis=0)
 
         self.write_lbol_plaintext(self.lc, 'direct')
+        h5file.close()
 
     def lqbol(self):
         """Calculate the quasi-bolometric lightcurve using direct integration
         with trapezoidal integration of the fluxes
         """
+        h5file = self.open_source_file()
+        self.import_hdf5_tables(h5file)
+
         self.convert_magnitudes_to_fluxes()
         self.deredden_fluxes()
         self.get_lbol_epochs()
@@ -196,11 +215,15 @@ class SN(object):
                 self.qbol_lc = np.append(self.qbol_lc, [[jd, phase, phase_err, lqbol, lqbol_err]], axis=0)
         self.qbol_lc = np.delete(self.qbol_lc, (0), axis=0)
         self.write_lbol_plaintext(self.qbol_lc, 'qbol')
+        h5file.close()
 
     def lbol_bc_bh09(self, filter1, filter2):
         """Calculate the bolometric lightcurve using the bolometric corrections
         found in Bersten & Hamuy 2009 (2009ApJ...701..200B). These require 
         specifying a color, taken to be filter1 - filter2"""
+        h5file = self.open_source_file()
+        self.import_hdf5_tables(h5file)
+
         self.get_magnitudes()
         self.deredden_UBVRI_magnitudes()
         self.get_bc_epochs(filter1, filter2)
@@ -223,6 +246,7 @@ class SN(object):
 
         self.bc_lc = np.delete(self.bc_lc, (0), axis=0)
         self.write_lbol_plaintext(self.bc_lc, 'bc_' + filter1 + '-' + filter2)
+        h5file.close()
 
     def get_bc_color(self, jd, filter1, filter2):
         """Make an array of `filter1` - `filter2` on each of the bc_epochs
