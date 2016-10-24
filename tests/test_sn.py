@@ -2,6 +2,7 @@ import unittest
 from .context import superbol
 import superbol.sn as sn
 import tables as tb
+import numpy as np
 from pkg_resources import resource_filename
 
 class TestSNInitialization(unittest.TestCase):
@@ -123,5 +124,76 @@ class TestSNImportHDF5Tables(unittest.TestCase):
         result = self.my_sn.parameter_table
         self.assertEqual(expected, result)
 
+    def tearDown(self):
+        self.h5file.close()
+
+class TestSNGetPhotometry(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+    
+    def test_get_photometry_returns_numpy_array(self):
+        photometry = self.my_sn.get_photometry()
+        result = isinstance(photometry, np.ndarray)
+        self.assertTrue(result)
+
+    def test_get_photometry_dtype(self):
+        expected = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
+        photometry = self.my_sn.get_photometry()
+        result = photometry.dtype
+        self.assertEqual(expected, result)
+
+    def test_get_photometry_98A_first_obs_jd(self):
+        expected = 2450820.3
+        
+        photometry = self.my_sn.get_photometry()
+        result = photometry[0]['jd']
+        self.assertEqual(expected, result)
+
+    def test_get_photometry_98A_first_obs_filter_name(self):
+        expected = b'R'
+        
+        photometry = self.my_sn.get_photometry()
+        result = photometry[0]['name']
+        self.assertEqual(expected, result)
+
+    def test_get_photometry_98A_first_obs_mag(self):
+        expected = 17.0
+        
+        photometry = self.my_sn.get_photometry()
+        result = photometry[0]['magnitude']
+        self.assertEqual(expected, result)
+
+    def test_get_photometry_98A_first_obs_uncertainty(self):
+        expected = 0.5
+        
+        photometry = self.my_sn.get_photometry()
+        result = photometry[0]['uncertainty']
+        self.assertEqual(expected, result)
+
+    def tearDown(self):
+        self.h5file.close()
+
+class TestSNGetBCColor(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+        self.photometry = self.my_sn.get_photometry()
+
+    def test_get_bc_color_98A_returns_first_BV_color(self):
+        B = 18.05
+        V = 16.92
+        expected = B-V
+        result = self.my_sn.get_bc_color(self.photometry, 2450837.8, 'B', 'V')
+        self.assertEqual(expected, result)
+    
     def tearDown(self):
         self.h5file.close()

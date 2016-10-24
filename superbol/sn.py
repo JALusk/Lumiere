@@ -224,7 +224,7 @@ class SN(object):
         h5file = self.open_source_file()
         self.import_hdf5_tables(h5file)
 
-        self.get_magnitudes()
+        photometry = self.get_photometry()
         self.deredden_UBVRI_magnitudes()
         self.get_bc_epochs(filter1, filter2)
         self.distance_cm, self.distance_cm_err = self.get_distance_cm()
@@ -248,10 +248,11 @@ class SN(object):
         self.write_lbol_plaintext(self.bc_lc, 'bc_' + filter1 + '-' + filter2)
         h5file.close()
 
-    def get_bc_color(self, jd, filter1, filter2):
+    def get_bc_color(self, photometry, jd, filter1, filter2):
         """Make an array of `filter1` - `filter2` on each of the bc_epochs
 
         Args:
+            photometry (ndarray): Numpy array of photometry from get_photometry()
             jd (float): Julian Date of the observation
             filter1 (str): Sring designation for filter 1 ("B", for example)
             filter2 (str): String designation for filter 2 ("V", for example)
@@ -260,18 +261,22 @@ class SN(object):
             float: Magnitude of filter 1 minus the magnitude of filter 2.
         """
 
-        f1_mag = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
-                            == jd and x['name'] == filter1])
-        f2_mag = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
-                            == jd and x['name'] == filter2])
+        filter1 = filter1.encode('ascii')
+        filter2 = filter2.encode('ascii')
 
-        return f1_mag - f2_mag
+        f1_mag = [x['magnitude'] for x in photometry if x['jd'] 
+                            == jd and x['name'] == filter1]
+        f2_mag = [x['magnitude'] for x in photometry if x['jd'] 
+                            == jd and x['name'] == filter2]
 
-    def get_bc_color_uncertainty(self, jd, filter1, filter2):
+        return f1_mag[0] - f2_mag[0]
+
+    def get_bc_color_uncertainty(self, photometry, jd, filter1, filter2):
         """Make an array of :math:`\\sqrt{(\\delta \\text{filter1})^2 - (\\delta
         \\text{filter2})^2}` on each of the bc_epochs
 
         Args:
+            photometry (ndarray): Numpy array of photometry from get_photometry()
             jd (float): Julian Date of the observation
             filter1 (str): Sring designation for filter 1 ("B", for example)
             filter2 (str): String designation for filter 2 ("V", for example)
@@ -281,31 +286,32 @@ class SN(object):
             filter 1 and filter 2.
         """
 
-        f1_err = np.array([x['uncertainty'] for x in self.photometry if x['jd']
+        f1_err = np.array([x['uncertainty'] for x in photometry if x['jd']
                             == jd and x['name'] == filter1])
-        f2_err = np.array([x['uncertainty'] for x in self.photometry if x['jd']
+        f2_err = np.array([x['uncertainty'] for x in photometry if x['jd']
                             == jd and x['name'] == filter2])
 
         return np.sqrt(f1_err**2 + f2_err**2)
 
-    def get_magnitudes(self):
+    def get_photometry(self):
         """Build a numpy array of [`jd`, `name`, `magnitude`, `uncertainty`]
         from the data contained within the HDF5 file.
         """
         dtype = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
-        self.photometry = np.array([(0.0,'0.0',0.0,0.0)], dtype=dtype)
+        photometry = np.array([(0.0,'0.0',0.0,0.0)], dtype=dtype)
         
         for obs in self.phot_table.iterrows():
             filterid = obs['filter_id']
             for filt in self.filter_table.where('(filter_id == filterid)'):
-                self.photometry = np.append(self.photometry, 
-                                            np.array([(obs['jd'], 
-                                                       filt['name'], 
-                                                       obs['magnitude'], 
-                                                       obs['uncertainty'])],
-                                                     dtype=dtype))
+                photometry = np.append(photometry, 
+                                       np.array([(obs['jd'], 
+                                       filt['name'], 
+                                       obs['magnitude'], 
+                                       obs['uncertainty'])],
+                                       dtype=dtype))
 
-        self.photometry = np.delete(self.photometry, (0), axis=0)
+        photometry = np.delete(photometry, (0), axis=0)
+        return photometry
 
     def deredden_UBVRI_magnitudes(self):
         """Apply the corrections from CCM89 (1989ApJ...345..245C), Table 3 to
