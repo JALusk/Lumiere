@@ -233,12 +233,12 @@ class SN(object):
         
         for i in range(len(self.bc_epochs)):
             jd = self.bc_epochs[i]
-            color = self.get_bc_color(jd, filter1, filter2)
-            color_err = self.get_bc_color_uncertainty(jd, filter1, filter2) 
+            color = self.get_bc_color(photometry, jd, filter1, filter2)
+            color_err = self.get_bc_color_uncertainty(photometry, jd, filter1, filter2) 
             v_mag = np.array([x['magnitude'] for x in self.photometry 
-                               if x['jd'] == jd and x['name'] == 'V'])
+                               if x['jd'] == jd and x['name'] == b'V'])
             v_mag_err = np.array([x['uncertainty'] for x in self.photometry 
-                                if x['jd'] == jd and x['name'] == 'V'])      
+                                if x['jd'] == jd and x['name'] == b'V'])      
             lbol_bc, lbol_bc_err = calc_Lbol(color, color_err, filter1+"minus"+filter2, v_mag, v_mag_err, self.distance_cm, self.distance_cm_err)            
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
@@ -248,8 +248,8 @@ class SN(object):
         self.write_lbol_plaintext(self.bc_lc, 'bc_' + filter1 + '-' + filter2)
         h5file.close()
 
-    def get_bc_color(self, photometry, jd, filter1, filter2):
-        """Make an array of `filter1` - `filter2` on each of the bc_epochs
+    def get_color(self, photometry, jd, filter1, filter2):
+        """Get the `filter1` - `filter2` color on `jd`
 
         Args:
             photometry (ndarray): Numpy array of photometry from get_photometry()
@@ -259,21 +259,30 @@ class SN(object):
 
         Returns:
             float: Magnitude of filter 1 minus the magnitude of filter 2.
+            None: If JD not in photometry, or if filter2 or filter2 not 
+                  observed on given JD
         """
-
+        # Make sure the string matching works with Python 3
         filter1 = filter1.encode('ascii')
         filter2 = filter2.encode('ascii')
 
-        f1_mag = [x['magnitude'] for x in photometry if x['jd'] 
-                            == jd and x['name'] == filter1]
-        f2_mag = [x['magnitude'] for x in photometry if x['jd'] 
-                            == jd and x['name'] == filter2]
+        f1_mag = None
+        f2_mag = None
 
-        return f1_mag[0] - f2_mag[0]
+        for x in photometry:
+            if x['jd'] == jd and x['name'] == filter1:
+                f1_mag = x['magnitude']
+            elif x['jd'] == jd and x['name'] == filter2:
+                f2_mag = x['magnitude']
 
-    def get_bc_color_uncertainty(self, photometry, jd, filter1, filter2):
-        """Make an array of :math:`\\sqrt{(\\delta \\text{filter1})^2 - (\\delta
-        \\text{filter2})^2}` on each of the bc_epochs
+        if f1_mag == None or f2_mag == None:
+            return None
+        else:
+            return f1_mag - f2_mag
+            
+
+    def get_color_uncertainty(self, photometry, jd, filter1, filter2):
+        """Get the uncertainty of the `filter1` - `filter2` color using the quadrature sum of the uncertainties given by :math:`\\sqrt{(\\delta \\text{filter1})^2 - (\\delta \\text{filter2})^2}`
 
         Args:
             photometry (ndarray): Numpy array of photometry from get_photometry()
@@ -284,14 +293,28 @@ class SN(object):
         Returns:
             float: Quadrature sum of the uncertainties in the magnitudes of
             filter 1 and filter 2.
+            None: If JD not in photometry, or if filter2 or filter2 not 
+                  observed on given JD
+
         """
+        # Make sure the string matching works with Python 3
+        filter1 = filter1.encode('ascii')
+        filter2 = filter2.encode('ascii')
 
-        f1_err = np.array([x['uncertainty'] for x in photometry if x['jd']
-                            == jd and x['name'] == filter1])
-        f2_err = np.array([x['uncertainty'] for x in photometry if x['jd']
-                            == jd and x['name'] == filter2])
+        f1_err = None
+        f2_err = None
 
-        return np.sqrt(f1_err**2 + f2_err**2)
+        for x in photometry:
+            if x['jd'] == jd and x['name'] == filter1:
+                f1_err = x['uncertainty']
+            elif x['jd'] == jd and x['name'] == filter2:
+                f2_err = x['uncertainty']
+
+        if f1_err == None or f2_err == None:
+            return None
+        else:
+            return np.sqrt(f1_err**2 + f2_err**2)
+
 
     def get_photometry(self):
         """Build a numpy array of [`jd`, `name`, `magnitude`, `uncertainty`]

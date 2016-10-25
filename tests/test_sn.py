@@ -188,12 +188,66 @@ class TestSNGetBCColor(unittest.TestCase):
         self.my_sn.import_hdf5_tables(self.h5file)
         self.photometry = self.my_sn.get_photometry()
 
-    def test_get_bc_color_98A_returns_first_BV_color(self):
+    def test_get_color_returns_float_when_given_valid_data(self):
+        color = self.my_sn.get_color(self.photometry, 2450837.8, 'B', 'V')
+        result = isinstance(color, float)
+        self.assertTrue(result)
+
+    def test_get_color_returns_None_when_given_bad_JD(self):
+        color = self.my_sn.get_color(self.photometry, 12, 'B', 'V')
+        self.assertEqual(color, None)
+
+    def test_get_color_returns_None_when_given_bad_filter1(self):
+        color = self.my_sn.get_color(self.photometry, 2450837.8, 'X', 'V')
+        self.assertEqual(color, None)
+
+    def test_get_color_returns_None_when_given_bad_filter2(self):
+        color = self.my_sn.get_color(self.photometry, 2450837.8, 'B', 'X')
+        self.assertEqual(color, None)
+
+    def test_get_color_98A_returns_first_BV_color_correctly(self):
         B = 18.05
         V = 16.92
         expected = B-V
-        result = self.my_sn.get_bc_color(self.photometry, 2450837.8, 'B', 'V')
+        result = self.my_sn.get_color(self.photometry, 2450837.8, 'B', 'V')
         self.assertEqual(expected, result)
-    
+ 
+    def tearDown(self):
+        self.h5file.close()
+
+class TestSNGetBCColorUncertainty(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+        self.photometry = self.my_sn.get_photometry()
+
+    def test_get_color_uncertainty_returns_float_when_given_valid_data(self):
+        color = self.my_sn.get_color_uncertainty(self.photometry, 2450837.8, 'B', 'V')
+        result = isinstance(color, float)
+        self.assertTrue(result)
+
+    def test_get_color_returns_None_when_given_bad_JD(self):
+        color = self.my_sn.get_color_uncertainty(self.photometry, 12, 'B', 'V')
+        self.assertEqual(color, None)
+
+    def test_get_color_returns_None_when_given_bad_filter1(self):
+        color = self.my_sn.get_color_uncertainty(self.photometry, 2450837.8, 'X', 'V')
+        self.assertEqual(color, None)
+
+    def test_get_color_returns_None_when_given_bad_filter2(self):
+        color = self.my_sn.get_color_uncertainty(self.photometry, 2450837.8, 'B', 'X')
+        self.assertEqual(color, None)
+
+    def test_get_color_98A_returns_first_BV_color_correctly(self):
+        B_err = 0.1
+        V_err = 0.03
+        expected = np.sqrt(B_err**2 + V_err**2)
+        result = self.my_sn.get_color_uncertainty(self.photometry, 2450837.8, 'B', 'V')
+        self.assertEqual(expected, result)
+ 
     def tearDown(self):
         self.h5file.close()
