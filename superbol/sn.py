@@ -336,7 +336,7 @@ class SN(object):
         photometry = np.delete(photometry, (0), axis=0)
         return photometry
 
-    def deredden_UBVRI_magnitudes(self):
+    def deredden_UBVRI_magnitudes(self, photometry):
         """Apply the corrections from CCM89 (1989ApJ...345..245C), Table 3 to
         the observed photometric magnitudes.
 
@@ -345,11 +345,13 @@ class SN(object):
         self.Av_host = self.parameter_table.cols.Av_host[0]
         self.Av_tot = self.Av_gal + self.Av_host
 
-        ccm89_corr = {'U': 1.569, 'B': 1.337, 'V': 1.0, 'R': 0.751, 'I': 0.479}
+        ccm89_corr = {b'U': 1.569, b'B': 1.337, b'V': 1.0, b'R': 0.751, b'I': 0.479}
 
-        for obs in self.photometry:
+        for obs in photometry:
             if obs['name'] in ccm89_corr:
                 obs['magnitude'] = obs['magnitude'] - ccm89_corr[obs['name']] * self.Av_tot
+
+        return photometry
 
     def get_bc_epochs(self, filter1, filter2):
         """Get epochs for which observations of both filter1 and filter2 exist"""

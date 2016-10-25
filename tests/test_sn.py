@@ -251,3 +251,35 @@ class TestSNGetBCColorUncertainty(unittest.TestCase):
  
     def tearDown(self):
         self.h5file.close()
+
+class TestSNDereddenUBVRIMagnitudes(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+        self.photometry = self.my_sn.get_photometry()
+
+    def test_deredden_UBVRI_magnitudes_98A_works_on_first_R_magnitude(self):
+        Av_gal = self.my_sn.parameter_table.cols.Av_gal[0]
+        Av_host = self.my_sn.parameter_table.cols.Av_host[0]
+        Av_tot = Av_gal + Av_host
+        expected = 17.0 - 0.751 * Av_tot
+        
+        dereddened_photometry = self.my_sn.deredden_UBVRI_magnitudes(self.photometry)
+        result = dereddened_photometry[0]['magnitude']
+
+        self.assertEqual(expected, result)
+
+    def test_deredden_UBVRI_magnitudes_98A_ignores_J_magnitude(self):
+        expected = 15.17
+        
+        dereddened_photometry = self.my_sn.deredden_UBVRI_magnitudes(self.photometry)
+        result = dereddened_photometry[20]['magnitude']
+
+        self.assertEqual(expected, result)
+
+    def tearDown(self):
+        self.h5file.close()
