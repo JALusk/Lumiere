@@ -53,29 +53,49 @@ class SN(object):
         =====  =========  =========
     """
 
-    def __init__(self, name):
+    def __init__(self, name, source=None):
         """Initializes the SN with supplied value for [name]"""
         self.name = name
+        self.source = source
+        
+        self.filter_table = None
+        self.phot_table = None
+        self.parameter_table = None
+
         self.min_num_obs = 4
 
-        self.read_hdf5()
+        #self.read_hdf5()
 
-    def read_hdf5(self):
-        """Reads the hdf5 file and returns data on supernova matching [name]"""
-        path_to_data = resource_filename('superbol', 'data/sn_data.h5')
+    def open_source_h5file(self):
+        """Opens the hdf5 file and returns pytables File object"""
+        if self.source == None:
+            path_to_data = resource_filename('superbol', 'data/sn_data.h5')
+            #self.filter_table = h5file.root.filters
+        
+            #self.sn_node = h5file.get_node('/sn', self.name)
+        
+            #self.phot_table = self.sn_node.phot
+            #self.parameter_table = self.sn_node.parameters
+        else:
+            path_to_data = self.source
+            
         h5file = tb.open_file(path_to_data, 'r')
-        
+        return h5file
+
+    def import_hdf5_tables(self, h5file):
+        """Reads the hdf5 file and sets up Table objects containing data"""
+        sn_node = h5file.get_node('/sn', self.name)
         self.filter_table = h5file.root.filters
-        
-        self.sn_node = h5file.get_node('/sn', self.name)
-        
-        self.phot_table = self.sn_node.phot
-        self.parameter_table = self.sn_node.parameters
+        self.phot_table = sn_node.phot
+        self.parameter_table = sn_node.parameters
 
     def lbol_direct_bh09(self):
         """Calculate the bolometric lightcurve using the direct integration
         method published in Bersten & Hamuy 2009 (2009ApJ...701..200B)
         """
+        h5file = self.open_source_file()
+        self.import_hdf5_tables(h5file)
+
         self.convert_magnitudes_to_fluxes()
         self.deredden_fluxes()
         self.get_lbol_epochs()
@@ -151,11 +171,15 @@ class SN(object):
         self.lc = np.delete(self.lc, (0), axis=0)
 
         self.write_lbol_plaintext(self.lc, 'direct')
+        h5file.close()
 
     def lqbol(self):
         """Calculate the quasi-bolometric lightcurve using direct integration
         with trapezoidal integration of the fluxes
         """
+        h5file = self.open_source_file()
+        self.import_hdf5_tables(h5file)
+
         self.convert_magnitudes_to_fluxes()
         self.deredden_fluxes()
         self.get_lbol_epochs()
@@ -191,58 +215,77 @@ class SN(object):
                 self.qbol_lc = np.append(self.qbol_lc, [[jd, phase, phase_err, lqbol, lqbol_err]], axis=0)
         self.qbol_lc = np.delete(self.qbol_lc, (0), axis=0)
         self.write_lbol_plaintext(self.qbol_lc, 'qbol')
+        h5file.close()
 
     def lbol_bc_bh09(self, filter1, filter2):
         """Calculate the bolometric lightcurve using the bolometric corrections
         found in Bersten & Hamuy 2009 (2009ApJ...701..200B). These require 
         specifying a color, taken to be filter1 - filter2"""
-        self.get_magnitudes()
-        self.deredden_UBVRI_magnitudes()
-        self.get_bc_epochs(filter1, filter2)
-        self.distance_cm, self.distance_cm_err = self.get_distance_cm()
+        h5file = self.open_source_h5file()
+        self.import_hdf5_tables(h5file)
 
-        self.bc_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
+        photometry = self.get_photometry()
+        dereddened_phot = self.deredden_UBVRI_magnitudes(photometry)
+        bc_epochs = self.get_bc_epochs(dereddened_phot, filter1, filter2)
+        distance_cm, distance_cm_err = self.get_distance_cm()
+
+        bc_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
         
-        for i in range(len(self.bc_epochs)):
-            jd = self.bc_epochs[i]
-            color = self.get_bc_color(jd, filter1, filter2)
-            color_err = self.get_bc_color_uncertainty(jd, filter1, filter2) 
-            v_mag = np.array([x['magnitude'] for x in self.photometry 
-                               if x['jd'] == jd and x['name'] == 'V'])
-            v_mag_err = np.array([x['uncertainty'] for x in self.photometry 
-                                if x['jd'] == jd and x['name'] == 'V'])      
-            lbol_bc, lbol_bc_err = calc_Lbol(color, color_err, filter1+"minus"+filter2, v_mag, v_mag_err, self.distance_cm, self.distance_cm_err)            
+        for i in range(len(bc_epochs)):
+            jd = bc_epochs[i]
+            color = self.get_color(dereddened_phot, jd, filter1, filter2)
+            color_err = self.get_color_uncertainty(dereddened_phot, jd, filter1, filter2) 
+            v_mag = np.array([x['magnitude'] for x in dereddened_phot 
+                               if x['jd'] == jd and x['name'] == b'V'])
+            v_mag_err = np.array([x['uncertainty'] for x in dereddened_phot 
+                                if x['jd'] == jd and x['name'] == b'V'])      
+            lbol_bc, lbol_bc_err = calc_Lbol(color, color_err, filter1+"minus"+filter2, v_mag, v_mag_err, distance_cm, distance_cm_err)            
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
-            self.bc_lc = np.append(self.bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
+            bc_lc = np.append(bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
 
-        self.bc_lc = np.delete(self.bc_lc, (0), axis=0)
-        self.write_lbol_plaintext(self.bc_lc, 'bc_' + filter1 + '-' + filter2)
+        bc_lc = np.delete(bc_lc, (0), axis=0)
+        self.write_lbol_plaintext(bc_lc, 'bc_' + filter1 + '-' + filter2)
+        h5file.close()
 
-    def get_bc_color(self, jd, filter1, filter2):
-        """Make an array of `filter1` - `filter2` on each of the bc_epochs
+    def get_color(self, photometry, jd, filter1, filter2):
+        """Get the `filter1` - `filter2` color on `jd`
 
         Args:
+            photometry (ndarray): Numpy array of photometry from get_photometry()
             jd (float): Julian Date of the observation
             filter1 (str): Sring designation for filter 1 ("B", for example)
             filter2 (str): String designation for filter 2 ("V", for example)
 
         Returns:
             float: Magnitude of filter 1 minus the magnitude of filter 2.
+            None: If JD not in photometry, or if filter2 or filter2 not 
+                  observed on given JD
         """
+        # Make sure the string matching works with Python 3
+        filter1 = filter1.encode('ascii')
+        filter2 = filter2.encode('ascii')
 
-        f1_mag = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
-                            == jd and x['name'] == filter1])
-        f2_mag = np.array([x['magnitude'] for x in self.photometry if x['jd'] 
-                            == jd and x['name'] == filter2])
+        f1_mag = None
+        f2_mag = None
 
-        return f1_mag - f2_mag
+        for x in photometry:
+            if x['jd'] == jd and x['name'] == filter1:
+                f1_mag = x['magnitude']
+            elif x['jd'] == jd and x['name'] == filter2:
+                f2_mag = x['magnitude']
 
-    def get_bc_color_uncertainty(self, jd, filter1, filter2):
-        """Make an array of :math:`\\sqrt{(\\delta \\text{filter1})^2 - (\\delta
-        \\text{filter2})^2}` on each of the bc_epochs
+        if f1_mag == None or f2_mag == None:
+            return None
+        else:
+            return f1_mag - f2_mag
+            
+
+    def get_color_uncertainty(self, photometry, jd, filter1, filter2):
+        """Get the uncertainty of the `filter1` - `filter2` color using the quadrature sum of the uncertainties given by :math:`\\sqrt{(\\delta \\text{filter1})^2 - (\\delta \\text{filter2})^2}`
 
         Args:
+            photometry (ndarray): Numpy array of photometry from get_photometry()
             jd (float): Julian Date of the observation
             filter1 (str): Sring designation for filter 1 ("B", for example)
             filter2 (str): String designation for filter 2 ("V", for example)
@@ -250,35 +293,50 @@ class SN(object):
         Returns:
             float: Quadrature sum of the uncertainties in the magnitudes of
             filter 1 and filter 2.
+            None: If JD not in photometry, or if filter2 or filter2 not 
+                  observed on given JD
+
         """
+        # Make sure the string matching works with Python 3
+        filter1 = filter1.encode('ascii')
+        filter2 = filter2.encode('ascii')
 
-        f1_err = np.array([x['uncertainty'] for x in self.photometry if x['jd']
-                            == jd and x['name'] == filter1])
-        f2_err = np.array([x['uncertainty'] for x in self.photometry if x['jd']
-                            == jd and x['name'] == filter2])
+        f1_err = None
+        f2_err = None
 
-        return np.sqrt(f1_err**2 + f2_err**2)
+        for x in photometry:
+            if x['jd'] == jd and x['name'] == filter1:
+                f1_err = x['uncertainty']
+            elif x['jd'] == jd and x['name'] == filter2:
+                f2_err = x['uncertainty']
 
-    def get_magnitudes(self):
+        if f1_err == None or f2_err == None:
+            return None
+        else:
+            return np.sqrt(f1_err**2 + f2_err**2)
+
+
+    def get_photometry(self):
         """Build a numpy array of [`jd`, `name`, `magnitude`, `uncertainty`]
         from the data contained within the HDF5 file.
         """
         dtype = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
-        self.photometry = np.array([(0.0,'0.0',0.0,0.0)], dtype=dtype)
+        photometry = np.array([(0.0,'0.0',0.0,0.0)], dtype=dtype)
         
         for obs in self.phot_table.iterrows():
             filterid = obs['filter_id']
             for filt in self.filter_table.where('(filter_id == filterid)'):
-                self.photometry = np.append(self.photometry, 
-                                            np.array([(obs['jd'], 
-                                                       filt['name'], 
-                                                       obs['magnitude'], 
-                                                       obs['uncertainty'])],
-                                                     dtype=dtype))
+                photometry = np.append(photometry, 
+                                       np.array([(obs['jd'], 
+                                       filt['name'], 
+                                       obs['magnitude'], 
+                                       obs['uncertainty'])],
+                                       dtype=dtype))
 
-        self.photometry = np.delete(self.photometry, (0), axis=0)
+        photometry = np.delete(photometry, (0), axis=0)
+        return photometry
 
-    def deredden_UBVRI_magnitudes(self):
+    def deredden_UBVRI_magnitudes(self, photometry):
         """Apply the corrections from CCM89 (1989ApJ...345..245C), Table 3 to
         the observed photometric magnitudes.
 
@@ -287,27 +345,34 @@ class SN(object):
         self.Av_host = self.parameter_table.cols.Av_host[0]
         self.Av_tot = self.Av_gal + self.Av_host
 
-        ccm89_corr = {'U': 1.569, 'B': 1.337, 'V': 1.0, 'R': 0.751, 'I': 0.479}
+        ccm89_corr = {b'U': 1.569, b'B': 1.337, b'V': 1.0, b'R': 0.751, b'I': 0.479}
 
-        for obs in self.photometry:
+        for obs in photometry:
             if obs['name'] in ccm89_corr:
                 obs['magnitude'] = obs['magnitude'] - ccm89_corr[obs['name']] * self.Av_tot
 
-    def get_bc_epochs(self, filter1, filter2):
+        return photometry
+
+    def get_bc_epochs(self, photometry, filter1, filter2):
         """Get epochs for which observations of both filter1 and filter2 exist"""
-        self.bc_epochs = np.array([])
+        bc_epochs = np.array([])
+
+        filter1 = filter1.encode('ascii')
+        filter2 = filter2.encode('ascii')
         
-        for jd_unique in np.unique(self.photometry['jd']):
+        for jd_unique in np.unique(photometry['jd']):
             has_filter1 = False
             has_filter2 = False
-            for obs in self.photometry:
+            for obs in photometry:
                 if obs['jd'] == jd_unique:
                     if obs['name'] == filter1:
                         has_filter1 = True
                     elif obs['name'] == filter2:
                         has_filter2 = True
             if has_filter1 and has_filter2:
-                self.bc_epochs = np.append(self.bc_epochs, jd_unique)
+                bc_epochs = np.append(bc_epochs, jd_unique)
+
+        return bc_epochs
 
     def get_distance_cm(self):
         """Get the distance to the supernova in centimeters from the HDF5 file.
