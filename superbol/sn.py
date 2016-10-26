@@ -353,21 +353,26 @@ class SN(object):
 
         return photometry
 
-    def get_bc_epochs(self, filter1, filter2):
+    def get_bc_epochs(self, photometry, filter1, filter2):
         """Get epochs for which observations of both filter1 and filter2 exist"""
-        self.bc_epochs = np.array([])
+        bc_epochs = np.array([])
+
+        filter1 = filter1.encode('ascii')
+        filter2 = filter2.encode('ascii')
         
-        for jd_unique in np.unique(self.photometry['jd']):
+        for jd_unique in np.unique(photometry['jd']):
             has_filter1 = False
             has_filter2 = False
-            for obs in self.photometry:
+            for obs in photometry:
                 if obs['jd'] == jd_unique:
                     if obs['name'] == filter1:
                         has_filter1 = True
                     elif obs['name'] == filter2:
                         has_filter2 = True
             if has_filter1 and has_filter2:
-                self.bc_epochs = np.append(self.bc_epochs, jd_unique)
+                bc_epochs = np.append(bc_epochs, jd_unique)
+
+        return bc_epochs
 
     def get_distance_cm(self):
         """Get the distance to the supernova in centimeters from the HDF5 file.

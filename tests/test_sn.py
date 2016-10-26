@@ -283,3 +283,36 @@ class TestSNDereddenUBVRIMagnitudes(unittest.TestCase):
 
     def tearDown(self):
         self.h5file.close()
+
+class TestGetBCEpochs(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+        self.photometry = self.my_sn.get_photometry()
+
+    def test_get_bc_epochs_returns_numpy_array(self):
+        bc_epochs = self.my_sn.get_bc_epochs(self.photometry, "B", "V")
+        result = isinstance(bc_epochs, np.ndarray)
+        self.assertTrue(result)
+
+    def test_get_bc_epochs_returns_nonempty_numpy_array_when_given_good_filter_names(self):
+        bc_epochs = self.my_sn.get_bc_epochs(self.photometry, "B", "V")
+        result = len(bc_epochs)
+        self.assertTrue(result > 0)
+
+    def test_get_bc_epochs_returns_empty_numpy_array_when_given_bad_filter_names(self):
+        bc_epochs = self.my_sn.get_bc_epochs(self.photometry, "X", "V")
+        result = len(bc_epochs)
+        self.assertTrue(result == 0)
+
+    def test_get_bc_epochs_returns_correct_dates(self):
+        expected = np.array([2450837.8, 2450846.7, 2450898.5, 2450899.8, 2450939.6, 2450962.5, 2450991.5, 2451200.7])
+        result = self.my_sn.get_bc_epochs(self.photometry, "B", "V")
+        self.assertTrue(np.array_equal(expected, result))
+
+    def tearDown(self):
+        self.h5file.close()
