@@ -316,3 +316,42 @@ class TestGetBCEpochs(unittest.TestCase):
 
     def tearDown(self):
         self.h5file.close()
+
+
+class TestGetDistanceCM(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+
+    def test_get_distance_cm_returns_2tuple(self):
+        result = self.my_sn.get_distance_cm()
+        self.assertTrue(len(result), 2)
+
+    def test_get_distance_cm_returns_distance_as_float(self):
+        distance, e_distance = self.my_sn.get_distance_cm()
+        result = isinstance(distance, float)
+        self.assertTrue(result)
+
+    def test_get_distance_cm_returns_distance_error_as_float(self):
+        distance, e_distance = self.my_sn.get_distance_cm()
+        result = isinstance(e_distance, float)
+        self.assertTrue(result)
+
+    def test_get_distance_cm_returns_correct_distance(self):
+        mpc_to_cm = 3.08567758E24
+        expected = 30.34 * mpc_to_cm
+        result = self.my_sn.get_distance_cm()
+        self.assertEqual(expected, result[0])
+
+    def test_get_distance_cm_returns_correct_distance_error(self):
+        mpc_to_cm = 3.08567758E24
+        expected = 7 * mpc_to_cm
+        result = self.my_sn.get_distance_cm()
+        self.assertEqual(expected, result[1])
+
+    def tearDown(self):
+        self.h5file.close()
