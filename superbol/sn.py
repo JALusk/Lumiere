@@ -221,31 +221,31 @@ class SN(object):
         """Calculate the bolometric lightcurve using the bolometric corrections
         found in Bersten & Hamuy 2009 (2009ApJ...701..200B). These require 
         specifying a color, taken to be filter1 - filter2"""
-        h5file = self.open_source_file()
+        h5file = self.open_source_h5file()
         self.import_hdf5_tables(h5file)
 
         photometry = self.get_photometry()
-        self.deredden_UBVRI_magnitudes()
-        self.get_bc_epochs(filter1, filter2)
-        self.distance_cm, self.distance_cm_err = self.get_distance_cm()
+        dereddened_phot = self.deredden_UBVRI_magnitudes(photometry)
+        bc_epochs = self.get_bc_epochs(dereddened_phot, filter1, filter2)
+        distance_cm, distance_cm_err = self.get_distance_cm()
 
-        self.bc_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
+        bc_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
         
-        for i in range(len(self.bc_epochs)):
-            jd = self.bc_epochs[i]
-            color = self.get_bc_color(photometry, jd, filter1, filter2)
-            color_err = self.get_bc_color_uncertainty(photometry, jd, filter1, filter2) 
-            v_mag = np.array([x['magnitude'] for x in self.photometry 
+        for i in range(len(bc_epochs)):
+            jd = bc_epochs[i]
+            color = self.get_color(dereddened_phot, jd, filter1, filter2)
+            color_err = self.get_color_uncertainty(dereddened_phot, jd, filter1, filter2) 
+            v_mag = np.array([x['magnitude'] for x in dereddened_phot 
                                if x['jd'] == jd and x['name'] == b'V'])
-            v_mag_err = np.array([x['uncertainty'] for x in self.photometry 
+            v_mag_err = np.array([x['uncertainty'] for x in dereddened_phot 
                                 if x['jd'] == jd and x['name'] == b'V'])      
-            lbol_bc, lbol_bc_err = calc_Lbol(color, color_err, filter1+"minus"+filter2, v_mag, v_mag_err, self.distance_cm, self.distance_cm_err)            
+            lbol_bc, lbol_bc_err = calc_Lbol(color, color_err, filter1+"minus"+filter2, v_mag, v_mag_err, distance_cm, distance_cm_err)            
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
-            self.bc_lc = np.append(self.bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
+            bc_lc = np.append(bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
 
-        self.bc_lc = np.delete(self.bc_lc, (0), axis=0)
-        self.write_lbol_plaintext(self.bc_lc, 'bc_' + filter1 + '-' + filter2)
+        bc_lc = np.delete(bc_lc, (0), axis=0)
+        self.write_lbol_plaintext(bc_lc, 'bc_' + filter1 + '-' + filter2)
         h5file.close()
 
     def get_color(self, photometry, jd, filter1, filter2):
