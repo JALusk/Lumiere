@@ -388,21 +388,23 @@ class SN(object):
         distance_cm_err = self.parameter_table.cols.distance_Mpc_err[0] * mpc_to_cm
         return distance_cm, distance_cm_err
 
-    def get_lbol_epochs(self):
+    def get_lbol_epochs(self, converted_obs, min_number_obs):
         """Get only epochs with enough photometric data to calculate Lbol
 
         The minimum number of filters needed to calculate a luminosity is set in
         the __init__ mehod.
         """
-        self.lbol_epochs = np.array([])
+        lbol_epochs = np.array([])
         
-        for jd_unique in np.unique(self.converted_obs['jd']):
+        for jd_unique in np.unique(converted_obs['jd']):
             num_obs = 0
-            for obs in self.converted_obs:
+            for obs in converted_obs:
                 if obs['jd'] == jd_unique:
                     num_obs += 1
-            if num_obs >= self.min_num_obs:
-                self.lbol_epochs = np.append(self.lbol_epochs, jd_unique)
+            if num_obs >= min_number_obs:
+                lbol_epochs = np.append(lbol_epochs, jd_unique)
+        
+        return lbol_epochs
 
     def convert_magnitudes_to_fluxes(self):
         """Perform the magnitude to flux conversion.
@@ -410,7 +412,7 @@ class SN(object):
         Creates an array of [`jd`, `name`, `wavelength`, `flux`, `uncertainty`]
         """
         dtype = [('jd', '>f8'), ('name', 'S1'), ('wavelength', '>f8'), ('flux', '>f8'), ('uncertainty', '>f8')]
-        self.converted_obs = np.array([(0.0,'0.0',0.0,0.0,0.0)], dtype=dtype)
+        converted_obs = np.array([(0.0,'0.0',0.0,0.0,0.0)], dtype=dtype)
         
         for obs in self.phot_table.iterrows():
             filterid = obs['filter_id']
@@ -420,7 +422,7 @@ class SN(object):
                                           filt['eff_wl'], 
                                           filt['flux_zeropoint'])
                 if 909.09 <= filt['eff_wl'] <= 33333.33:
-                    self.converted_obs = np.append(self.converted_obs, 
+                    converted_obs = np.append(converted_obs, 
                                                    np.array([(obs['jd'], 
                                                               filt['name'],
                                                               filt['eff_wl'],
@@ -428,8 +430,9 @@ class SN(object):
                                                               flux_err)],
                                                             dtype=dtype))
 
-        self.converted_obs = np.delete(self.converted_obs, (0), axis=0)
+        converted_obs = np.delete(converted_obs, (0), axis=0)
 
+        return converted_obs
 
     def deredden_fluxes(self):
         """Deredden the observed fluxes using the ccm89 model

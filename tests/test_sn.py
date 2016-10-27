@@ -355,3 +355,101 @@ class TestGetDistanceCM(unittest.TestCase):
 
     def tearDown(self):
         self.h5file.close()
+
+class TestSNConvertMagnitudesToFluxes(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+    
+    def test_convert_magnitudes_to_fluxes_returns_numpy_array(self):
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        result = isinstance(converted_obs, np.ndarray)
+        self.assertTrue(result)
+
+    def test_convert_magnitudes_to_fluxes_dtype(self):
+        expected = [('jd', '>f8'), ('name', 'S1'), ('wavelength', '>f8'), ('flux', '>f8'), ('uncertainty', '>f8')]
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        result = converted_obs.dtype
+        self.assertEqual(expected, result)
+
+    def test_convert_magnitudes_to_fluxes_98A_first_obs_jd(self):
+        expected = 2450820.3
+        
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        result = converted_obs[0]['jd']
+        self.assertEqual(expected, result)
+
+    def test_convert_magnitudes_to_fluxes_98A_first_obs_filter_name(self):
+        expected = b'R'
+        
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        result = converted_obs[0]['name']
+        self.assertEqual(expected, result)
+
+    def test_convert_magnitudes_to_fluxes_98A_first_obs_wavelength(self):
+        expected = 6410.0
+        
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        result = converted_obs[0]['wavelength']
+        self.assertEqual(expected, result)
+
+    def test_convert_magnitudes_to_fluxes_98A_first_obs_flux(self):
+        expected = 3.450312479987838e-16
+        
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        result = converted_obs[0]['flux']
+        self.assertEqual(expected, result)
+    
+    def test_convert_magnitudes_to_fluxes_98A_first_obs_uncertainty(self):
+        expected = 1.588927616518263e-16
+        
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        result = converted_obs[0]['uncertainty']
+        self.assertEqual(expected, result)
+
+    def test_convert_magnitudes_to_fluxes_98A_returns_correct_number_of_observations(self):
+        expected = 50
+
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        result = len(converted_obs)
+        self.assertEqual(expected, result)
+
+    def tearDown(self):
+        self.h5file.close()
+
+class TestGetLbolEpochs(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+
+    def test_get_lbol_epochs_returns_numpy_array(self):
+        lbol_epochs = self.my_sn.get_lbol_epochs(self.converted_obs, 4)
+        result = isinstance(lbol_epochs, np.ndarray)
+        self.assertTrue(result)
+
+    def test_get_lbol_epochs_returns_nonempty_numpy_array_when_given_good_input(self):
+        lbol_epochs = self.my_sn.get_lbol_epochs(self.converted_obs, 4)
+        result = len(lbol_epochs)
+        self.assertTrue(result > 0)
+
+    def test_get_lbol_epochs_returns_empty_numpy_array_when_given_min_number_obs_too_high(self):
+        lbol_epochs = self.my_sn.get_lbol_epochs(self.converted_obs, 6)
+        result = len(lbol_epochs)
+        self.assertTrue(result == 0)
+
+    def test_get_lbol_epochs_returns_correct_dates(self):
+        expected = np.array([2450837.8, 2450846.7, 2450898.5, 2450939.6, 2450962.5, 2450991.5])
+        result = self.my_sn.get_lbol_epochs(self.converted_obs, 4)
+        self.assertTrue(np.array_equal(expected, result))
+
+    def tearDown(self):
+        self.h5file.close()
