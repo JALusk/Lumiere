@@ -434,18 +434,20 @@ class SN(object):
 
         return converted_obs
 
-    def deredden_fluxes(self):
+    def deredden_fluxes(self, converted_obs):
         """Deredden the observed fluxes using the ccm89 model
 
         The dereddening procedure is handled by the extinction.reddening method
         from specutils.
         """
-        self.Av_gal = self.parameter_table.cols.Av_gal[0]
-        self.Av_host = self.parameter_table.cols.Av_host[0]
-        self.Av_tot = self.Av_gal + self.Av_host
+        Av_gal = self.parameter_table.cols.Av_gal[0]
+        Av_host = self.parameter_table.cols.Av_host[0]
+        Av_tot = Av_gal + Av_host
 
-        for obs in self.converted_obs:
-            obs['flux'] = obs['flux'] * extinction.reddening(obs['wavelength'] * u.AA, self.Av_tot, model='ccm89')
+        for obs in converted_obs:
+            obs['flux'] = obs['flux'] * extinction.reddening(obs['wavelength'] * u.AA, Av_tot, model='ccm89')
+
+        return converted_obs
 
     def write_lbol_plaintext(self, lightcurve, suffix):
         """Write the lightcurve to a file. Append suffix to filename"""

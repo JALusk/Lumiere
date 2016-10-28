@@ -4,6 +4,8 @@ import superbol.sn as sn
 import tables as tb
 import numpy as np
 from pkg_resources import resource_filename
+from specutils import extinction
+from astropy import units as u
 
 class TestSNInitialization(unittest.TestCase):
    
@@ -453,3 +455,53 @@ class TestGetLbolEpochs(unittest.TestCase):
 
     def tearDown(self):
         self.h5file.close()
+
+class TestSNDereddenFluxes(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+
+    def test_deredden_fluxes_returns_numpy_array(self):
+        dereddened_obs = self.my_sn.deredden_fluxes(self.converted_obs)
+        result = isinstance(dereddened_obs, np.ndarray)
+        self.assertTrue(result)
+
+    def test_deredden_fluxes_dtype(self):
+        expected = [('jd', '>f8'), ('name', 'S1'), ('wavelength', '>f8'), ('flux', '>f8'), ('uncertainty', '>f8')]
+        dereddened_obs = self.my_sn.deredden_fluxes(self.converted_obs)
+        result = dereddened_obs.dtype
+        self.assertEqual(expected, result)
+
+    def test_dereddened_fluxes_actually_changed_input_array(self):
+        dereddened_obs = self.my_sn.deredden_fluxes(self.converted_obs)
+        self.assertFalse(np.testing.assert_array_equal(self.converted_obs, dereddened_obs))
+
+    def test_deredden_fluxes_98A_ccm89_on_first_element(self):
+        flux = 3.450312479987838e-16
+        Av_gal = self.my_sn.parameter_table.cols.Av_gal[0]
+        Av_host = self.my_sn.parameter_table.cols.Av_host[0]
+        Av_tot = Av_gal + Av_host
+
+        wavelength = 6410.0
+
+        expected = flux * extinction.reddening(wavelength * u.AA, Av_tot, model='ccm89')
+        dereddened_obs = self.my_sn.deredden_fluxes(self.converted_obs)
+        result = dereddened_obs[0]['flux']
+        self.assertEqual(expected, result)
+
+    def test_deredden_fluxes_returns_array_of_same_size_as_converted_obs(self):
+        expected = len(self.converted_obs)
+        
+        dereddened_obs = self.my_sn.deredden_fluxes(self.converted_obs)
+        result = len(dereddened_obs)
+
+        self.assertEqual(expected, result)
+
+    def tearDown(self):
+        self.h5file.close()
+
