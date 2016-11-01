@@ -1,5 +1,5 @@
 test:
-	python -m unittest discover -v
+	python -Wall -m unittest discover -v
 
 clean:
 	rm -rf build/
