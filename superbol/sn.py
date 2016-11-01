@@ -177,24 +177,26 @@ class SN(object):
         """Calculate the quasi-bolometric lightcurve using direct integration
         with trapezoidal integration of the fluxes
         """
-        h5file = self.open_source_file()
+        h5file = self.open_source_h5file()
         self.import_hdf5_tables(h5file)
 
-        self.convert_magnitudes_to_fluxes()
-        self.deredden_fluxes()
-        self.get_lbol_epochs()
-        self.distance_cm, self.distance_cm_err = self.get_distance_cm()
+        converted_obs = self.convert_magnitudes_to_fluxes()
+        dereddened_obs = self.deredden_fluxes(converted_obs)
+        lbol_epochs = self.get_lbol_epochs(dereddened_obs, self.min_num_obs)
+        distance_cm, distance_cm_err = self.get_distance_cm()
+       
+
+        dtype = [('jd', '>f8'), ('phase', '>f8'), ('phase_err', '>f8'), ('lbol', '>f8'), ('lbol_err', '>f8')]
+        qbol_lc = np.array([(0.0, 0.0, 0.0, 0.0, 0.0)], dtype=dtype)
         
-        self.qbol_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
-        
-        for jd in self.lbol_epochs:
-            wavelengths = np.array([x['wavelength'] for x in self.converted_obs
+        for jd in lbol_epochs:
+            wavelengths = np.array([x['wavelength'] for x in dereddened_obs
                                     if x['jd'] == jd])
-            fluxes = np.array([x['flux'] for x in self.converted_obs
+            fluxes = np.array([x['flux'] for x in dereddened_obs
                                if x['jd'] == jd])
-            flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
+            flux_errs = np.array([x['uncertainty'] for x in dereddened_obs
                                   if x['jd'] == jd])
-            names = np.array([x['name'] for x in self.converted_obs
+            names = np.array([x['name'] for x in dereddened_obs
                                   if x['jd'] == jd])
 
             sort_indices = np.argsort(wavelengths)
@@ -205,17 +207,19 @@ class SN(object):
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
 
-            lqbol = fqbol * 4.0 * np.pi * self.distance_cm**2.0
-            lqbol_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fqbol_err)**2
-                              +(8.0*np.pi * fqbol * self.distance_cm * self.distance_cm_err)**2)
+            lqbol = fqbol * 4.0 * np.pi * distance_cm**2.0
+            lqbol_err = np.sqrt((4.0 * np.pi * distance_cm**2 * fqbol_err)**2
+                              +(8.0*np.pi * fqbol * distance_cm * distance_cm_err)**2)
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
             # Quick and dirty fix for IR-only nights (don't want those in qbol calc)
             if min(wavelengths) < 10000.0:
-                self.qbol_lc = np.append(self.qbol_lc, [[jd, phase, phase_err, lqbol, lqbol_err]], axis=0)
-        self.qbol_lc = np.delete(self.qbol_lc, (0), axis=0)
-        self.write_lbol_plaintext(self.qbol_lc, 'qbol')
+                qbol_lc = np.append(qbol_lc, np.array([(jd, phase, phase_err, lqbol, lqbol_err)], dtype=dtype), axis=0)
+        
+        qbol_lc = np.delete(qbol_lc, (0), axis=0)
         h5file.close()
+
+        return qbol_lc
 
     def lbol_bc_bh09(self, filter1, filter2):
         """Calculate the bolometric lightcurve using the bolometric corrections
