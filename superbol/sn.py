@@ -449,9 +449,11 @@ class SN(object):
 
         return converted_obs
 
-    def write_lbol_plaintext(self, lightcurve, suffix):
-        """Write the lightcurve to a file. Append suffix to filename"""
-        filename = "lbol_" + self.name + "_" + suffix + ".dat"
-        lc_file = open(filename, 'wb')
-        np.savetxt(lc_file, lightcurve, header = self.name+": JD, Phase (days), Phase err (days), Lbol (erg/s), Lbol err (erg/s)")
-        lc_file.close()
+    def write_lbol_filestream(self, outfile_handle, lightcurve):
+        """Write the lightcurve to a file handle"""
+        np.savetxt(outfile_handle, lightcurve)
+
+    def write_lbol_to_file(filename, lightcurve):
+        """Write the lightcurve to a file on disk"""
+        with open(filename, 'w') as outfile_handle:
+            self.write_lbol_filestream(outfile_handle, lightcurve)

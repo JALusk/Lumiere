@@ -1,4 +1,5 @@
 import unittest
+from io import BytesIO
 from .context import superbol
 import superbol.sn as sn
 import tables as tb
@@ -505,3 +506,17 @@ class TestSNDereddenFluxes(unittest.TestCase):
     def tearDown(self):
         self.h5file.close()
 
+class TestWriteLbolFilestream(unittest.TestCase):
+
+    def setUp(self):
+        self.tempfile = BytesIO()
+        self.sn_name = "sn1998a"
+        self.my_sn = sn.SN(self.sn_name)
+        self.lightcurve = np.array([[2.450837799999999814e+06, 3.679999999981373549e+01, 4.000000000000000000e+00, 6.180762979839354528e+41, 2.928851370959845050e+41]])
+
+    def test_write_lbol_filestream(self):
+        self.my_sn.write_lbol_filestream(self.tempfile, self.lightcurve)
+        expected = b"2.450837799999999814e+06 3.679999999981373549e+01 4.000000000000000000e+00 6.180762979839354528e+41 2.928851370959845050e+41\n"
+        self.tempfile.seek(0)
+        result = self.tempfile.read()
+        self.assertEqual(result, expected)
