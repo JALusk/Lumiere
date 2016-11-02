@@ -93,25 +93,25 @@ class SN(object):
         """Calculate the bolometric lightcurve using the direct integration
         method published in Bersten & Hamuy 2009 (2009ApJ...701..200B)
         """
-        h5file = self.open_source_file()
+        h5file = self.open_source_h5file()
         self.import_hdf5_tables(h5file)
 
-        self.convert_magnitudes_to_fluxes()
-        self.deredden_fluxes()
-        self.get_lbol_epochs()
-        self.distance_cm, self.distance_cm_err = self.get_distance_cm()
+        converted_obs = self.convert_magnitudes_to_fluxes()
+        dereddened_obs = self.deredden_fluxes(converted_obs)
+        lbol_epochs = self.get_lbol_epochs(dereddened_obs, self.min_num_obs)
+        distance_cm, distance_cm_err = self.get_distance_cm()
         
-        self.lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
-        
-        for jd in self.lbol_epochs:
-            names = np.array([x['name'] for x in self.converted_obs 
-                              if x['jd'] == jd and x['name'] != 'z'])
-            wavelengths = np.array([x['wavelength'] for x in self.converted_obs
-                                    if x['jd'] == jd and x['name'] != 'z'])
-            fluxes = np.array([x['flux'] for x in self.converted_obs
-                               if x['jd'] == jd and x['name'] != 'z'])
-            flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
-                                  if x['jd'] == jd and x['name'] != 'z'])
+        dtype = [('jd', '>f8'), ('phase', '>f8'), ('phase_err', '>f8'), ('lbol', '>f8'), ('lbol_err', '>f8')]
+        direct_lc = np.array([(0.0, 0.0, 0.0, 0.0, 0.0)], dtype=dtype) 
+        for jd in lbol_epochs:
+            names = np.array([x['name'] for x in converted_obs 
+                              if x['jd'] == jd and x['name'] != b'z'])
+            wavelengths = np.array([x['wavelength'] for x in converted_obs
+                                    if x['jd'] == jd and x['name'] != b'z'])
+            fluxes = np.array([x['flux'] for x in converted_obs
+                               if x['jd'] == jd and x['name'] != b'z'])
+            flux_errs = np.array([x['uncertainty'] for x in converted_obs
+                                  if x['jd'] == jd and x['name'] != b'z'])
 
             sort_indices = np.argsort(wavelengths)
             wavelengths = wavelengths[sort_indices]
@@ -161,17 +161,17 @@ class SN(object):
 
             fbol = fqbol + ir_corr + uv_corr
             fbol_err = np.sqrt(np.sum(x*x for x in [fqbol_err, ir_corr_err, uv_corr_err]))
-            lum = fbol * 4.0 * np.pi * self.distance_cm**2.0
-            lum_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fbol_err)**2
-                              +(8.0*np.pi * fbol * self.distance_cm * self.distance_cm_err)**2)
+            lum = fbol * 4.0 * np.pi * distance_cm**2.0
+            lum_err = np.sqrt((4.0 * np.pi * distance_cm**2 * fbol_err)**2
+                              +(8.0*np.pi * fbol * distance_cm * distance_cm_err)**2)
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
-            self.lc = np.append(self.lc, [[jd, phase, phase_err, lum, lum_err]], axis=0)
+            direct_lc = np.append(direct_lc, np.array([(jd, phase, phase_err, lum, lum_err)], dtype=dtype), axis=0)
 
-        self.lc = np.delete(self.lc, (0), axis=0)
-
-        self.write_lbol_plaintext(self.lc, 'direct')
+        direct_lc = np.delete(direct_lc, (0), axis=0)
         h5file.close()
+
+        return direct_lc
 
     def lqbol(self):
         """Calculate the quasi-bolometric lightcurve using direct integration
@@ -233,7 +233,8 @@ class SN(object):
         bc_epochs = self.get_bc_epochs(dereddened_phot, filter1, filter2)
         distance_cm, distance_cm_err = self.get_distance_cm()
 
-        bc_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
+        dtype = [('jd', '>f8'), ('phase', '>f8'), ('phase_err', '>f8'), ('lbol', '>f8'), ('lbol_err', '>f8')]
+        bc_lc = np.array([(0.0, 0.0, 0.0, 0.0, 0.0)], dtype=dtype)
         
         for i in range(len(bc_epochs)):
             jd = bc_epochs[i]
@@ -246,11 +247,12 @@ class SN(object):
             lbol_bc, lbol_bc_err = calc_Lbol(color, color_err, filter1+"minus"+filter2, v_mag, v_mag_err, distance_cm, distance_cm_err)            
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
-            bc_lc = np.append(bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
+            bc_lc = np.append(bc_lc, np.array([(jd, phase, phase_err, lbol_bc, lbol_bc_err)], dtype=dtype), axis=0)
 
         bc_lc = np.delete(bc_lc, (0), axis=0)
-        self.write_lbol_plaintext(bc_lc, 'bc_' + filter1 + '-' + filter2)
         h5file.close()
+
+        return bc_lc
 
     def get_color(self, photometry, jd, filter1, filter2):
         """Get the `filter1` - `filter2` color on `jd`

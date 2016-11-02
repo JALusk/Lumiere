@@ -564,3 +564,92 @@ class TestLqbol(unittest.TestCase):
 
     def tearDown(self):
         self.h5file.close()
+
+class TestLbolBC(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+
+    def test_lbc_lc_returns_numpy_array(self):
+        bc_lc = self.my_sn.lbol_bc_bh09('B', 'V')
+        result = isinstance(bc_lc, np.ndarray)
+        self.assertTrue(result)
+
+    def test_lbc_lc_dtype(self):
+        expected = [('jd', '>f8'), ('phase', '>f8'), ('phase_err', '>f8'), ('lbol', '>f8'), ('lbol_err', '>f8')]
+        bc_lc = self.my_sn.lbol_bc_bh09('B', 'V')
+        result = bc_lc.dtype
+        self.assertEqual(expected, result)
+
+    def test_lbc_lc_includes_all_jd_in_lbol_epochs(self):
+        photometry = self.my_sn.get_photometry()
+        dereddened_phot = self.my_sn.deredden_UBVRI_magnitudes(photometry)
+        bc_epochs = self.my_sn.get_bc_epochs(dereddened_phot, 'B', 'V')
+
+        expected = len(bc_epochs)
+        bc_lc = self.my_sn.lbol_bc_bh09('B', 'V')
+        result = len(bc_lc['jd'])
+        self.assertEqual(expected, result)
+
+    def test_lbc_lc_98A_BV_first_lbol(self):
+        expected = 6.180762979839354528e+41
+        bc_lc = self.my_sn.lbol_bc_bh09('B', 'V')
+        result = bc_lc['lbol'][0]
+        self.assertEqual(expected, result)
+
+    def test_lbc_lc_98A_BV_first_lbol_err(self):
+        expected = 2.928851370959845050e+41
+        bc_lc = self.my_sn.lbol_bc_bh09('B', 'V')
+        result = bc_lc['lbol_err'][0]
+        self.assertEqual(expected, result)
+
+    def tearDown(self):
+        self.h5file.close()
+
+class TestLbolDirect(unittest.TestCase):
+
+    def setUp(self):
+        self.sn_name = "sn1998a"
+        self.source = "tests/test_data.h5"
+        self.my_sn = sn.SN(self.sn_name, self.source)
+        self.h5file = tb.open_file(self.source, 'r')
+        self.my_sn.import_hdf5_tables(self.h5file)
+        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+
+    def test_direct_lc_returns_numpy_array(self):
+        direct_lc = self.my_sn.lbol_direct_bh09()
+        result = isinstance(direct_lc, np.ndarray)
+        self.assertTrue(result)
+
+    def test_direct_lc_dtype(self):
+        expected = [('jd', '>f8'), ('phase', '>f8'), ('phase_err', '>f8'), ('lbol', '>f8'), ('lbol_err', '>f8')]
+        direct_lc = self.my_sn.lbol_direct_bh09()
+        result = direct_lc.dtype
+        self.assertEqual(expected, result)
+
+    def test_direct_lc_includes_all_jd_in_lbol_epochs(self):
+        lbol_epochs = self.my_sn.get_lbol_epochs(self.converted_obs, 4)
+        direct_lc = self.my_sn.lbol_direct_bh09()
+        expected = len(lbol_epochs)
+        result = len(direct_lc['jd'])
+        self.assertEqual(expected, result)
+
+    def test_direct_lc_98A_first_lbol(self):
+        expected = 6.908881676781544815e+41
+        direct_lc = self.my_sn.lbol_direct_bh09()
+        result = direct_lc['lbol'][0]
+        self.assertEqual(expected, result)
+
+    def test_direct_lc_98A_first_lbol_err(self):
+        expected = 3.200749412914101756e+41
+        direct_lc = self.my_sn.lbol_direct_bh09()
+        result = direct_lc['lbol_err'][0]
+        self.assertEqual(expected, result)
+
+    def tearDown(self):
+        self.h5file.close()
+
