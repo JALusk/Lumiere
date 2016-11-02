@@ -93,25 +93,25 @@ class SN(object):
         """Calculate the bolometric lightcurve using the direct integration
         method published in Bersten & Hamuy 2009 (2009ApJ...701..200B)
         """
-        h5file = self.open_source_file()
+        h5file = self.open_source_h5file()
         self.import_hdf5_tables(h5file)
 
-        self.convert_magnitudes_to_fluxes()
-        self.deredden_fluxes()
-        self.get_lbol_epochs()
-        self.distance_cm, self.distance_cm_err = self.get_distance_cm()
+        converted_obs = self.convert_magnitudes_to_fluxes()
+        dereddened_obs = self.deredden_fluxes(converted_obs)
+        lbol_epochs = self.get_lbol_epochs(dereddened_obs, self.min_num_obs)
+        distance_cm, distance_cm_err = self.get_distance_cm()
         
-        self.lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
-        
-        for jd in self.lbol_epochs:
-            names = np.array([x['name'] for x in self.converted_obs 
-                              if x['jd'] == jd and x['name'] != 'z'])
-            wavelengths = np.array([x['wavelength'] for x in self.converted_obs
-                                    if x['jd'] == jd and x['name'] != 'z'])
-            fluxes = np.array([x['flux'] for x in self.converted_obs
-                               if x['jd'] == jd and x['name'] != 'z'])
-            flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
-                                  if x['jd'] == jd and x['name'] != 'z'])
+        dtype = [('jd', '>f8'), ('phase', '>f8'), ('phase_err', '>f8'), ('lbol', '>f8'), ('lbol_err', '>f8')]
+        direct_lc = np.array([(0.0, 0.0, 0.0, 0.0, 0.0)], dtype=dtype) 
+        for jd in lbol_epochs:
+            names = np.array([x['name'] for x in converted_obs 
+                              if x['jd'] == jd and x['name'] != b'z'])
+            wavelengths = np.array([x['wavelength'] for x in converted_obs
+                                    if x['jd'] == jd and x['name'] != b'z'])
+            fluxes = np.array([x['flux'] for x in converted_obs
+                               if x['jd'] == jd and x['name'] != b'z'])
+            flux_errs = np.array([x['uncertainty'] for x in converted_obs
+                                  if x['jd'] == jd and x['name'] != b'z'])
 
             sort_indices = np.argsort(wavelengths)
             wavelengths = wavelengths[sort_indices]
@@ -161,40 +161,42 @@ class SN(object):
 
             fbol = fqbol + ir_corr + uv_corr
             fbol_err = np.sqrt(np.sum(x*x for x in [fqbol_err, ir_corr_err, uv_corr_err]))
-            lum = fbol * 4.0 * np.pi * self.distance_cm**2.0
-            lum_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fbol_err)**2
-                              +(8.0*np.pi * fbol * self.distance_cm * self.distance_cm_err)**2)
+            lum = fbol * 4.0 * np.pi * distance_cm**2.0
+            lum_err = np.sqrt((4.0 * np.pi * distance_cm**2 * fbol_err)**2
+                              +(8.0*np.pi * fbol * distance_cm * distance_cm_err)**2)
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
-            self.lc = np.append(self.lc, [[jd, phase, phase_err, lum, lum_err]], axis=0)
+            direct_lc = np.append(direct_lc, np.array([(jd, phase, phase_err, lum, lum_err)], dtype=dtype), axis=0)
 
-        self.lc = np.delete(self.lc, (0), axis=0)
-
-        self.write_lbol_plaintext(self.lc, 'direct')
+        direct_lc = np.delete(direct_lc, (0), axis=0)
         h5file.close()
+
+        return direct_lc
 
     def lqbol(self):
         """Calculate the quasi-bolometric lightcurve using direct integration
         with trapezoidal integration of the fluxes
         """
-        h5file = self.open_source_file()
+        h5file = self.open_source_h5file()
         self.import_hdf5_tables(h5file)
 
-        self.convert_magnitudes_to_fluxes()
-        self.deredden_fluxes()
-        self.get_lbol_epochs()
-        self.distance_cm, self.distance_cm_err = self.get_distance_cm()
+        converted_obs = self.convert_magnitudes_to_fluxes()
+        dereddened_obs = self.deredden_fluxes(converted_obs)
+        lbol_epochs = self.get_lbol_epochs(dereddened_obs, self.min_num_obs)
+        distance_cm, distance_cm_err = self.get_distance_cm()
+       
+
+        dtype = [('jd', '>f8'), ('phase', '>f8'), ('phase_err', '>f8'), ('lbol', '>f8'), ('lbol_err', '>f8')]
+        qbol_lc = np.array([(0.0, 0.0, 0.0, 0.0, 0.0)], dtype=dtype)
         
-        self.qbol_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
-        
-        for jd in self.lbol_epochs:
-            wavelengths = np.array([x['wavelength'] for x in self.converted_obs
+        for jd in lbol_epochs:
+            wavelengths = np.array([x['wavelength'] for x in dereddened_obs
                                     if x['jd'] == jd])
-            fluxes = np.array([x['flux'] for x in self.converted_obs
+            fluxes = np.array([x['flux'] for x in dereddened_obs
                                if x['jd'] == jd])
-            flux_errs = np.array([x['uncertainty'] for x in self.converted_obs
+            flux_errs = np.array([x['uncertainty'] for x in dereddened_obs
                                   if x['jd'] == jd])
-            names = np.array([x['name'] for x in self.converted_obs
+            names = np.array([x['name'] for x in dereddened_obs
                                   if x['jd'] == jd])
 
             sort_indices = np.argsort(wavelengths)
@@ -205,17 +207,19 @@ class SN(object):
 
             fqbol, fqbol_err = fqbol_trapezoidal(wavelengths, fluxes, flux_errs)
 
-            lqbol = fqbol * 4.0 * np.pi * self.distance_cm**2.0
-            lqbol_err = np.sqrt((4.0 * np.pi * self.distance_cm**2 * fqbol_err)**2
-                              +(8.0*np.pi * fqbol * self.distance_cm * self.distance_cm_err)**2)
+            lqbol = fqbol * 4.0 * np.pi * distance_cm**2.0
+            lqbol_err = np.sqrt((4.0 * np.pi * distance_cm**2 * fqbol_err)**2
+                              +(8.0*np.pi * fqbol * distance_cm * distance_cm_err)**2)
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
             # Quick and dirty fix for IR-only nights (don't want those in qbol calc)
             if min(wavelengths) < 10000.0:
-                self.qbol_lc = np.append(self.qbol_lc, [[jd, phase, phase_err, lqbol, lqbol_err]], axis=0)
-        self.qbol_lc = np.delete(self.qbol_lc, (0), axis=0)
-        self.write_lbol_plaintext(self.qbol_lc, 'qbol')
+                qbol_lc = np.append(qbol_lc, np.array([(jd, phase, phase_err, lqbol, lqbol_err)], dtype=dtype), axis=0)
+        
+        qbol_lc = np.delete(qbol_lc, (0), axis=0)
         h5file.close()
+
+        return qbol_lc
 
     def lbol_bc_bh09(self, filter1, filter2):
         """Calculate the bolometric lightcurve using the bolometric corrections
@@ -229,7 +233,8 @@ class SN(object):
         bc_epochs = self.get_bc_epochs(dereddened_phot, filter1, filter2)
         distance_cm, distance_cm_err = self.get_distance_cm()
 
-        bc_lc = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
+        dtype = [('jd', '>f8'), ('phase', '>f8'), ('phase_err', '>f8'), ('lbol', '>f8'), ('lbol_err', '>f8')]
+        bc_lc = np.array([(0.0, 0.0, 0.0, 0.0, 0.0)], dtype=dtype)
         
         for i in range(len(bc_epochs)):
             jd = bc_epochs[i]
@@ -242,11 +247,12 @@ class SN(object):
             lbol_bc, lbol_bc_err = calc_Lbol(color, color_err, filter1+"minus"+filter2, v_mag, v_mag_err, distance_cm, distance_cm_err)            
             phase = jd - self.parameter_table.cols.explosion_JD[0]
             phase_err = self.parameter_table.cols.explosion_JD_err[0]
-            bc_lc = np.append(bc_lc, [[jd, phase, phase_err, lbol_bc, lbol_bc_err]], axis=0)
+            bc_lc = np.append(bc_lc, np.array([(jd, phase, phase_err, lbol_bc, lbol_bc_err)], dtype=dtype), axis=0)
 
         bc_lc = np.delete(bc_lc, (0), axis=0)
-        self.write_lbol_plaintext(bc_lc, 'bc_' + filter1 + '-' + filter2)
         h5file.close()
+
+        return bc_lc
 
     def get_color(self, photometry, jd, filter1, filter2):
         """Get the `filter1` - `filter2` color on `jd`
@@ -388,21 +394,23 @@ class SN(object):
         distance_cm_err = self.parameter_table.cols.distance_Mpc_err[0] * mpc_to_cm
         return distance_cm, distance_cm_err
 
-    def get_lbol_epochs(self):
+    def get_lbol_epochs(self, converted_obs, min_number_obs):
         """Get only epochs with enough photometric data to calculate Lbol
 
         The minimum number of filters needed to calculate a luminosity is set in
         the __init__ mehod.
         """
-        self.lbol_epochs = np.array([])
+        lbol_epochs = np.array([])
         
-        for jd_unique in np.unique(self.converted_obs['jd']):
+        for jd_unique in np.unique(converted_obs['jd']):
             num_obs = 0
-            for obs in self.converted_obs:
+            for obs in converted_obs:
                 if obs['jd'] == jd_unique:
                     num_obs += 1
-            if num_obs >= self.min_num_obs:
-                self.lbol_epochs = np.append(self.lbol_epochs, jd_unique)
+            if num_obs >= min_number_obs:
+                lbol_epochs = np.append(lbol_epochs, jd_unique)
+        
+        return lbol_epochs
 
     def convert_magnitudes_to_fluxes(self):
         """Perform the magnitude to flux conversion.
@@ -410,7 +418,7 @@ class SN(object):
         Creates an array of [`jd`, `name`, `wavelength`, `flux`, `uncertainty`]
         """
         dtype = [('jd', '>f8'), ('name', 'S1'), ('wavelength', '>f8'), ('flux', '>f8'), ('uncertainty', '>f8')]
-        self.converted_obs = np.array([(0.0,'0.0',0.0,0.0,0.0)], dtype=dtype)
+        converted_obs = np.array([(0.0,'0.0',0.0,0.0,0.0)], dtype=dtype)
         
         for obs in self.phot_table.iterrows():
             filterid = obs['filter_id']
@@ -420,7 +428,7 @@ class SN(object):
                                           filt['eff_wl'], 
                                           filt['flux_zeropoint'])
                 if 909.09 <= filt['eff_wl'] <= 33333.33:
-                    self.converted_obs = np.append(self.converted_obs, 
+                    converted_obs = np.append(converted_obs, 
                                                    np.array([(obs['jd'], 
                                                               filt['name'],
                                                               filt['eff_wl'],
@@ -428,25 +436,30 @@ class SN(object):
                                                               flux_err)],
                                                             dtype=dtype))
 
-        self.converted_obs = np.delete(self.converted_obs, (0), axis=0)
+        converted_obs = np.delete(converted_obs, (0), axis=0)
 
+        return converted_obs
 
-    def deredden_fluxes(self):
+    def deredden_fluxes(self, converted_obs):
         """Deredden the observed fluxes using the ccm89 model
 
         The dereddening procedure is handled by the extinction.reddening method
         from specutils.
         """
-        self.Av_gal = self.parameter_table.cols.Av_gal[0]
-        self.Av_host = self.parameter_table.cols.Av_host[0]
-        self.Av_tot = self.Av_gal + self.Av_host
+        Av_gal = self.parameter_table.cols.Av_gal[0]
+        Av_host = self.parameter_table.cols.Av_host[0]
+        Av_tot = Av_gal + Av_host
 
-        for obs in self.converted_obs:
-            obs['flux'] = obs['flux'] * extinction.reddening(obs['wavelength'] * u.AA, self.Av_tot, model='ccm89')
+        for obs in converted_obs:
+            obs['flux'] = obs['flux'] * extinction.reddening(obs['wavelength'] * u.AA, Av_tot, model='ccm89')
 
-    def write_lbol_plaintext(self, lightcurve, suffix):
-        """Write the lightcurve to a file. Append suffix to filename"""
-        filename = "lbol_" + self.name + "_" + suffix + ".dat"
-        lc_file = open(filename, 'wb')
-        np.savetxt(lc_file, lightcurve, header = self.name+": JD, Phase (days), Phase err (days), Lbol (erg/s), Lbol err (erg/s)")
-        lc_file.close()
+        return converted_obs
+
+    def write_lbol_filestream(self, outfile_handle, lightcurve):
+        """Write the lightcurve to a file handle"""
+        np.savetxt(outfile_handle, lightcurve)
+
+    def write_lbol_to_file(filename, lightcurve):
+        """Write the lightcurve to a file on disk"""
+        with open(filename, 'w') as outfile_handle:
+            self.write_lbol_filestream(outfile_handle, lightcurve)
