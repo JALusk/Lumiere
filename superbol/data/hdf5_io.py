@@ -108,15 +108,7 @@ def add_sn_filter_photometry(hdf5_filename, sn_name, filter_name, filter_eff_wl,
         filter_id = get_old_filter_id(filter_table, filter_name)
 
     for i in range(len(jd)):
-        new_observation = phot_table.row
-        new_observation['filter_id'] = filter_id
-        new_observation['jd'] = jd[i]
-        new_observation['magnitude'] = mag[i]
-        new_observation['uncertainty'] = err[i]
-        new_observation['reference'] = ref
-        new_observation['note'] = note
-        new_observation['telescope_id'] = 0
-
+        new_observation = make_new_observation_entry(filter_id, jd[i], mag[i], err[i], ref, note, phot_table)
         new_observation.append()
 
     phot_table.flush()

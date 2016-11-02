@@ -95,3 +95,66 @@ class TestNewFilter(unittest.TestCase):
 
     def tearDown(self):
         self.h5file.close()
+
+class TestMakeNewObservationEntry(unittest.TestCase):
+
+    def setUp(self):
+        self.hdf5_filename = 'tests/test_data.h5'
+        self.h5file = tb.open_file(self.hdf5_filename, 'a')
+        self.phot_table = self.h5file.root.sn.sn1998a.phot
+        self.filter_id = 1
+        self.jd = 9999999
+        self.mag = 17.0
+        self.err = 1.0
+        self.ref = 'TESTREF'
+        self.note = 'TESTNOTE'
+
+    def test_make_new_observation_returns_row(self):
+        new_observation = hdf5_io.make_new_observation_entry(self.filter_id, self.jd, self.mag, self.err, self.ref, self.note, self.phot_table)
+        result = isinstance(new_observation, tb.tableextension.Row)
+        self.assertTrue(result)
+
+    def test_make_new_observation_returns_row_with_correct_filter_id(self):
+        new_observation = hdf5_io.make_new_observation_entry(self.filter_id, self.jd, self.mag, self.err, self.ref, self.note, self.phot_table)
+        expected = self.filter_id
+        result = new_observation['filter_id']
+        self.assertEqual(expected, result)
+
+    def test_make_new_observation_returns_row_with_correct_jd(self):
+        new_observation = hdf5_io.make_new_observation_entry(self.filter_id, self.jd, self.mag, self.err, self.ref, self.note, self.phot_table)
+        expected = self.jd
+        result = new_observation['jd']
+        self.assertEqual(expected, result)
+
+    def test_make_new_observation_returns_row_with_correct_mag(self):
+        new_observation = hdf5_io.make_new_observation_entry(self.filter_id, self.jd, self.mag, self.err, self.ref, self.note, self.phot_table)
+        expected = self.mag
+        result = new_observation['magnitude']
+        self.assertEqual(expected, result)
+
+    def test_make_new_observation_returns_row_with_correct_err(self):
+        new_observation = hdf5_io.make_new_observation_entry(self.filter_id, self.jd, self.mag, self.err, self.ref, self.note, self.phot_table)
+        expected = self.err
+        result = new_observation['uncertainty']
+        self.assertEqual(expected, result)
+
+    def test_make_new_observation_returns_row_with_correct_ref(self):
+        new_observation = hdf5_io.make_new_observation_entry(self.filter_id, self.jd, self.mag, self.err, self.ref, self.note, self.phot_table)
+        expected = self.ref
+        result = new_observation['reference']
+        self.assertEqual(expected, result)
+
+    def test_make_new_observation_returns_row_with_correct_note(self):
+        new_observation = hdf5_io.make_new_observation_entry(self.filter_id, self.jd, self.mag, self.err, self.ref, self.note, self.phot_table)
+        expected = self.note
+        result = new_observation['note']
+        self.assertEqual(expected, result)
+
+    def test_make_new_observation_returns_row_with_expected_telescope_id(self):
+        new_observation = hdf5_io.make_new_observation_entry(self.filter_id, self.jd, self.mag, self.err, self.ref, self.note, self.phot_table)
+        expected = 0
+        result = new_observation['telescope_id']
+        self.assertEqual(expected, result)
+
+    def tearDown(self):
+        self.h5file.close()
