@@ -64,8 +64,6 @@ class SN(object):
 
         self.min_num_obs = 4
 
-        #self.read_hdf5()
-
     def open_source_h5file(self):
         """Opens the hdf5 file and returns pytables File object"""
         if self.source == None:
