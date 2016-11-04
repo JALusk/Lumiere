@@ -50,7 +50,7 @@ def make_new_filter_entry(filter_table, filter_name, filter_eff_wl, filter_flux_
     # If the user provided eff_wl and flux_zeropoint, make a new filter entry
     new_filter = filter_table.row
     
-    new_filter_id = set_new_filter_id()
+    new_filter_id = set_new_filter_id(filter_table)
     new_filter['filter_id'] = new_filter_id
     new_filter['name'] = filter_name
     new_filter['eff_wl'] = filter_eff_wl
@@ -58,7 +58,7 @@ def make_new_filter_entry(filter_table, filter_name, filter_eff_wl, filter_flux_
     new_filter['note'] = note
     new_filter['ref'] = ref
     
-    return new_filter, largest_id
+    return new_filter, new_filter_id 
 
 def set_new_filter_id(filter_table):
     # Give new filter a unique ID larger than the largest ID in the HDF5 file
