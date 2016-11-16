@@ -57,7 +57,7 @@ def planck_integral(wavelength, temperature):
     C2 = const.h.cgs * const.c.cgs / const.k_B.cgs
 
     x = C2 / (wavelength.to(u.cm) * temperature)
-    iterations = min(int(2 + 20/x.value), 512)
+    iterations = min(int(2.0 + 20.0/x.value), 512)
 
     series = 0.0
     for i in range(1, iterations):
