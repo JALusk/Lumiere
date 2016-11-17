@@ -76,7 +76,6 @@ class TestFitBlackbodyToBlackbody(unittest.TestCase):
         self.warm_errors = [4.5613153169705906e-16, 3.611905858092645e-16, 2.3921603708586965e-16, 1.639405566514862e-16, 9.126671293767318e-17, 9.177243109359599e-18, 3.1983381109924263e-18]
         self.hot_errors = [1.0241915540933445e-17, 1.4831860746515914e-17, 1.7682275165286134e-17, 1.717175744676841e-17, 1.3887713520412634e-17, 2.8004081263434603e-18, 1.1313249474986263e-18] 
 
-
         # Supernova-ish angular radiua
         self.theta = 2.0e-11
     
@@ -109,3 +108,66 @@ class TestFitBlackbodyToBlackbody(unittest.TestCase):
         result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.hot_fluxes, self.hot_errors)
 
         self.assertAlmostEqual(self.theta, result_theta)
+
+class TestFitBlackbodyTemperatureToWD(unittest.TestCase):
+    """Test BB fitting with WD flux and wavelength data"""
+
+    def setUp(self):
+        # Effective wavelengths
+        self.wavelengths = [3639.3, 3660.0, 4380.0,
+                            4765.1, 5450.0, 6223.3,
+                            6410.0, 7609.2, 7980.0, 
+                            12200.0, 16300.0, 21900.0]
+
+        # Cool, warm, and hot model temperatures
+        self.cool_temp = 3500.0
+        self.warm_temp = 5000.0
+        self.hot_temp = 10000.0
+
+        # Cool, warm, and hot BB fluxes at self.wavelengths
+        self.cool_fluxes = [3.17400826e-17, 3.34700591e-17, 1.16712421e-16,
+                            1.86464465e-16, 3.02291718e-16, 4.28431996e-16,
+                            4.58203528e-16, 5.21624341e-16, 5.59678199e-16,
+                            3.91108039e-16, 2.18847839e-16, 1.00139367e-16]
+        self.warm_fluxes = [1.53889168e-15, 1.56695484e-15, 2.51140687e-15,
+                            2.94982383e-15, 3.20941774e-15, 3.32875550e-15,
+                            3.12649997e-15, 2.75776877e-15, 2.59381138e-15,
+                            1.09420008e-15, 4.95840803e-16, 1.97244473e-16]
+        self.hot_fluxes = [9.62073059e-14, 9.81423561e-14, 6.84096043e-14,
+                           6.04499687e-14, 4.30552632e-14, 3.30431846e-14,
+                           2.81746435e-14, 1.88867769e-14, 1.56869456e-14,
+                           4.02806753e-15, 1.47279487e-15, 5.04666925e-16]
+
+        # Cool, warm, and hot BB flux errors (1%)
+        self.cool_errors = [5.84673929e-19, 6.16541274e-19, 2.14992225e-18,                            3.43480238e-18, 5.56841923e-18, 7.89200901e-18,
+                            8.44042091e-18, 9.60867546e-18, 1.03096534e-17,
+                            7.20447633e-18, 4.03132617e-18, 1.84463531e-18]
+        self.warm_errors = [2.83474324e-17, 2.88643748e-17, 4.62618242e-17,
+                            5.43377631e-17, 5.91196596e-17, 6.13179423e-17,
+                            5.75922578e-17, 5.07999781e-17, 4.77797713e-17,
+                            2.01559104e-17, 9.13372513e-18, 3.63337746e-18]
+        self.hot_errors = [1.77220407e-15, 1.80784901e-15, 1.26015148e-15,
+                           1.11352957e-15, 7.93107259e-16, 6.08677954e-16,
+                           5.18996112e-16, 3.47907287e-16, 2.88964217e-16,
+                           7.41997460e-17, 2.71298841e-17, 9.29630830e-18]
+
+    def test_fit_blackbody_cool_WD(self):
+        """This test is a cheat - it compares the result from fitting the above data to... the result from fitting the above data. However, I need it in order to check that Python 2.7 and Python 3 are returning the same value"""
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.cool_fluxes, self.cool_errors)
+
+        expected = 3300.2745422033599
+        self.assertAlmostEqual(expected, result_T, 4)
+
+    def test_fit_blackbody_warm_WD(self):
+        """This test is a cheat - it compares the result from fitting the above data to... the result from fitting the above data. However, I need it in order to check that Python 2.7 and Python 3 are returning the same value"""
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.warm_fluxes, self.warm_errors)
+
+        expected = 4983.3607398832628
+        self.assertAlmostEqual(expected, result_T, 4)
+
+    def test_fit_blackbody_hot_WD(self):
+        """This test is a cheat - it compares the result from fitting the above data to... the result from fitting the above data. However, I need it in order to check that Python 2.7 and Python 3 are returning the same value"""
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.hot_fluxes, self.hot_errors)
+
+        expected = 11196.376938272722
+        self.assertAlmostEqual(expected, result_T, 4)
