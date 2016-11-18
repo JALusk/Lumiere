@@ -73,7 +73,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_UV_cool(self):
         # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.000174
-        result = planck_integral(3800, 2500) / (5.67051E-5 * 2500**4) * np.pi
+        result = planck_integral(3800.0, 2500.0) / (5.67051E-5 * 2500.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
@@ -81,7 +81,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_UV_warm(self):
         # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.052110
-        result = planck_integral(3800, 5000) / (5.67051E-5 * 5000**4) * np.pi
+        result = planck_integral(3800.0, 5000.0) / (5.67051E-5 * 5000.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
@@ -89,7 +89,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_UV_hot(self):
         # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.443376
-        result = planck_integral(3800, 10000) / (5.67051E-5 * 10000**4) * np.pi
+        result = planck_integral(3800.0, 10000.0) / (5.67051E-5 * 10000.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
@@ -97,7 +97,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_IR_cool(self):
         # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.052110
-        result = planck_integral(7600, 2500) / (5.67051E-5 * 2500**4) * np.pi
+        result = planck_integral(7600.0, 2500.0) / (5.67051E-5 * 2500.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
@@ -105,7 +105,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_IR_warm(self):
          # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.443376
-        result = planck_integral(7600, 5000) / (5.67051E-5 * 5000**4) * np.pi
+        result = planck_integral(7600.0, 5000.0) / (5.67051E-5 * 5000.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
@@ -113,7 +113,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_IR_hot(self):
          # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.839068
-        result = planck_integral(7600, 10000) / (5.67051E-5 * 10000**4) * np.pi
+        result = planck_integral(7600.0, 10000.0) / (5.67051E-5 * 10000.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
