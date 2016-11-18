@@ -53,3 +53,133 @@ class TestFitBlackbody(unittest.TestCase):
                                                        self.flux_array.value, self.flux_uncertainties.value)
         self.assertEqual((expected_temp, expected_radius, expected_perr[0], expected_perr[1]), 
                          (result_temp, result_radius, result_perr[0], result_perr[1]))
+
+class TestFitBlackbodyToBlackbody(unittest.TestCase):
+    """Test BB fitting with actual BB flux and wavelength data"""
+
+    def setUp(self):
+        # UBVRIJHK effective wavelengths from Bessel et. al. (1998)
+        self.wavelengths = [3660.0, 4380.0, 5450.0, 6410.0, 7980.0, 16300.0, 21900.0]
+
+        # Cool, warm, and hot model temperatures
+        self.cool_temp = 2500.0
+        self.warm_temp = 5100.0
+        self.hot_temp = 10000.0
+
+        # Cool, warm, and hot BB fluxes at self.wavelengths
+        self.cool_fluxes = [3.3786134983627783e-19, 1.825359587379945e-18, 8.074018141103508e-18, 1.7444713955287287e-17, 3.414668965720534e-17, 3.923967095683563e-17, 2.3130894084061456e-17]
+        self.warm_fluxes = [1.0241915540933445e-15, 1.4831860746515914e-15, 1.7682275165286134e-15, 1.717175744676841e-15, 1.3887713520412634e-15, 2.8004081263434603e-16, 1.1313249474986263e-16] 
+        self.hot_fluxes = [4.5613153169705906e-14, 3.611905858092645e-14, 2.3921603708586965e-14, 1.639405566514862e-14, 9.126671293767318e-15, 9.177243109359599e-16, 3.1983381109924263e-16]
+
+        # Cool, warm, and hot BB flux errors (1%)
+        self.cool_errors = [3.3786134983627783e-21, 1.825359587379945e-20, 8.074018141103508e-20, 1.7444713955287287e-19, 3.414668965720534e-19, 3.923967095683563e-19, 2.3130894084061456e-19]
+        self.warm_errors = [4.5613153169705906e-16, 3.611905858092645e-16, 2.3921603708586965e-16, 1.639405566514862e-16, 9.126671293767318e-17, 9.177243109359599e-18, 3.1983381109924263e-18]
+        self.hot_errors = [1.0241915540933445e-17, 1.4831860746515914e-17, 1.7682275165286134e-17, 1.717175744676841e-17, 1.3887713520412634e-17, 2.8004081263434603e-18, 1.1313249474986263e-18] 
+
+        # Supernova-ish angular radiua
+        self.theta = 2.0e-11
+    
+    def test_fit_blackbody_cool_temp(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.cool_fluxes, self.cool_errors)
+
+        self.assertAlmostEqual(self.cool_temp, result_T)
+
+    def test_fit_blackbody_cool_theta(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.cool_fluxes, self.cool_errors)
+
+        self.assertAlmostEqual(self.theta, result_theta)
+
+    def test_fit_blackbody_warm_temp(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.warm_fluxes, self.warm_errors)
+
+        self.assertAlmostEqual(self.warm_temp, result_T)
+
+    def test_fit_blackbody_warm_theta(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.warm_fluxes, self.warm_errors)
+
+        self.assertAlmostEqual(self.theta, result_theta)
+
+    def test_fit_blackbody_hot_temp(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.hot_fluxes, self.hot_errors)
+
+        self.assertAlmostEqual(self.hot_temp, result_T)
+
+    def test_fit_blackbody_hot_theta(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.hot_fluxes, self.hot_errors)
+
+        self.assertAlmostEqual(self.theta, result_theta)
+
+class TestFitBlackbodyTemperatureToWD(unittest.TestCase):
+    """Test BB fitting with WD flux and wavelength data"""
+
+    def setUp(self):
+        # Effective wavelengths
+        self.wavelengths = [3639.3, 3660.0, 4380.0,
+                            4765.1, 5450.0, 6223.3,
+                            6410.0, 7609.2, 7980.0, 
+                            12200.0, 16300.0, 21900.0]
+
+        # Cool, warm, and hot model temperatures
+        self.cool_temp = 3500.0
+        self.warm_temp = 5000.0
+        self.hot_temp = 10000.0
+
+        # Cool, warm, and hot BB fluxes at self.wavelengths
+        self.cool_fluxes = [3.17400826e-17, 3.34700591e-17, 1.16712421e-16,
+                            1.86464465e-16, 3.02291718e-16, 4.28431996e-16,
+                            4.58203528e-16, 5.21624341e-16, 5.59678199e-16,
+                            3.91108039e-16, 2.18847839e-16, 1.00139367e-16]
+        self.warm_fluxes = [1.53889168e-15, 1.56695484e-15, 2.51140687e-15,
+                            2.94982383e-15, 3.20941774e-15, 3.32875550e-15,
+                            3.12649997e-15, 2.75776877e-15, 2.59381138e-15,
+                            1.09420008e-15, 4.95840803e-16, 1.97244473e-16]
+        self.hot_fluxes = [9.62073059e-14, 9.81423561e-14, 6.84096043e-14,
+                           6.04499687e-14, 4.30552632e-14, 3.30431846e-14,
+                           2.81746435e-14, 1.88867769e-14, 1.56869456e-14,
+                           4.02806753e-15, 1.47279487e-15, 5.04666925e-16]
+
+        # Cool, warm, and hot BB flux errors (1%)
+        self.cool_errors = [5.84673929e-19, 6.16541274e-19, 2.14992225e-18,                            3.43480238e-18, 5.56841923e-18, 7.89200901e-18,
+                            8.44042091e-18, 9.60867546e-18, 1.03096534e-17,
+                            7.20447633e-18, 4.03132617e-18, 1.84463531e-18]
+        self.warm_errors = [2.83474324e-17, 2.88643748e-17, 4.62618242e-17,
+                            5.43377631e-17, 5.91196596e-17, 6.13179423e-17,
+                            5.75922578e-17, 5.07999781e-17, 4.77797713e-17,
+                            2.01559104e-17, 9.13372513e-18, 3.63337746e-18]
+        self.hot_errors = [1.77220407e-15, 1.80784901e-15, 1.26015148e-15,
+                           1.11352957e-15, 7.93107259e-16, 6.08677954e-16,
+                           5.18996112e-16, 3.47907287e-16, 2.88964217e-16,
+                           7.41997460e-17, 2.71298841e-17, 9.29630830e-18]
+
+    def test_fit_blackbody_cool_WD(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.cool_fluxes, self.cool_errors)
+
+        expected = 3300.274543
+        self.assertAlmostEqual(expected, result_T)
+
+    def test_fit_blackbody_warm_WD(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.warm_fluxes, self.warm_errors)
+
+        expected = 4983.36073925
+        self.assertAlmostEqual(expected, result_T)
+
+    def test_fit_blackbody_hot_WD(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.hot_fluxes, self.hot_errors)
+
+        expected = 11196.3769245
+        self.assertAlmostEqual(expected, result_T)
+
+
+class TestFitBlackbodyTemperatureToSN(unittest.TestCase):
+
+    def setUp(self):
+        self.wavelengths = [3660., 4380.,  5450.,  6410.,  7980.]
+        self.fluxes = [1.42159582e-16, 2.09548255e-16, 3.70796730e-16, 4.53049602e-16, 3.36788260e-16]
+        self.flux_errs = [2.21846926e-17, 1.18302183e-17, 1.17834356e-17, 1.53145455e-17, 1.24389601e-17]
+
+    def test_fit_blackbody_SN98A(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.fluxes, self.flux_errs)
+
+        expected = 4331.7954035003195
+        self.assertAlmostEqual(expected, result_T)
+

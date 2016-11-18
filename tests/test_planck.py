@@ -73,7 +73,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_UV_cool(self):
         # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.000174
-        result = planck_integral(3800, 2500) / (5.67051E-5 * 2500**4) * np.pi
+        result = planck_integral(3800.0, 2500.0) / (5.67051E-5 * 2500.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
@@ -81,7 +81,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_UV_warm(self):
         # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.052110
-        result = planck_integral(3800, 5000) / (5.67051E-5 * 5000**4) * np.pi
+        result = planck_integral(3800.0, 5000.0) / (5.67051E-5 * 5000.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
@@ -89,7 +89,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_UV_hot(self):
         # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.443376
-        result = planck_integral(3800, 10000) / (5.67051E-5 * 10000**4) * np.pi
+        result = planck_integral(3800.0, 10000.0) / (5.67051E-5 * 10000.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
@@ -97,7 +97,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_IR_cool(self):
         # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.052110
-        result = planck_integral(7600, 2500) / (5.67051E-5 * 2500**4) * np.pi
+        result = planck_integral(7600.0, 2500.0) / (5.67051E-5 * 2500.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
@@ -105,7 +105,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_IR_warm(self):
          # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.443376
-        result = planck_integral(7600, 5000) / (5.67051E-5 * 5000**4) * np.pi
+        result = planck_integral(7600.0, 5000.0) / (5.67051E-5 * 5000.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
@@ -113,12 +113,12 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
     def test_planck_integral_IR_hot(self):
          # Taking values from Lawson, Int. J. Engng Ed. Vol. 20, No. 6, pp. 984-990, 2004
         expected = 0.839068
-        result = planck_integral(7600, 10000) / (5.67051E-5 * 10000**4) * np.pi
+        result = planck_integral(7600.0, 10000.0) / (5.67051E-5 * 10000.0**4) * np.pi
         pdiff = abs(expected - result.value) / np.mean([expected, result.value])
         
         self.assertFalse(pdiff > 0.01)
 
-    def test_planck_integral_convergence_R_cool(self):
+    def test_planck_integral_convergence_R_cool(self): 
         wavelength = u.Quantity(7600, unit=u.Angstrom)
         temperature = u.Quantity(2500, unit=u.K)
 
@@ -144,7 +144,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
 
         B_integral_1 = (C1 * temperature**4 / C2**4) * series / u.sr
 
-        self.assertTrue(B_integral.value / B_integral_1.value - 1 < 1E-10)
+        self.assertTrue(B_integral.value / B_integral_1.value - 1.0 < 1E-10)
 
     def test_planck_integral_convergence_R_warm(self):
         wavelength = u.Quantity(7600, unit=u.Angstrom)
@@ -172,7 +172,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
 
         B_integral_1 = (C1 * temperature**4 / C2**4) * series / u.sr
 
-        self.assertTrue(B_integral.value / B_integral_1.value - 1 < 1E-10)
+        self.assertTrue(B_integral.value / B_integral_1.value - 1.0 < 1E-10)
         
     def test_planck_integral_convergence_R_hot(self):
         wavelength = u.Quantity(7600, unit=u.Angstrom)
@@ -200,7 +200,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
 
         B_integral_1 = (C1 * temperature**4 / C2**4) * series / u.sr
 
-        self.assertTrue(B_integral.value / B_integral_1.value - 1 < 1E-10)
+        self.assertTrue(B_integral.value / B_integral_1.value - 1.0 < 1E-10)
 
     def test_planck_integral_convergence_U_cool(self):
         wavelength = u.Quantity(21900, unit=u.Angstrom)
@@ -228,7 +228,7 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
 
         B_integral_1 = (C1 * temperature**4 / C2**4) * series / u.sr
 
-        self.assertTrue(B_integral.value / B_integral_1.value - 1 < 1E-10)
+        self.assertTrue(B_integral.value / B_integral_1.value - 1.0 < 1E-10)
 
     def test_planck_integral_convergence_K_warm(self):
         wavelength = u.Quantity(21900, unit=u.Angstrom)
@@ -256,11 +256,11 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
 
         B_integral_1 = (C1 * temperature**4 / C2**4) * series / u.sr
 
-        self.assertTrue(B_integral.value / B_integral_1.value - 1 < 1E-10)
+        self.assertTrue(B_integral.value / B_integral_1.value - 1.0 < 1E-10)
 
     def test_planck_integral_convergence_K_hot(self):
         wavelength = u.Quantity(21900, unit=u.Angstrom)
-        temperature = u.Quantity(5000, unit=u.K)
+        temperature = u.Quantity(10000, unit=u.K)
 
         C1 = 2.0 * const.h.cgs * const.c.cgs**2
         C2 = const.h.cgs * const.c.cgs / const.k_B.cgs
@@ -284,4 +284,4 @@ class TestPlanckFunctionExtrema(unittest.TestCase):
 
         B_integral_1 = (C1 * temperature**4 / C2**4) * series / u.sr
 
-        self.assertTrue(B_integral.value / B_integral_1.value - 1 < 1E-10)        
+        self.assertTrue(B_integral.value / B_integral_1.value - 1.0 < 1E-10)        
