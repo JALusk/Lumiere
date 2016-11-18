@@ -152,22 +152,34 @@ class TestFitBlackbodyTemperatureToWD(unittest.TestCase):
                            7.41997460e-17, 2.71298841e-17, 9.29630830e-18]
 
     def test_fit_blackbody_cool_WD(self):
-        """This test is a cheat - it compares the result from fitting the above data to... the result from fitting the above data. However, I need it in order to check that Python 2.7 and Python 3 are returning the same value"""
         result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.cool_fluxes, self.cool_errors)
 
-        expected = 3300.2745422033599
-        self.assertAlmostEqual(expected, result_T, 4)
+        expected = 3300.274543
+        self.assertAlmostEqual(expected, result_T)
 
     def test_fit_blackbody_warm_WD(self):
-        """This test is a cheat - it compares the result from fitting the above data to... the result from fitting the above data. However, I need it in order to check that Python 2.7 and Python 3 are returning the same value"""
         result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.warm_fluxes, self.warm_errors)
 
-        expected = 4983.3607398832628
-        self.assertAlmostEqual(expected, result_T, 4)
+        expected = 4983.36073925
+        self.assertAlmostEqual(expected, result_T)
 
     def test_fit_blackbody_hot_WD(self):
-        """This test is a cheat - it compares the result from fitting the above data to... the result from fitting the above data. However, I need it in order to check that Python 2.7 and Python 3 are returning the same value"""
         result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.hot_fluxes, self.hot_errors)
 
-        expected = 11196.376938272722
-        self.assertAlmostEqual(expected, result_T, 4)
+        expected = 11196.3769245
+        self.assertAlmostEqual(expected, result_T)
+
+
+class TestFitBlackbodyTemperatureToSN(unittest.TestCase):
+
+    def setUp(self):
+        self.wavelengths = [3660., 4380.,  5450.,  6410.,  7980.]
+        self.fluxes = [1.42159582e-16, 2.09548255e-16, 3.70796730e-16, 4.53049602e-16, 3.36788260e-16]
+        self.flux_errs = [2.21846926e-17, 1.18302183e-17, 1.17834356e-17, 1.53145455e-17, 1.24389601e-17]
+
+    def test_fit_blackbody_SN98A(self):
+        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.fluxes, self.flux_errs)
+
+        expected = 4331.7954035003195
+        self.assertAlmostEqual(expected, result_T)
+
