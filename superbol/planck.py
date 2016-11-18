@@ -61,7 +61,7 @@ def planck_integral(wavelength, temperature):
 
     series = 0.0
     for i in range(1, iterations):
-        term = (x**3/i + 3*x**2/i**2 + 6*x/i**3 + 6/i**4) * np.exp(-i * x)
+        term = (x**3/i + 3*x**2/i**2 + 6*x/i**3 + 6.0/i**4) * np.exp(-i * x)
         series += term
 
     B_integral = (C1 * temperature**4 / C2**4) * series / u.sr
