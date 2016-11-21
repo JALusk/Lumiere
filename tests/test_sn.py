@@ -639,13 +639,13 @@ class TestLbolDirect(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_direct_lc_98A_first_lbol(self):
-        expected = 6.908881676781544815e+41
+        expected = 6.9078771375187276e+41
         direct_lc = self.my_sn.lbol_direct_bh09()
         result = direct_lc['lbol'][0]
         self.assertEqual(expected, result)
 
     def test_direct_lc_98A_first_lbol_err(self):
-        expected = 3.200749412914101756e+41
+        expected = 3.200283724016021e+41
         direct_lc = self.my_sn.lbol_direct_bh09()
         result = direct_lc['lbol_err'][0]
         self.assertEqual(expected, result)
