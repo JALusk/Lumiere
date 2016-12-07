@@ -43,7 +43,7 @@ def combine_repeated_detections(binned_phot):
     JD (after binning)"""
     
     JD, jdindex = np.unique(binned_phot['jd'], return_index = True)
-    zipped_photometry = np.array([(0.0, '', 0.0, 0.0)], dtype = binned_phot.dtype)
+    zipped_photometry = np.empty(np.shape(binned_phot[0]), dtype = binned_phot.dtype)
     # Split into sub-arrays for each days' detections
     for subarray in np.split(binned_phot, jdindex[1:]):
         jd = subarray['jd'][0]
