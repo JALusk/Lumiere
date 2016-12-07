@@ -239,8 +239,12 @@ class SN(object):
         h5file = self.open_source_h5file()
         self.import_hdf5_tables(h5file)
 
-        photometry = self.get_photometry()
-        dereddened_phot = self.deredden_UBVRI_magnitudes(photometry)
+        if self.photometry == None:
+            self.photometry = self.get_photometry()
+
+        combined_phot = zip_photometry(self.photometry)
+
+        dereddened_phot = self.deredden_UBVRI_magnitudes(combined_phot)
         bc_epochs = self.get_bc_epochs(dereddened_phot, filter1, filter2)
         distance_cm, distance_cm_err = self.get_distance_cm()
 
@@ -471,7 +475,7 @@ class SN(object):
         """Write the lightcurve to a file handle"""
         np.savetxt(outfile_handle, lightcurve)
 
-    def write_lbol_to_file(filename, lightcurve):
+    def write_lbol_to_file(self, filename, lightcurve):
         """Write the lightcurve to a file on disk"""
         with open(filename, 'w') as outfile_handle:
             self.write_lbol_filestream(outfile_handle, lightcurve)
