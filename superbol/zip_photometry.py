@@ -55,7 +55,8 @@ def combine_repeated_detections(binned_phot):
         for repeated_filter in repeated_filters:
             average_mag = np.mean(subarray['magnitude'][np.where(subarray['name'] == repeated_filter)])
             err = np.sqrt(np.sum(subarray['uncertainty'][np.where(subarray['name'] == repeated_filter)]**2))
-            averaged_detection = np.array([(subarray['jd'][0], repeated_filter, average_mag, err)], dtype=binned_phot.dtype)
+            filter_id = np.unique(subarray['id'][np.where(subarray['name'] == repeated_filter)])
+            averaged_detection = np.array([(subarray['jd'][0], repeated_filter, filter_id, average_mag, err)], dtype=binned_phot.dtype)
                                                             
             subarray_no_repeats = np.append(subarray_no_repeats, averaged_detection)
         zipped_photometry = np.append(zipped_photometry, subarray_no_repeats)
