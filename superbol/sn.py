@@ -8,6 +8,7 @@ from .fbol import ir_correction, uv_correction_linear, uv_correction_blackbody
 from .fit_blackbody import bb_fit_parameters
 from .fit_blackbody import bb_flux_nounits
 from .luminosity import calc_Lbol
+from .zip_photometry import zip_photometry
 from specutils import extinction
 
 
@@ -62,6 +63,8 @@ class SN(object):
         self.phot_table = None
         self.parameter_table = None
 
+        self.photometry = None
+
         self.min_num_obs = 4
 
     def open_source_h5file(self):
@@ -94,7 +97,12 @@ class SN(object):
         h5file = self.open_source_h5file()
         self.import_hdf5_tables(h5file)
 
-        converted_obs = self.convert_magnitudes_to_fluxes()
+        if self.photometry == None:
+            self.photometry = self.get_photometry()
+
+        combined_phot = zip_photometry(self.photometry)
+
+        converted_obs = self.convert_magnitudes_to_fluxes(combined_phot)
         dereddened_obs = self.deredden_fluxes(converted_obs)
         lbol_epochs = self.get_lbol_epochs(dereddened_obs, self.min_num_obs)
         distance_cm, distance_cm_err = self.get_distance_cm()
@@ -178,7 +186,12 @@ class SN(object):
         h5file = self.open_source_h5file()
         self.import_hdf5_tables(h5file)
 
-        converted_obs = self.convert_magnitudes_to_fluxes()
+        if self.photometry == None:
+            self.photometry = self.get_photometry()
+        
+        combined_phot = zip_photometry(self.photometry)
+
+        converted_obs = self.convert_magnitudes_to_fluxes(combined_phot)
         dereddened_obs = self.deredden_fluxes(converted_obs)
         lbol_epochs = self.get_lbol_epochs(dereddened_obs, self.min_num_obs)
         distance_cm, distance_cm_err = self.get_distance_cm()
@@ -324,15 +337,16 @@ class SN(object):
         """Build a numpy array of [`jd`, `name`, `magnitude`, `uncertainty`]
         from the data contained within the HDF5 file.
         """
-        dtype = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
-        photometry = np.array([(0.0,'0.0',0.0,0.0)], dtype=dtype)
+        dtype = [('jd', '>f8'), ('name', 'S1'), ('id', '<i4'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
+        photometry = np.array([(0.0,'0.0',0,0.0,0.0)], dtype=dtype)
         
         for obs in self.phot_table.iterrows():
             filterid = obs['filter_id']
             for filt in self.filter_table.where('(filter_id == filterid)'):
                 photometry = np.append(photometry, 
                                        np.array([(obs['jd'], 
-                                       filt['name'], 
+                                       filt['name'],
+                                       filt['filter_id'],
                                        obs['magnitude'], 
                                        obs['uncertainty'])],
                                        dtype=dtype))
@@ -410,7 +424,7 @@ class SN(object):
         
         return lbol_epochs
 
-    def convert_magnitudes_to_fluxes(self):
+    def convert_magnitudes_to_fluxes(self, photometry):
         """Perform the magnitude to flux conversion.
 
         Creates an array of [`jd`, `name`, `wavelength`, `flux`, `uncertainty`]
@@ -418,8 +432,8 @@ class SN(object):
         dtype = [('jd', '>f8'), ('name', 'S1'), ('wavelength', '>f8'), ('flux', '>f8'), ('uncertainty', '>f8')]
         converted_obs = np.array([(0.0,'0.0',0.0,0.0,0.0)], dtype=dtype)
         
-        for obs in self.phot_table.iterrows():
-            filterid = obs['filter_id']
+        for obs in photometry:
+            filterid = obs['id']
             for filt in self.filter_table.where('(filter_id == filterid)'):
                 flux, flux_err = mag2flux(obs['magnitude'], 
                                           obs['uncertainty'], 
