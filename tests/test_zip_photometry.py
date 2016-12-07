@@ -121,7 +121,7 @@ class TestCombineRepeatedDetections(unittest.TestCase):
                                (2446856.01, 'J', 3.46, 0.02)], dtype=self.dtype)
         expected = np.array([(2446856.01, 'J', 3.45, err)], dtype=self.dtype)
         result = zip_phot.combine_repeated_detections(photometry)
-        self.assertTrue(np.array_equal(expected, result))
+        self.assertTrue(np.array_equal(expected, result), msg='{0}, {1}'.format(expected, result))
 
     def test_leave_non_repeated_detections_alone(self):
         """When there are no repeated detections, do nothing"""
@@ -129,7 +129,7 @@ class TestCombineRepeatedDetections(unittest.TestCase):
                                (2446856.01, 'H', 3.28, 0.02)], dtype=self.dtype)
         expected = photometry
         result = zip_phot.combine_repeated_detections(photometry)
-        self.assertTrue(np.array_equal(expected, result))
+        self.assertTrue(np.array_equal(expected, result), msg='{0}, {1}'.format(expected, result))
 
     def test_combine_repeated_detectiions_two_filters(self):
         photometry = np.array([(2446856.510, 'J', 3.44, 0.02),
@@ -158,4 +158,4 @@ class TestCombineRepeatedDetections(unittest.TestCase):
                              (2446856.639, 'R', 4.025, 0.02), 
                              (2446856.639, 'I', 3.952, 0.02)], dtype=self.dtype)
         result = zip_phot.combine_repeated_detections(photometry)
-        self.assertTrue(np.array_equal(expected, result))
+        self.assertTrue(np.array_equal(expected, result), msg='{0}, {1}'.format(expected, result))

@@ -46,6 +46,11 @@ class TestSNInitialization(unittest.TestCase):
         result = self.my_sn.parameter_table
         self.assertEqual(expected, result)
 
+    def test_sn_photometry_initialization(self):
+        expected = None
+        result = self.my_sn.photometry
+        self.assertEqual(expected, result)
+
 class TestSNDefaultSourceOpening(unittest.TestCase):
 
     def setUp(self):
@@ -145,7 +150,7 @@ class TestSNGetPhotometry(unittest.TestCase):
         self.assertTrue(result)
 
     def test_get_photometry_dtype(self):
-        expected = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
+        expected = [('jd', '>f8'), ('name', 'S1'), ('id', '<i4'), ('magnitude', '>f8'), ('uncertainty', '>f8')]
         photometry = self.my_sn.get_photometry()
         result = photometry.dtype
         self.assertEqual(expected, result)
@@ -162,6 +167,13 @@ class TestSNGetPhotometry(unittest.TestCase):
         
         photometry = self.my_sn.get_photometry()
         result = photometry[0]['name']
+        self.assertEqual(expected, result)
+
+    def test_get_photometry_98A_first_obs_filter_id(self):
+        expected = 14
+        
+        photometry = self.my_sn.get_photometry()
+        result = photometry[0]['id']
         self.assertEqual(expected, result)
 
     def test_get_photometry_98A_first_obs_mag(self):
@@ -367,57 +379,58 @@ class TestSNConvertMagnitudesToFluxes(unittest.TestCase):
         self.my_sn = sn.SN(self.sn_name, self.source)
         self.h5file = tb.open_file(self.source, 'r')
         self.my_sn.import_hdf5_tables(self.h5file)
+        self.photometry = self.my_sn.get_photometry()
     
     def test_convert_magnitudes_to_fluxes_returns_numpy_array(self):
-        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
         result = isinstance(converted_obs, np.ndarray)
         self.assertTrue(result)
 
     def test_convert_magnitudes_to_fluxes_dtype(self):
         expected = [('jd', '>f8'), ('name', 'S1'), ('wavelength', '>f8'), ('flux', '>f8'), ('uncertainty', '>f8')]
-        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
         result = converted_obs.dtype
         self.assertEqual(expected, result)
 
     def test_convert_magnitudes_to_fluxes_98A_first_obs_jd(self):
         expected = 2450820.3
         
-        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
         result = converted_obs[0]['jd']
         self.assertEqual(expected, result)
 
     def test_convert_magnitudes_to_fluxes_98A_first_obs_filter_name(self):
         expected = b'R'
         
-        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
         result = converted_obs[0]['name']
         self.assertEqual(expected, result)
 
     def test_convert_magnitudes_to_fluxes_98A_first_obs_wavelength(self):
         expected = 6410.0
         
-        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
         result = converted_obs[0]['wavelength']
         self.assertEqual(expected, result)
 
     def test_convert_magnitudes_to_fluxes_98A_first_obs_flux(self):
         expected = 3.450312479987838e-16
         
-        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
         result = converted_obs[0]['flux']
         self.assertEqual(expected, result)
     
     def test_convert_magnitudes_to_fluxes_98A_first_obs_uncertainty(self):
         expected = 1.588927616518263e-16
         
-        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
         result = converted_obs[0]['uncertainty']
         self.assertEqual(expected, result)
 
     def test_convert_magnitudes_to_fluxes_98A_returns_correct_number_of_observations(self):
         expected = 50
 
-        converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
         result = len(converted_obs)
         self.assertEqual(expected, result)
 
@@ -432,7 +445,8 @@ class TestGetLbolEpochs(unittest.TestCase):
         self.my_sn = sn.SN(self.sn_name, self.source)
         self.h5file = tb.open_file(self.source, 'r')
         self.my_sn.import_hdf5_tables(self.h5file)
-        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        self.photometry = self.my_sn.get_photometry()
+        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
 
     def test_get_lbol_epochs_returns_numpy_array(self):
         lbol_epochs = self.my_sn.get_lbol_epochs(self.converted_obs, 4)
@@ -465,7 +479,8 @@ class TestSNDereddenFluxes(unittest.TestCase):
         self.my_sn = sn.SN(self.sn_name, self.source)
         self.h5file = tb.open_file(self.source, 'r')
         self.my_sn.import_hdf5_tables(self.h5file)
-        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        self.photometry = self.my_sn.get_photometry()
+        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
 
     def test_deredden_fluxes_returns_numpy_array(self):
         dereddened_obs = self.my_sn.deredden_fluxes(self.converted_obs)
@@ -530,7 +545,8 @@ class TestLqbol(unittest.TestCase):
         self.my_sn = sn.SN(self.sn_name, self.source)
         self.h5file = tb.open_file(self.source, 'r')
         self.my_sn.import_hdf5_tables(self.h5file)
-        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        self.photometry = self.my_sn.get_photometry()
+        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
 
     def test_lqbol_lc_returns_numpy_array(self):
         qbol_lc = self.my_sn.lqbol()
@@ -618,7 +634,8 @@ class TestLbolDirect(unittest.TestCase):
         self.my_sn = sn.SN(self.sn_name, self.source)
         self.h5file = tb.open_file(self.source, 'r')
         self.my_sn.import_hdf5_tables(self.h5file)
-        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes()
+        self.photometry = self.my_sn.get_photometry()
+        self.converted_obs = self.my_sn.convert_magnitudes_to_fluxes(self.photometry)
 
     def test_direct_lc_returns_numpy_array(self):
         direct_lc = self.my_sn.lbol_direct_bh09()
