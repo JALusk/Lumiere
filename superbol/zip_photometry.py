@@ -2,7 +2,7 @@ import numpy as np
 
 def zip_photometry(photometry, dt=0.3):
     sorted_phot = sort_photometry(photometry)
-    binned_phot = bin_JDs(sorted_phot, dt)
+    binned_phot = bin_by_day(sorted_phot)
     zipped_phot = combine_repeated_detections(binned_phot)
 
     return zipped_phot
@@ -35,6 +35,16 @@ def bin_JDs(sorted_photometry, dt=0.3):
 
     for k in range(len(last_group)):
         sorted_photometry['jd'][break_index + k] = mean_last_group
+
+    return sorted_photometry
+
+def bin_by_day(sorted_photometry):
+    """Combine observations taken on the same JD"""
+
+    bins = np.floor(sorted_photometry['jd'])
+
+    for i, binned_JD in enumerate(bins):
+        sorted_photometry['jd'][i] = binned_JD
 
     return sorted_photometry
 
