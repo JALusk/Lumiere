@@ -107,6 +107,36 @@ class TestBinPhotometry(unittest.TestCase):
         result = zip_phot.bin_JDs(photometry)
         self.assertTrue(np.allclose(expected['jd'], result['jd']), msg='{0}, {1}'.format(expected, result))
 
+class TestBinByDay(unittest.TestCase):
+    
+    def setUp(self):
+        self.dtype = [('jd', '>f8'), ('name', 'S1'), ('magnitude', '>f8'), 
+                      ('uncertainty', '>f8')]
+
+    def test_bin_simple_dataset(self):
+        photometry = np.array([(2446855.622, 'U', 5.909, 0.02),
+                               (2446855.622, 'B', 5.165, 0.02),
+                               (2446855.622, 'V', 4.498, 0.02),
+                               (2446855.622, 'R', 4.064, 0.02),
+                               (2446855.622, 'I', 3.987, 0.02),
+                               (2446856.270, 'J', 3.49, 0.02),
+                               (2446856.270, 'H', 3.27, 0.02),
+                               (2446856.270, 'K', 2.99, 0.02),
+                               (2446856.270, 'L', 2.45, 0.03),
+                               (2446856.270, 'M', 2.34, 0.04)], dtype=self.dtype)
+        expected = np.array([(2446855.0, 'U', 5.909, 0.02),
+                              (2446855.0, 'B', 5.165, 0.02),
+                              (2446855.0, 'V', 4.498, 0.02),
+                              (2446855.0, 'R', 4.064, 0.02),
+                              (2446855.0, 'I', 3.987, 0.02),
+                              (2446856.0, 'J', 3.49, 0.02),
+                              (2446856.0, 'H', 3.27, 0.02),
+                              (2446856.0, 'K', 2.99, 0.02),
+                              (2446856.0, 'L', 2.45, 0.03),
+                              (2446856.0, 'M', 2.34, 0.04)], dtype=self.dtype)
+        result = zip_phot.bin_by_day(photometry)
+        self.assertTrue(np.allclose(expected['jd'], result['jd']))
+
 class TestCombineRepeatedDetections(unittest.TestCase):
 
     def setUp(self):
