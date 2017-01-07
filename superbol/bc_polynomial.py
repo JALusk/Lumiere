@@ -1,4 +1,4 @@
-import constants
+import superbol.constants as constants
 import math
 
 def set_constants(color_type):
@@ -139,7 +139,7 @@ def calculate_polynomial_derivative(coefficients, variable):
 
     Returns:
         float: The result of summing the derivatives of
-        the polynomial terms calculated from the coefficients and 
+        the polynomial terms calculated from the coefficients and
         variable given.
     """
     polynomial_derivative = 0.0
@@ -147,7 +147,7 @@ def calculate_polynomial_derivative(coefficients, variable):
     for order in range(len(coefficients)):
         polynomial_derivative += calculate_polynomial_derivative_term(
             coefficients[order], variable, order)
- 
+
     return polynomial_derivative
 
 def quadrature_sum(x, y):
@@ -185,9 +185,9 @@ def calc_bolometric_correction_err(color_value, color_err, color_type):
    """
     coefficients = set_constants(color_type)[0]
     rms_err = set_constants(color_type)[3]
-    
+
     bc_derivative = calculate_polynomial_derivative(coefficients,
-                                                     color_value) 
+                                                     color_value)
     bc_polynomial_err = abs(bc_derivative) * color_err
     bolometric_correction_uncertainty = quadrature_sum(bc_polynomial_err,
                                                        rms_err)
@@ -205,9 +205,9 @@ def calc_bolometric_correction(color_value, color_err, color_type):
         color_type (str): String signifying which color color_value represents.
             Valid values are "BminusV" for B-V, "VminusI" for V-I, and
             "BminusI" for B-I.
- 
+
     Returns:
-        tuple: A tuple containing the bolometric correction for use in 
+        tuple: A tuple containing the bolometric correction for use in
         calculating the bolometric luminosity of the supernova, and the
         uncertainty in that bolometric correction (if the color given
         is within the valid range of the polynomial fit.)
