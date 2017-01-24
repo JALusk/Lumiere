@@ -2,7 +2,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 from astropy import units as u
 from astropy import constants as const
-from planck import *
+from superbol.planck import *
 
 def bb_flux(wavelength, temperature, angular_radius):
     """Observed flux at `wavelength` from a blackbody of `temperature` and `angular_radius` in cgs units
@@ -30,7 +30,7 @@ def bb_flux_nounits(wavelength, temperature, angular_radius):
 
 def bb_flux_integrated(wavelength, temperature, angular_radius):
     """Integrate the planck function from :math:`\\lambda = 0` to :math:`\\lambda =` `wavelength`, then convert result to observed flux
-    
+
     Args:
         wavelength (float): Wavelength in Angstroms
         temperature (float): Temperature in Kelvin
@@ -94,7 +94,7 @@ def dbb_total_flux_dT(temperature, angular_radius):
 
 def bb_fit_parameters(wavelengths, fluxes, flux_uncertainties):
     """Fit a blackbody to observed `wavelengths` and `fluxes`.
-    
+
     The initial guesses for the `temperature` and `angular_radius` are :math:`T = 5000` K and :math:`\\theta = 1.0 \\times 10^{-10}`. These are typical for an extragalactic supernovae, but should be used with caution for any other objects.
 
     Args:
@@ -110,5 +110,5 @@ def bb_fit_parameters(wavelengths, fluxes, flux_uncertainties):
     temperature = popt[0]
     angular_radius = popt[1]
     perr = np.sqrt(np.diag(pcov))
-    
+
     return temperature, angular_radius, perr

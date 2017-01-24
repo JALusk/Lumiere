@@ -3,3 +3,4 @@ astropy
 scipy >= 0.14.0  # curve_fit couldn't handle uncertainties in ydata in <= 0.13.0
 numpy
 specutils
+tables
