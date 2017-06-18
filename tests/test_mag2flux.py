@@ -20,3 +20,11 @@ class TestObservation(unittest.TestCase):
         flux = my_obs.convert_to_flux()
         self.assertEqual(flux, flux_conversion_factor)
         
+    def test_observation_converts_Johnson_U_nonzero_magnitude_to_flux(self):
+        """Observation should convert magnitude of U = 19.356 to flux"""
+        magnitude = 19.356
+        flux_conversion_factor = 417.5E-11
+        expected_flux = flux_conversion_factor * 10**(-0.4 * magnitude)
+        my_obs = mag2flux.Observation(magnitude, flux_conversion_factor)
+        flux = my_obs.convert_to_flux()
+        self.assertEqual(flux, expected_flux)

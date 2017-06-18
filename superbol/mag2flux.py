@@ -5,4 +5,5 @@ class Observation(object):
         self.flux_conversion_factor = flux_conversion_factor
 
     def convert_to_flux(self):
-        return self.flux_conversion_factor
+        flux = self.flux_conversion_factor * 10**(-0.4 * self.magnitude)
+        return flux
