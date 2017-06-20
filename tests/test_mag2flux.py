@@ -58,4 +58,3 @@ class TestObservation(unittest.TestCase):
         my_obs = mag2flux.Observation(self.B_magnitude, uncertainty, self.B_flux_conversion_factor)
         flux_uncertainty = my_obs.calculate_flux_uncertainty()
         self.assertEqual(expected_flux_uncertainty, flux_uncertainty)
-        
