@@ -12,7 +12,8 @@ class Observation(object):
         return flux
 
     def calculate_flux_uncertainty(self):
-        flux_uncertainty = self.convert_to_flux() * 0.4 * math.log(10) * self.uncertainty
+        flux = self.convert_to_flux()
+        flux_uncertainty = flux * 0.4 * math.log(10) * self.uncertainty
         return flux_uncertainty
 
 class Band(object):
