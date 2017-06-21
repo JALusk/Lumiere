@@ -20,9 +20,9 @@ class Band(object):
 
 class MonochromaticFlux(object):
 
-    def __init__(self, flux, uncertainty, wavelength):
+    def __init__(self, flux, flux_uncertainty, wavelength):
         self.flux = flux
-        self.uncertainty = uncertainty
+        self.flux_uncertainty = flux_uncertainty
         self.wavelength = wavelength
 
 class MagnitudeToFluxConverter(object):
@@ -42,6 +42,6 @@ class MagnitudeToFluxConverter(object):
     def convert_to_flux(self):
         flux = self._calculate_flux()
         flux_uncertainty = self._calculate_flux_uncertainty(flux)
-        wavelength = self.observation.band.effective_wavelength
-        monochromatic_flux = MonochromaticFlux(flux, flux_uncertainty, wavelength)
+        effective_wavelength = self.observation.band.effective_wavelength
+        monochromatic_flux = MonochromaticFlux(flux, flux_uncertainty, effective_wavelengt)
         return monochromatic_flux

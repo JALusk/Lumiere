@@ -48,7 +48,7 @@ class TestObservation(unittest.TestCase):
         expected_flux_uncertainty = expected_flux * 0.4 * math.log(10) * self.uncertainty
         my_obs = mag2flux.Observation(self.U_magnitude, self.uncertainty, self.U_band)
         flux = my_obs.convert_to_flux()
-        flux_uncertainty = flux.uncertainty
+        flux_uncertainty = flux.flux_uncertainty
         self.assertEqual(expected_flux_uncertainty, flux_uncertainty)
 
     def test_observation_zero_uncertainty(self):
@@ -58,5 +58,5 @@ class TestObservation(unittest.TestCase):
         expected_flux_uncertainty = 0.00
         my_obs = mag2flux.Observation(self.B_magnitude, uncertainty, self.B_band)
         flux = my_obs.convert_to_flux()
-        flux_uncertainty = flux.uncertainty
+        flux_uncertainty = flux.flux_uncertainty
         self.assertEqual(expected_flux_uncertainty, flux_uncertainty)
