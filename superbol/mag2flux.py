@@ -1,6 +1,6 @@
 import math
 
-class Observation(object):
+class ObservedMagnitude(object):
 
     def __init__(self, magnitude, uncertainty, band):
         self.magnitude = magnitude
@@ -43,5 +43,5 @@ class MagnitudeToFluxConverter(object):
         flux = self._calculate_flux()
         flux_uncertainty = self._calculate_flux_uncertainty(flux)
         effective_wavelength = self.observation.band.effective_wavelength
-        monochromatic_flux = MonochromaticFlux(flux, flux_uncertainty, effective_wavelengt)
+        monochromatic_flux = MonochromaticFlux(flux, flux_uncertainty, effective_wavelength)
         return monochromatic_flux
