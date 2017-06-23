@@ -3,60 +3,83 @@ import math
 from .context import superbol
 from superbol import mag2flux
 
-class TestObservation(unittest.TestCase):
+class TestObservedMagnitude(unittest.TestCase):
 
     def setUp(self):
-        self.U_band = mag2flux.Band('U', 3660.0, 417.5E-11)
         self.B_band = mag2flux.Band('B', 4380.0, 632.0E-11)
-        self.U_magnitude = 19.356
-        self.B_magnitude = 18.793
-        self.uncertainty = 0.02
+        self.B_obs = mag2flux.ObservedMagnitude(18.793, 0.02, self.B_band)
         
-    def test_observation_converts_Johnson_U_zero_magnitude_to_flux(self):
-        """Observation should convert magnitude of U = 0 to the flux conversion factor of the filter"""
-        magnitude = 0
-        uncertainty = 0
-        my_obs = mag2flux.ObservedMagnitude(magnitude, uncertainty, self.U_band)
-        flux = my_obs.convert_to_flux()
-        self.assertEqual(flux.flux, self.U_band.flux_conversion_factor)
-
-    def test_observation_converts_Johsnon_B_zero_magnitude_to_flux(self):
-        """Observation should convert magnitude of B = 0 to the flux conversion factor of the filter"""
-        magnitude = 0
-        uncertainty = 0
-        my_obs = mag2flux.ObservedMagnitude(magnitude, uncertainty, self.B_band)
-        flux = my_obs.convert_to_flux()
-        self.assertEqual(flux.flux, self.B_band.flux_conversion_factor)
-        
-    def test_observation_converts_Johnson_U_nonzero_magnitude_to_flux(self):
-        """Observation should convert magnitude of U = 19.356 to flux"""
-        expected_flux = self.U_band.flux_conversion_factor * 10**(-0.4 * self.U_magnitude)
-        my_obs = mag2flux.ObservedMagnitude(self.U_magnitude, self.uncertainty, self.U_band)
-        flux = my_obs.convert_to_flux()
+    def test_convert_to_flux_converts_Johnson_B_magnitude_to_flux(self):
+        expected_flux = self.B_band.flux_conversion_factor * 10**(-0.4 * self.B_obs.magnitude)
+        flux = self.B_obs.convert_to_flux()
         self.assertEqual(flux.flux, expected_flux)
 
-    def test_observation_converts_Johnson_B_nonzero_magnitude_to_flux(self):
-        """Observation should convert magnitude of B = 18.793 to flux"""
-        expected_flux = self.B_band.flux_conversion_factor * 10**(-0.4 * self.B_magnitude)
-        my_obs = mag2flux.ObservedMagnitude(self.B_magnitude, self.uncertainty, self.B_band)
-        flux = my_obs.convert_to_flux()
-        self.assertEqual(flux.flux, expected_flux)
+    def test_convert_to_flux_propagates_Johnson_B_magnitude_uncertainty(self):
+        expected_flux = self.B_band.flux_conversion_factor * 10**(-0.4 * self.B_obs.magnitude)
+        expected_flux_uncertainty = expected_flux * 0.4 * math.log(10) * self.B_obs.uncertainty
+        flux = self.B_obs.convert_to_flux()
+        self.assertEqual(flux.flux_uncertainty, expected_flux_uncertainty)
 
-    def test_observation_calculates_uncertainty_in_flux_conversion(self):
-        """Observation should propagate the uncertainty in the magnitude to flux conversion"""
-        expected_flux = self.U_band.flux_conversion_factor * 10**(-0.4 * self.U_magnitude)
-        expected_flux_uncertainty = expected_flux * 0.4 * math.log(10) * self.uncertainty
-        my_obs = mag2flux.ObservedMagnitude(self.U_magnitude, self.uncertainty, self.U_band)
-        flux = my_obs.convert_to_flux()
-        flux_uncertainty = flux.flux_uncertainty
-        self.assertEqual(expected_flux_uncertainty, flux_uncertainty)
+    def test_convert_to_flux_produces_flux_at_band_effective_wavelength(self):
+        expected_wavelength = self.B_band.effective_wavelength
+        flux = self.B_obs.convert_to_flux()
+        self.assertEqual(flux.wavelength, expected_wavelength)
 
-    def test_observation_zero_uncertainty(self):
-        """A magnitude with no uncertainty should produce a flux with zero uncertainty"""
-        uncertainty = 0.00
-        expected_flux = self.B_band.flux_conversion_factor * 10**(-0.4 * self.B_magnitude)
-        expected_flux_uncertainty = 0.00
-        my_obs = mag2flux.ObservedMagnitude(self.B_magnitude, uncertainty, self.B_band)
-        flux = my_obs.convert_to_flux()
-        flux_uncertainty = flux.flux_uncertainty
-        self.assertEqual(expected_flux_uncertainty, flux_uncertainty)
+class TestMagnitudeToFluxConverter(unittest.TestCase):
+
+    def setUp(self):
+        self.converter = mag2flux.MagnitudeToFluxConverter()
+
+    def test_calculate_flux_works_for_magnitude_equal_to_zero(self):
+        result = self.converter._calculate_flux(0, 1)
+        self.assertEqual(1, result)
+
+    def test_calculate_flux_works_for_magnitude_equal_to_one(self):
+        result = self.converter._calculate_flux(1, 1)
+        self.assertEqual(10**(-0.4), result)
+
+    def test_calculate_flux_works_for_real_data(self):
+        expected = 417.5E-11 * 10**(-0.4 * 19.356)
+        result = self.converter._calculate_flux(19.356, 417.5E-11)
+        self.assertEqual(expected, result)
+
+    def test_calculate_flux_uncertainty_with_zero_mag_uncertainty(self):
+        expected = 0
+        result = self.converter._calculate_flux_uncertainty(1, 0)
+        self.assertEqual(expected, result)
+
+    def test_calculate_flux_uncertainty_with_nonzero_mag_uncertainty(self):
+        expected = 0.4 * math.log(10)
+        result = self.converter._calculate_flux_uncertainty(1, 1)
+        self.assertEqual(expected, result)
+
+    def test_calculate_flux_uncertainty_with_real_data(self):
+        flux = 417.5E-11 * 10**(-0.4 * 19.356)
+        expected = flux * 0.4 * math.log(10) * 0.02
+        result = self.converter._calculate_flux_uncertainty(flux, 0.02)
+        self.assertEqual(expected, result)
+
+class TestMagnitudeToFluxConverterConvertMethod(unittest.TestCase):
+
+    def setUp(self):
+        self.converter = mag2flux.MagnitudeToFluxConverter()
+        self.band = mag2flux.Band('U', 3660.0, 417.5E-11)
+        self.observed_mag = mag2flux.ObservedMagnitude(19.356, 0.02, self.band)
+
+    def test_convert_with_real_data_gets_flux_right(self):
+        flux = 417.5E-11 * 10**(-0.4 * 19.356)
+        expected = mag2flux.MonochromaticFlux(flux, 0, 0)
+        result = self.converter.convert(self.observed_mag)
+        self.assertEqual(expected.flux, result.flux)
+
+    def test_convert_with_real_data_gets_flux_uncertainty_right(self):
+        flux = 417.5E-11 * 10**(-0.4 * 19.356)
+        flux_uncertainty = flux * 0.4 * math.log(10) * 0.02
+        expected = mag2flux.MonochromaticFlux(flux, flux_uncertainty, 0)
+        result = self.converter.convert(self.observed_mag)
+        self.assertEqual(expected.flux_uncertainty, result.flux_uncertainty)
+
+    def test_convert_with_real_data_does_not_change_wavelength(self):
+        expected = mag2flux.MonochromaticFlux(0, 0, self.band.effective_wavelength)
+        result = self.converter.convert(self.observed_mag)
+        self.assertEqual(expected.wavelength, result.wavelength)

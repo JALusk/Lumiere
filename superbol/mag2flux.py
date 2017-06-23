@@ -15,7 +15,7 @@ class ObservedMagnitude(object):
         self.band = band
 
     def convert_to_flux(self):
-        monochromatic_flux = MagnitudeToFluxConverter(self).convert()
+        monochromatic_flux = MagnitudeToFluxConverter().convert(self)
         return monochromatic_flux
 
 class MonochromaticFlux(object):
@@ -27,21 +27,18 @@ class MonochromaticFlux(object):
 
 class MagnitudeToFluxConverter(object):
 
-    def __init__(self, observed_magnitude):
-        self.observed_magnitude = observed_magnitude
-
-    def _calculate_flux(self):
-        flux_conversion_factor = self.observed_magnitude.band.flux_conversion_factor
-        flux = flux_conversion_factor * 10**(-0.4 * self.observed_magnitude.magnitude)
+    def _calculate_flux(self, magnitude, flux_conversion_factor):
+        flux = flux_conversion_factor * 10**(-0.4 * magnitude)
         return flux
 
-    def _calculate_flux_uncertainty(self, flux):
-        flux_uncertainty = flux * 0.4 * math.log(10) * self.observed_magnitude.uncertainty
+    def _calculate_flux_uncertainty(self, flux, magnitude_uncertainty):
+        flux_uncertainty = flux * 0.4 * math.log(10) * magnitude_uncertainty
         return flux_uncertainty
 
-    def convert(self):
-        flux = self._calculate_flux()
-        flux_uncertainty = self._calculate_flux_uncertainty(flux)
-        effective_wavelength = self.observed_magnitude.band.effective_wavelength
+    def convert(self, observed_magnitude):
+        """Convert an observed magnitude to a monochromatic flux"""
+        flux = self._calculate_flux(observed_magnitude.magnitude, observed_magnitude.band.flux_conversion_factor)
+        flux_uncertainty = self._calculate_flux_uncertainty(flux, observed_magnitude.uncertainty)
+        effective_wavelength = observed_magnitude.band.effective_wavelength
         monochromatic_flux = MonochromaticFlux(flux, flux_uncertainty, effective_wavelength)
         return monochromatic_flux
