@@ -1,2 +1,2 @@
 test:
-	python -Wall -m unittest discover -v
+	python3 -Wall -m unittest discover -v
