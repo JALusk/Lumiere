@@ -4,10 +4,36 @@ import numpy as np
 class InsufficientFluxes(Exception):
     pass
 
-class QuasiBolometricFlux(object):
+class Distance(object):
+
     def __init__(self, value, uncertainty):
         self.value = value
         self.uncertainty = uncertainty
+
+class QuasiBolometricFlux(object):
+
+    def __init__(self, value, uncertainty):
+        self.value = value
+        self.uncertainty = uncertainty
+
+class QuasiBolometricLuminosity(object):
+
+    def __init__(self, value, uncertainty):
+        self.value = value
+        self.uncertainty = uncertainty
+
+def get_quasi_bolometric_flux(integral_calculator, 
+                              uncertainty_calculator, 
+                              fluxes):
+    """Calculate Fqbol using the supplied integration technique"""
+    if len(fluxes) < 2:
+        raise InsufficientFluxes(
+            "Cannot calculate quasi-bolometric flux with fewer " +
+            "than two fluxes, {0} received".format(len(fluxes)))
+
+    return QuasiBolometricFlux(
+            value = integral_calculator.calculate(fluxes),
+            uncertainty = uncertainty_calculator(fluxes))
 
 class TrapezoidalIntegralCalculator(object):
     """Integrate between fluxes using the trapezoidal method"""
@@ -25,18 +51,6 @@ class TrapezoidalIntegralCalculator(object):
         wavelength_list = self._get_wavelength_list(fluxes)
         return np.trapz(flux_list, wavelength_list)
 
-def get_quasi_bolometric_flux(integral_calculator, 
-                              uncertainty_calculator, 
-                              fluxes):
-    if len(fluxes) < 2:
-        raise InsufficientFluxes(
-            "Cannot calculate quasi-bolometric flux with fewer " +
-            "than two fluxes, {0} received".format(len(fluxes)))
-
-    return QuasiBolometricFlux(
-            value = integral_calculator.calculate(fluxes),
-            uncertainty = uncertainty_calculator(fluxes))
-
 def uncertainty_calculator_trapezoidal(fluxes):
     """Calculate uncertainty in trapezoidal integral of fluxes"""
     radicand = 0
@@ -53,18 +67,6 @@ def uncertainty_calculator_trapezoidal(fluxes):
                          * flux.flux_uncertainty)**2
 
     return math.sqrt(radicand)
-
-class QuasiBolometricLuminosity(object):
-
-    def __init__(self, value, uncertainty):
-        self.value = value
-        self.uncertainty = uncertainty
-
-class Distance(object):
-
-    def __init__(self, value, uncertainty):
-        self.value = value
-        self.uncertainty = uncertainty
 
 def convert_flux_to_luminosity(fqbol, distance):
     """Convert quasi-bolometric flux to quasi-bolometric luminosity"""
