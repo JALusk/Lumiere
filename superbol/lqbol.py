@@ -53,3 +53,22 @@ def uncertainty_calculator_trapezoidal(fluxes):
                          * flux.flux_uncertainty)**2
 
     return math.sqrt(radicand)
+
+class QuasiBolometricLuminosity(object):
+
+    def __init__(self, value, uncertainty):
+        self.value = value
+        self.uncertainty = uncertainty
+
+class Distance(object):
+
+    def __init__(self, value, uncertainty):
+        self.value = value
+        self.uncertainty = uncertainty
+
+def convert_flux_to_luminosity(fqbol, distance):
+    """Convert quasi-bolometric flux to quasi-bolometric luminosity"""
+    lbqol_value = fqbol.value * 4.0 * math.pi * distance.value**2
+    lqbol_uncertainty = math.sqrt((4.0 * math.pi * distance.value**2 * fqbol.uncertainty)**2 + (fqbol.value * 8.0 * math.pi * distance.value * distance.uncertainty)**2)
+
+    return QuasiBolometricLuminosity(lbqol_value, lqbol_uncertainty)

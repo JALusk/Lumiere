@@ -8,13 +8,11 @@ from superbol import mag2flux
 from superbol import lqbol
 
 class TestGetQuasiBolometricFlux(unittest.TestCase):
-    """When obtaining the trapezoidal integration result"""
     def setUp(self):
         self.integral_calculator = Mock()
         self.uncertainty_calculator = Mock()
 
     def test_no_fluxes(self):
-        """it raises an exception with an empty flux set"""
         with self.assertRaises(lqbol.InsufficientFluxes):
             lqbol.get_quasi_bolometric_flux(
                 integral_calculator = self.integral_calculator,
@@ -22,7 +20,6 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
                 fluxes=[])
 
     def test_one_flux(self):
-        """it raises an exception with a single flux"""
         flux = mag2flux.MonochromaticFlux(flux = 200,
                                           flux_uncertainty = 30,
                                           wavelength = 1)
@@ -34,7 +31,6 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
                 fluxes=[flux])
 
     def test_two_fluxes(self):
-        """it produces quasi-bolometric flux with more than one flux"""
         flux1 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 0,
                                            wavelength = 0)
@@ -145,3 +141,19 @@ class TestTrapezoidalIntegralCalculator(unittest.TestCase):
     def test_trapezoidal_integral(self):
         integral = self.integral_calculator.calculate(self.fluxes)
         self.assertEqual(325, integral)
+
+class TestFluxLuminosityConverter(unittest.TestCase):
+
+    def setUp(self):
+        self.fqbol = lqbol.QuasiBolometricFlux(value = 10, uncertainty = 1)
+        self.distance = lqbol.Distance(value = 100, uncertainty = 10)
+
+    def test_convert_flux_to_luminosity(self):
+        expected = self.fqbol.value * 4.0 * math.pi * self.distance.value**2
+        result = lqbol.convert_flux_to_luminosity(self.fqbol, self.distance)
+        self.assertEqual(expected, result.value)
+
+    def test_convert_flux_to_luminosity_uncertainty(self):
+        expected = math.sqrt((4.0 * math.pi * self.distance.value**2 * self.fqbol.uncertainty)**2 + (self.fqbol.value * 8.0 * math.pi * self.distance.value * self.distance.uncertainty)**2)
+        result = lqbol.convert_flux_to_luminosity(self.fqbol, self.distance)
+        self.assertEqual(expected, result.uncertainty)
