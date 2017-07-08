@@ -1,2 +1,2 @@
 test:
-	python3 -Wall -m unittest discover -v
+	python3.6 -Wall -m unittest discover -v
