@@ -8,12 +8,12 @@ from .context import superbol
 from superbol import read_osc
 from superbol import mag2flux
 
-file_content = """{"B":{"effective_wavelength":   4380.0,
-                        "flux_conversion_factor": 632.0E-11},
-                   "U":{"effective_wavelength":   3660.0,
-                       "flux_conversion_factor":  417.5E-11}}"""
+filter_data = """{"B":{"effective_wavelength":   4380.0,
+                       "flux_conversion_factor": 632.0E-11},
+                  "U":{"effective_wavelength":   3660.0,
+                      "flux_conversion_factor":  417.5E-11}}"""
 
-@patch('builtins.open', mock_open(read_data = file_content), create=True)
+@patch('builtins.open', mock_open(read_data = filter_data), create=True)
 class TestGetObservedMagnitudes(unittest.TestCase):
 
     def setUp(self):
@@ -21,8 +21,8 @@ class TestGetObservedMagnitudes(unittest.TestCase):
         self.uncertainty = 0.06
         self.band_name = "B"
 
-        self.osc_photometry_dict = {'magnitude': self.magnitude, 
-                                    'e_magnitude': self.uncertainty, 
+        self.osc_photometry_dict = {'magnitude': "18.78", 
+                                    'e_magnitude': "0.06", 
                                     'band': self.band_name}
     
     def test_no_magnitude(self):
@@ -49,7 +49,12 @@ class TestGetObservedMagnitudes(unittest.TestCase):
         result = read_osc.get_observed_magnitude(self.osc_photometry_dict)
         self.assertEqual(result.band.name, self.band_name)
 
-@patch('builtins.open', mock_open(read_data = file_content), create=True)
+    def test_returns_zero_uncertainty_if_no_uncertainty_given(self):
+        result = read_osc.get_observed_magnitude({'magnitude': "18.78",
+                                                  'band': self.band_name})
+        self.assertEqual(result.uncertainty, 0.0)
+
+@patch('builtins.open', mock_open(read_data = filter_data), create=True)
 class TestGetBand(unittest.TestCase):
 
     def test_returns_band_instance(self):
@@ -78,7 +83,7 @@ class TestGetBand(unittest.TestCase):
         self.assertEqual(band_flux_conversion_factor, 
                          result.flux_conversion_factor)
 
-@patch('builtins.open', mock_open(read_data = file_content), create=True)
+@patch('builtins.open', mock_open(read_data = filter_data), create=True)
 class TestRetrieveBandDict(unittest.TestCase):
 
     def test_nonexistent_band(self):
@@ -89,3 +94,35 @@ class TestRetrieveBandDict(unittest.TestCase):
         result = read_osc.retrieve_band_dict('B')
         self.assertEqual(result["effective_wavelength"], 4380.0)
         self.assertEqual(result["flux_conversion_factor"], 632.0E-11)
+
+osc_json_data = """{
+"test":{
+        "photometry":[
+                      { 
+                       "time":"51663.30",
+                       "band":"B",
+                       "e_magnitude":"0.014",
+                       "magnitude":"18.793",
+                       "u_time":"MJD"
+                      },
+                      {
+                       "time":"51663.30",
+                        "band":"I",
+                        "e_magnitude":"0.015",
+                        "magnitude":"17.553",
+                        "u_time":"MJD"
+                       }
+                      ]
+       }
+}"""
+
+@patch('builtins.open', mock_open(read_data = osc_json_data), create=True)
+class TestRetrieveOSCPhotometry(unittest.TestCase):
+
+    def test_returns_sn_photometry(self):
+        result = read_osc.retrieve_osc_photometry('test')
+        self.assertEqual(result[0], {"time":"51663.30",
+                                     "band":"B",
+                                     "e_magnitude":"0.014",
+                                     "magnitude":"18.793",
+                                     "u_time":"MJD"})
