@@ -20,10 +20,12 @@ class TestGetObservedMagnitudes(unittest.TestCase):
         self.magnitude = 18.78
         self.uncertainty = 0.06
         self.band_name = "B"
+        self.time = 51663.30
 
         self.osc_photometry_dict = {'magnitude': "18.78", 
                                     'e_magnitude': "0.06", 
-                                    'band': self.band_name}
+                                    'band': self.band_name,
+                                    'time': self.time}
     
     def test_no_magnitude(self):
         with self.assertRaises(read_osc.NoMagnitude):
@@ -32,6 +34,10 @@ class TestGetObservedMagnitudes(unittest.TestCase):
     def test_no_band_name_given(self):
         with self.assertRaises(read_osc.NoBandNameGiven):
             read_osc.get_observed_magnitude({'magnitude' : 0})
+
+    def test_no_time_given(self):
+        with self.assertRaises(read_osc.NoTimeGiven):
+            read_osc.get_observed_magnitude({'magnitude' : 0, 'band': 0})
 
     def test_returns_observed_magnitude_instance(self):
         result = read_osc.get_observed_magnitude(self.osc_photometry_dict)
@@ -51,8 +57,13 @@ class TestGetObservedMagnitudes(unittest.TestCase):
 
     def test_returns_zero_uncertainty_if_no_uncertainty_given(self):
         result = read_osc.get_observed_magnitude({'magnitude': "18.78",
-                                                  'band': self.band_name})
+                                                  'band': self.band_name,
+                                                  'time': self.time})
         self.assertEqual(result.uncertainty, 0.0)
+
+    def test_returns_correct_time(self):
+        result = read_osc.get_observed_magnitude(self.osc_photometry_dict)
+        self.assertEqual(result.time, self.time)
 
 @patch('builtins.open', mock_open(read_data = filter_data), create=True)
 class TestGetBand(unittest.TestCase):
