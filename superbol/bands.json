@@ -1,0 +1,23 @@
+{
+    "U":{
+            "effective_wavelength":   3660.0,
+            "flux_conversion_factor": 417.5E-11
+        },
+    "B":{
+            "effective_wavelength":   4380.0,
+            "flux_conversion_factor": 632.0E-11
+        },
+    "V":{
+            "effective_wavelength":   5450.0
+            "flux_conversion_factor": 363.1E-11
+        },
+    "R":{
+            "effective_wavelength":   6410.0
+            "flux_conversion_factor": 217.7E-11
+        },
+    "I":{
+            "effective_wavelength":   7980.0
+            "flux_conversion_factor": 112.6E-11
+        },
+
+}
