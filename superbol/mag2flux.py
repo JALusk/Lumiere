@@ -1,5 +1,17 @@
 import math
 
+class ObservedMagnitude(object):
+
+    def __init__(self, magnitude, uncertainty, band, time):
+        self.magnitude = magnitude
+        self.uncertainty = uncertainty
+        self.band = band
+        self.time = time
+
+    def convert_to_flux(self):
+        monochromatic_flux = MagnitudeToFluxConverter().convert(self)
+        return monochromatic_flux
+
 class Band(object):
     
     def __init__(self, name, effective_wavelength, flux_conversion_factor):
@@ -7,23 +19,13 @@ class Band(object):
         self.effective_wavelength = effective_wavelength
         self.flux_conversion_factor = flux_conversion_factor
 
-class ObservedMagnitude(object):
-
-    def __init__(self, magnitude, uncertainty, band):
-        self.magnitude = magnitude
-        self.uncertainty = uncertainty
-        self.band = band
-
-    def convert_to_flux(self):
-        monochromatic_flux = MagnitudeToFluxConverter().convert(self)
-        return monochromatic_flux
-
 class MonochromaticFlux(object):
 
-    def __init__(self, flux, flux_uncertainty, wavelength):
+    def __init__(self, flux, flux_uncertainty, wavelength, time):
         self.flux = flux
         self.flux_uncertainty = flux_uncertainty
         self.wavelength = wavelength
+        self.time = time
 
 class MagnitudeToFluxConverter(object):
 
@@ -39,10 +41,11 @@ class MagnitudeToFluxConverter(object):
         """Convert an observed magnitude to a monochromatic flux"""
         magnitude = observed_magnitude.magnitude
         uncertainty = observed_magnitude.uncertainty
+        time = observed_magnitude.time
         flux_conversion_factor = observed_magnitude.band.flux_conversion_factor
 
         flux = self._calculate_flux(magnitude, flux_conversion_factor)
         flux_uncertainty = self._calculate_flux_uncertainty(flux, uncertainty)
         wavelength = observed_magnitude.band.effective_wavelength
-        monochromatic_flux = MonochromaticFlux(flux, flux_uncertainty, wavelength)
+        monochromatic_flux = MonochromaticFlux(flux, flux_uncertainty, wavelength, time)
         return monochromatic_flux

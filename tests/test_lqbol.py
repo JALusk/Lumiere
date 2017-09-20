@@ -22,7 +22,8 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
     def test_one_flux(self):
         flux = mag2flux.MonochromaticFlux(flux = 200,
                                           flux_uncertainty = 30,
-                                          wavelength = 1)
+                                          wavelength = 1,
+                                          time = 0)
 
         with self.assertRaises(lqbol.InsufficientFluxes):
             lqbol.get_quasi_bolometric_flux(
@@ -33,11 +34,13 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
     def test_two_fluxes(self):
         flux1 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 0,
-                                           wavelength = 0)
+                                           wavelength = 0,
+                                           time = 0)
 
         flux2 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 0,
-                                           wavelength= 1 )
+                                           wavelength= 1,
+                                           time = 0)
 
         two_fluxes = [flux1, flux2]
 
@@ -62,11 +65,13 @@ class TestUncertaintyCalculatorTrapezoidal(unittest.TestCase):
     def test_equal_flux_zero_uncertainty(self):
         flux1 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 0,
-                                           wavelength = 0)
+                                           wavelength = 0,
+                                           time = 0)
 
         flux2 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 0,
-                                           wavelength= 1)
+                                           wavelength= 1,
+                                           time = 0)
 
         expected_uncertainty = 0
         result = lqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1, flux2])
@@ -75,11 +80,13 @@ class TestUncertaintyCalculatorTrapezoidal(unittest.TestCase):
     def test_equal_flux_equal_uncertainty(self):
         flux1 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 10,
-                                           wavelength = 0)
+                                           wavelength = 0,
+                                           time = 0)
 
         flux2 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 10,
-                                           wavelength= 1)
+                                           wavelength= 1,
+                                           time = 0)
 
         expected_uncertainty = math.sqrt(50)
         result = lqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1,flux2])
@@ -88,11 +95,13 @@ class TestUncertaintyCalculatorTrapezoidal(unittest.TestCase):
     def test_unequal_flux_unequal_uncertainty(self):
         flux1 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 10,
-                                           wavelength = 0)
+                                           wavelength = 0,
+                                           time = 0)
 
         flux2 = mag2flux.MonochromaticFlux(flux = 200,
                                            flux_uncertainty = 20,
-                                           wavelength= 1)
+                                           wavelength= 1,
+                                           time = 0)
 
         expected_uncertainty = math.sqrt(125)
         result = lqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1,flux2])
@@ -101,15 +110,18 @@ class TestUncertaintyCalculatorTrapezoidal(unittest.TestCase):
     def test_three_fluxes(self):
         flux1 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 10,
-                                           wavelength = 0)
+                                           wavelength = 0,
+                                           time = 0)
 
         flux2 = mag2flux.MonochromaticFlux(flux = 200,
                                            flux_uncertainty = 20,
-                                           wavelength= 1)
+                                           wavelength= 1,
+                                           time = 0)
 
         flux3 = mag2flux.MonochromaticFlux(flux = 150,
                                            flux_uncertainty = 8,
-                                           wavelength= 2)
+                                           wavelength= 2,
+                                           time = 0)
 
         expected_uncertainty = math.sqrt(441)
         result = lqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1,flux2,flux3])
@@ -121,13 +133,16 @@ class TestTrapezoidalIntegralCalculator(unittest.TestCase):
         self.integral_calculator = lqbol.TrapezoidalIntegralCalculator()
         self.flux1 = mag2flux.MonochromaticFlux(flux = 100,
                                                 flux_uncertainty = 10,
-                                                wavelength = 0)
+                                                wavelength = 0,
+                                                time = 0)
         self.flux2 = mag2flux.MonochromaticFlux(flux = 200,
                                                 flux_uncertainty = 20,
-                                                wavelength= 1)
+                                                wavelength= 1,
+                                                time = 0)
         self.flux3 = mag2flux.MonochromaticFlux(flux = 150,
                                                 flux_uncertainty = 8,
-                                                wavelength= 2)
+                                                wavelength= 2,
+                                                time = 0)
         self.fluxes = [self.flux1, self.flux2, self.flux3]
     
     def test_flux_list(self):

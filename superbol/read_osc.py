@@ -8,6 +8,9 @@ class NoMagnitude(Exception):
 class NoBandNameGiven(Exception):
     pass
 
+class NoTimeGiven(Exception):
+    pass
+
 class NoBandFound(Exception):
     pass
 
@@ -17,16 +20,19 @@ def get_observed_magnitude(osc_photometry_dict):
         raise NoMagnitude
     elif 'band' not in osc_photometry_dict.keys():
         raise NoBandNameGiven
+    elif 'time' not in osc_photometry_dict.keys():
+        raise NoTimeGiven
 
     magnitude = float(osc_photometry_dict['magnitude'])
     band = get_band(osc_photometry_dict['band'])
+    time = float(osc_photometry_dict['time'])
     
     if 'e_magnitude' in osc_photometry_dict.keys():
         uncertainty = float(osc_photometry_dict['e_magnitude'])
     else:
         uncertainty = 0.0
 
-    return mag2flux.ObservedMagnitude(magnitude, uncertainty, band)
+    return mag2flux.ObservedMagnitude(magnitude, uncertainty, band, time)
 
 def get_band(band_name):
     """Make a Band object using the band_name given"""
@@ -37,7 +43,7 @@ def get_band(band_name):
                          effective_wavelength, 
                          flux_conversion_factor)
 
-def retrieve_band_dict(band_name, path=None):
+def retrieve_band_dict(band_name, path='/home/jlusk/src/superbol/superbol/bands.json'):
     """Load the Band attributes from a JSON file"""
     try:
         with open(path, 'r') as data_file:
@@ -45,7 +51,7 @@ def retrieve_band_dict(band_name, path=None):
         
         return file_content[band_name]
     except KeyError:
-        raise NoBandFound
+        raise NoBandFound("The band {0} was not found in the SuperBoL band catalog.".format(band_name))
 
 def retrieve_osc_photometry(sn_name, path=None):
     """Load the SN photometry from an OSC-formatted JSON file"""
