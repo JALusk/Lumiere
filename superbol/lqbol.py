@@ -74,3 +74,15 @@ def convert_flux_to_luminosity(fqbol, distance):
     lqbol_uncertainty = math.sqrt((4.0 * math.pi * distance.value**2 * fqbol.uncertainty)**2 + (fqbol.value * 8.0 * math.pi * distance.value * distance.uncertainty)**2)
 
     return QuasiBolometricLuminosity(lbqol_value, lqbol_uncertainty)
+
+def calculate_qbol_luminosity(flux_group, distance):
+    """Turn a group of fluxes into a quasi-bolometric luminosity"""
+    integral_calculator = lqbol.TrapezoidalIntegralCalculator
+    uncertainty_calculator = lqbol.uncertainty_calculator_trapezoidal
+    
+    fqbol = lqbol.get_quasi_bolometric_flux(integral_calculator,
+                                            uncertainty_calculator,
+                                            flux_group)
+    lqbol = lqbol.convert_flux_to_luminosity(fqbol, distance)
+    
+    return lqbol
