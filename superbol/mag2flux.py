@@ -1,12 +1,5 @@
 import math
 
-class Band(object):
-    
-    def __init__(self, name, effective_wavelength, flux_conversion_factor):
-        self.name = name
-        self.effective_wavelength = effective_wavelength
-        self.flux_conversion_factor = flux_conversion_factor
-
 class ObservedMagnitude(object):
 
     def __init__(self, magnitude, uncertainty, band, time):
@@ -18,6 +11,13 @@ class ObservedMagnitude(object):
     def convert_to_flux(self):
         monochromatic_flux = MagnitudeToFluxConverter().convert(self)
         return monochromatic_flux
+
+class Band(object):
+    
+    def __init__(self, name, effective_wavelength, flux_conversion_factor):
+        self.name = name
+        self.effective_wavelength = effective_wavelength
+        self.flux_conversion_factor = flux_conversion_factor
 
 class MonochromaticFlux(object):
 
