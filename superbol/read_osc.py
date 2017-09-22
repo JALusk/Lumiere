@@ -43,7 +43,7 @@ def get_band(band_name):
                          effective_wavelength, 
                          flux_conversion_factor)
 
-def retrieve_band_dict(band_name, path='/home/jlusk/src/superbol/superbol/bands.json'):
+def retrieve_band_dict(band_name, path='/home/jlusk/src/superbol/data/bands.json'):
     """Load the Band attributes from a JSON file"""
     try:
         with open(path, 'r') as data_file:
