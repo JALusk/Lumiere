@@ -37,6 +37,10 @@ def get_quasi_bolometric_flux(integral_calculator,
 
 class TrapezoidalIntegralCalculator(object):
     """Integrate between fluxes using the trapezoidal method"""
+    def _sort_fluxes_by_wavelength(self, fluxes):
+        """Sort the fluxes in-place by wavelength"""
+        fluxes.sort(key = lambda x: x.wavelength)
+
     def _get_flux_list(self, fluxes):
         """Return a list of flux values"""
         return [f.flux for f in fluxes]
@@ -47,6 +51,7 @@ class TrapezoidalIntegralCalculator(object):
 
     def calculate(self, fluxes):
         """Calculate the integral using numpy.trapz"""
+        self._sort_fluxes_by_wavelength(fluxes)
         flux_list = self._get_flux_list(fluxes)
         wavelength_list = self._get_wavelength_list(fluxes)
         return np.trapz(flux_list, wavelength_list)
@@ -77,12 +82,12 @@ def convert_flux_to_luminosity(fqbol, distance):
 
 def calculate_qbol_luminosity(flux_group, distance):
     """Turn a group of fluxes into a quasi-bolometric luminosity"""
-    integral_calculator = lqbol.TrapezoidalIntegralCalculator
-    uncertainty_calculator = lqbol.uncertainty_calculator_trapezoidal
+    integral_calculator = TrapezoidalIntegralCalculator()
+    uncertainty_calculator = uncertainty_calculator_trapezoidal
     
-    fqbol = lqbol.get_quasi_bolometric_flux(integral_calculator,
-                                            uncertainty_calculator,
-                                            flux_group)
-    lqbol = lqbol.convert_flux_to_luminosity(fqbol, distance)
+    fqbol = get_quasi_bolometric_flux(integral_calculator,
+                                      uncertainty_calculator,
+                                      flux_group)
+    lqbol = convert_flux_to_luminosity(fqbol, distance)
     
     return lqbol

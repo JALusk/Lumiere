@@ -16,5 +16,7 @@ def calculate_lightcurve(fluxes, distance, luminosity_calculator):
     grouped_fluxes = group_fluxes(fluxes, math.floor)
     lightcurve = []
     for flux_group in grouped_fluxes:
-        luminosity = luminosity_calculator(flux_group, distance)
-        lightcurve.append(luminosity) 
+        if len(flux_group) > 2:
+            luminosity = luminosity_calculator(flux_group, distance)
+            lightcurve.append(luminosity)
+    return lightcurve
