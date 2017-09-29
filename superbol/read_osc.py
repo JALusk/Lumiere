@@ -25,6 +25,7 @@ def get_observed_magnitude(osc_photometry_dict):
 
     magnitude = float(osc_photometry_dict['magnitude'])
     band = get_band(osc_photometry_dict['band'])
+    # This is a dirty hack to get around the way IRSA names bands
     time = float(osc_photometry_dict['time'])
     
     if 'e_magnitude' in osc_photometry_dict.keys():
@@ -37,13 +38,15 @@ def get_observed_magnitude(osc_photometry_dict):
 def get_band(band_name):
     """Make a Band object using the band_name given"""
     band_dict = retrieve_band_dict(band_name)
+    band_alt_name = band_dict['alt_name']
     effective_wavelength = band_dict['effective_wavelength']
     flux_conversion_factor = band_dict['flux_conversion_factor']
-    return mag2flux.Band(band_name, 
+    return mag2flux.Band(band_name,
+                         band_alt_name,
                          effective_wavelength, 
                          flux_conversion_factor)
 
-def retrieve_band_dict(band_name, path='/home/jlusk/src/superbol/superbol/bands.json'):
+def retrieve_band_dict(band_name, path='/home/jlusk/src/superbol/data/bands.json'):
     """Load the Band attributes from a JSON file"""
     try:
         with open(path, 'r') as data_file:

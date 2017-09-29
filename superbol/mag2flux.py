@@ -14,8 +14,9 @@ class ObservedMagnitude(object):
 
 class Band(object):
     
-    def __init__(self, name, effective_wavelength, flux_conversion_factor):
+    def __init__(self, name, alt_name, effective_wavelength, flux_conversion_factor):
         self.name = name
+        self.alt_name = alt_name
         self.effective_wavelength = effective_wavelength
         self.flux_conversion_factor = flux_conversion_factor
 

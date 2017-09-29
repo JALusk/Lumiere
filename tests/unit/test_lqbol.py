@@ -11,6 +11,7 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
     def setUp(self):
         self.integral_calculator = Mock()
         self.uncertainty_calculator = Mock()
+        self.time = 1234.5
 
     def test_no_fluxes(self):
         with self.assertRaises(lqbol.InsufficientFluxes):
@@ -23,7 +24,7 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
         flux = mag2flux.MonochromaticFlux(flux = 200,
                                           flux_uncertainty = 30,
                                           wavelength = 1,
-                                          time = 0)
+                                          time = self.time)
 
         with self.assertRaises(lqbol.InsufficientFluxes):
             lqbol.get_quasi_bolometric_flux(
@@ -35,12 +36,12 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
         flux1 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 0,
                                            wavelength = 0,
-                                           time = 0)
+                                           time = self.time)
 
         flux2 = mag2flux.MonochromaticFlux(flux = 100,
                                            flux_uncertainty = 0,
                                            wavelength= 1,
-                                           time = 0)
+                                           time = self.time)
 
         two_fluxes = [flux1, flux2]
 
@@ -59,6 +60,7 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
         self.integral_calculator.calculate.assert_called_once_with(two_fluxes)
         self.assertEqual(expected_value, result.value)
         self.assertEqual(expected_uncertainty, result.uncertainty)
+        self.assertEqual(self.time, result.time)
 
 class TestUncertaintyCalculatorTrapezoidal(unittest.TestCase):
 
@@ -160,7 +162,7 @@ class TestTrapezoidalIntegralCalculator(unittest.TestCase):
 class TestFluxLuminosityConverter(unittest.TestCase):
 
     def setUp(self):
-        self.fqbol = lqbol.QuasiBolometricFlux(value = 10, uncertainty = 1)
+        self.fqbol = lqbol.QuasiBolometricFlux(value = 10, uncertainty = 1, time = 0)
         self.distance = lqbol.Distance(value = 100, uncertainty = 10)
 
     def test_convert_flux_to_luminosity(self):
@@ -172,3 +174,8 @@ class TestFluxLuminosityConverter(unittest.TestCase):
         expected = math.sqrt((4.0 * math.pi * self.distance.value**2 * self.fqbol.uncertainty)**2 + (self.fqbol.value * 8.0 * math.pi * self.distance.value * self.distance.uncertainty)**2)
         result = lqbol.convert_flux_to_luminosity(self.fqbol, self.distance)
         self.assertEqual(expected, result.uncertainty)
+
+    def test_convert_flux_to_luminosity_time(self):
+        expected = 0
+        result = lqbol.convert_flux_to_luminosity(self.fqbol, self.distance)
+        self.assertEqual(expected, result.time)

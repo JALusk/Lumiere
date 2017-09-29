@@ -6,7 +6,7 @@ from superbol import mag2flux
 class TestObservedMagnitude(unittest.TestCase):
 
     def setUp(self):
-        self.B_band = mag2flux.Band('B', 4380.0, 632.0E-11)
+        self.B_band = mag2flux.Band('B', 'CTIO B', 4380.0, 632.0E-11)
         self.B_obs = mag2flux.ObservedMagnitude(18.793, 0.02, self.B_band,
                                                 2451663.30)
         
@@ -70,7 +70,7 @@ class TestMagnitudeToFluxConverterConvertMethod(unittest.TestCase):
     def setUp(self):
         self.converter = mag2flux.MagnitudeToFluxConverter()
         self.time = 2451663.30
-        self.band = mag2flux.Band('U', 3660.0, 417.5E-11)
+        self.band = mag2flux.Band('U', 'CTIO U', 3660.0, 417.5E-11)
         self.observed_mag = mag2flux.ObservedMagnitude(19.356, 
                                                        0.02, 
                                                        self.band, 

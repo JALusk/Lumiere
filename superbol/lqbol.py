@@ -12,15 +12,17 @@ class Distance(object):
 
 class QuasiBolometricFlux(object):
 
-    def __init__(self, value, uncertainty):
+    def __init__(self, value, uncertainty, time):
         self.value = value
         self.uncertainty = uncertainty
+        self.time = time
 
 class QuasiBolometricLuminosity(object):
 
-    def __init__(self, value, uncertainty):
+    def __init__(self, value, uncertainty, time):
         self.value = value
         self.uncertainty = uncertainty
+        self.time = time
 
 def get_quasi_bolometric_flux(integral_calculator, 
                               uncertainty_calculator, 
@@ -33,7 +35,8 @@ def get_quasi_bolometric_flux(integral_calculator,
 
     return QuasiBolometricFlux(
             value = integral_calculator.calculate(fluxes),
-            uncertainty = uncertainty_calculator(fluxes))
+            uncertainty = uncertainty_calculator(fluxes),
+            time = fluxes[0].time)
 
 class TrapezoidalIntegralCalculator(object):
     """Integrate between fluxes using the trapezoidal method"""
@@ -78,7 +81,7 @@ def convert_flux_to_luminosity(fqbol, distance):
     lbqol_value = fqbol.value * 4.0 * math.pi * distance.value**2
     lqbol_uncertainty = math.sqrt((4.0 * math.pi * distance.value**2 * fqbol.uncertainty)**2 + (fqbol.value * 8.0 * math.pi * distance.value * distance.uncertainty)**2)
 
-    return QuasiBolometricLuminosity(lbqol_value, lqbol_uncertainty)
+    return QuasiBolometricLuminosity(lbqol_value, lqbol_uncertainty, fqbol.time)
 
 def calculate_qbol_luminosity(flux_group, distance):
     """Turn a group of fluxes into a quasi-bolometric luminosity"""
