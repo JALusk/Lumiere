@@ -5,7 +5,7 @@ with open('README.rst') as file:
 
 setup(
     name='SuperBoL',
-    version='0.3.3',
+    version='0.3.4',
     description='Supernova Bolometric Lightcurves',
     long_description = long_description,
     author='Jeremy A. Lusk',
@@ -26,6 +26,7 @@ setup(
         "astropy",
         "scipy>=0.14",
         "numpy",
-        "specutils"
+        "extinction",
+        "tables"
     ],
     )   
