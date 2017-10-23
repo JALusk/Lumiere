@@ -2,7 +2,7 @@ import numpy as np
 import tables as tb
 from astropy import units as u
 from pkg_resources import resource_filename
-from specutils import extinction
+import extinction
 
 from superbol.fit_blackbody import bb_fit_parameters, bb_flux_nounits
 from superbol.luminosity import calc_Lbol
@@ -396,16 +396,18 @@ class SN(object):
     def deredden_fluxes(self):
         """Deredden the observed fluxes using the ccm89 model
 
-        The dereddening procedure is handled by the extinction.reddening method
-        from specutils.
+        The dereddening procedure is handled by the ``apply`` method
+        from the extinction package.
         """
         self.Av_gal = self.parameter_table.cols.Av_gal[0]
         self.Av_host = self.parameter_table.cols.Av_host[0]
         self.Av_tot = self.Av_gal + self.Av_host
 
         for obs in self.converted_obs:
-            obs['flux'] = obs['flux'] * extinction.reddening(
-                obs['wavelength'] * u.AA, self.Av_tot, model='ccm89')
+            wavelength = np.array([float(obs['wavelength'])])
+            obs_flux = np.array([float(obs['flux'])])
+            A_lam = extinction.ccm89(wavelength, self.Av_tot, 3.1)
+            obs['flux'] = extinction.apply(-A_lam, obs_flux)
 
     def write_lbol_plaintext(self, lightcurve, suffix):
         """Write the lightcurve to a file. Append suffix to filename"""

@@ -26,6 +26,6 @@ setup(
         "astropy",
         "scipy>=0.14",
         "numpy",
-        "specutils"
+        "extinction"
     ],
     )   
