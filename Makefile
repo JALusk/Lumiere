@@ -1,5 +1,5 @@
 test:
-	python3.6 -Wall -m unittest discover -s tests.unit -v
+	python3.6 -m unittest discover -s tests.unit -v
 
 integrate:
-	python3.6 -Wall -m unittest discover -s tests.integration -v
+	python3.6 -m unittest discover -s tests.integration -v
