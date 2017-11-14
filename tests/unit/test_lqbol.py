@@ -1,5 +1,6 @@
 import unittest
 import math
+import numpy as np
 
 from unittest.mock import Mock
 
@@ -145,7 +146,12 @@ class TestTrapezoidalIntegralCalculator(unittest.TestCase):
                                                 flux_uncertainty = 8,
                                                 wavelength= 2,
                                                 time = 0)
+        self.flux4 = mag2flux.MonochromaticFlux(flux = 250,
+                                                flux_uncertainty = 8,
+                                                wavelength= 2,
+                                                time = 0)
         self.fluxes = [self.flux1, self.flux2, self.flux3]
+        self.repeated_fluxes = [self.flux1, self.flux2, self.flux3, self.flux4]
     
     def test_flux_list(self):
         flux_list = self.integral_calculator._get_flux_list(self.fluxes)
@@ -158,6 +164,18 @@ class TestTrapezoidalIntegralCalculator(unittest.TestCase):
     def test_trapezoidal_integral(self):
         integral = self.integral_calculator.calculate(self.fluxes)
         self.assertEqual(325, integral)
+
+    def test_average_repeated_fluxes(self):
+        expected_fluxes = np.array([100, 200, 200])
+        expected_wavelengths = np.array([0, 1, 2])
+        flux_list, wavelength_list = self.integral_calculator._average_repeated_fluxes(self.repeated_fluxes)
+        np.testing.assert_array_equal(expected_fluxes, flux_list)
+        np.testing.assert_array_equal(expected_wavelengths, wavelength_list)
+
+    def test_repeated_fluxes(self):
+        """Should average together repeated fluxes"""
+        integral = self.integral_calculator.calculate(self.repeated_fluxes)
+        self.assertEqual(350, integral)
 
 class TestFluxLuminosityConverter(unittest.TestCase):
 

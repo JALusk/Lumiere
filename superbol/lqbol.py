@@ -40,10 +40,28 @@ def get_quasi_bolometric_flux(integral_calculator,
 
 class TrapezoidalIntegralCalculator(object):
     """Integrate between fluxes using the trapezoidal method"""
+    def calculate(self, fluxes):
+        """Calculate the integral using numpy.trapz"""
+        self._sort_fluxes_by_wavelength(fluxes)
+        flux_list, wavelength_list = self._average_repeated_fluxes(fluxes)
+        return np.trapz(flux_list, wavelength_list)
+
     def _sort_fluxes_by_wavelength(self, fluxes):
         """Sort the fluxes in-place by wavelength"""
         fluxes.sort(key = lambda x: x.wavelength)
 
+    def _average_repeated_fluxes(self, fluxes):
+        """Average together fluxes with the same wavelength"""
+        flux_array = np.array(self._get_flux_list(fluxes))
+        wavelength_array = np.array(self._get_wavelength_list(fluxes))
+        result_wavelengths = np.unique(wavelength_array)
+        result_fluxes = np.empty(result_wavelengths.shape)
+
+        for i, wavelength in enumerate(result_wavelengths):
+            result_fluxes[i] = np.mean(flux_array[wavelength_array == wavelength])
+
+        return result_fluxes, result_wavelengths
+        
     def _get_flux_list(self, fluxes):
         """Return a list of flux values"""
         return [f.flux for f in fluxes]
@@ -51,13 +69,6 @@ class TrapezoidalIntegralCalculator(object):
     def _get_wavelength_list(self, fluxes):
         """Return a list of flux wavelengths"""
         return [f.wavelength for f in fluxes]
-
-    def calculate(self, fluxes):
-        """Calculate the integral using numpy.trapz"""
-        self._sort_fluxes_by_wavelength(fluxes)
-        flux_list = self._get_flux_list(fluxes)
-        wavelength_list = self._get_wavelength_list(fluxes)
-        return np.trapz(flux_list, wavelength_list)
 
 def uncertainty_calculator_trapezoidal(fluxes):
     """Calculate uncertainty in trapezoidal integral of fluxes"""
