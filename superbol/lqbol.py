@@ -56,13 +56,12 @@ def get_quasi_bolometric_flux(integral_calculator,
                               uncertainty_calculator, 
                               fluxes):
     """Calculate Fqbol using the supplied integration technique"""
-    if len(fluxes) < 2:
+    integrable_fluxes = get_integrable_fluxes(fluxes)
+    if len(integrable_fluxes) < 2:
         raise InsufficientFluxes(
             "Cannot calculate quasi-bolometric flux with fewer " +
             "than two fluxes, {0} received".format(len(fluxes)))
-
-    integrable_fluxes = get_integrable_fluxes(fluxes)
-
+    
     return QuasiBolometricFlux(
             value = integral_calculator.calculate(integrable_fluxes),
             uncertainty = uncertainty_calculator(integrable_fluxes),
