@@ -1,6 +1,8 @@
 import math
 import numpy as np
 
+from superbol import mag2flux
+
 class InsufficientFluxes(Exception):
     pass
 
@@ -24,6 +26,32 @@ class QuasiBolometricLuminosity(object):
         self.uncertainty = uncertainty
         self.time = time
 
+def combine_fluxes(fluxes):
+    """Combine a list of MonochromaticFluxes into one average MonochromaticFlux"""
+    combined_flux = np.mean([f.flux for f in fluxes])
+    combined_uncertainty = np.sqrt(sum(f.flux_uncertainty**2 for f in fluxes)) / len(fluxes)
+    wavelength = fluxes[0].wavelength
+    time = fluxes[0].time
+    return mag2flux.MonochromaticFlux(combined_flux,
+                                      combined_uncertainty,
+                                      wavelength,
+                                      time)
+
+def yield_fluxes_at_each_observed_wavelength(fluxes):
+    """Yield lists of MonochromaticFluxes with the same wavelength"""
+    for wavelength in set(f.wavelength for f in fluxes):
+        yield [f for f in fluxes if f.wavelength == wavelength]
+
+def get_integrable_fluxes(fluxes):
+    """Return a list of MonochromaticFluxes with duplicates averaged"""
+    integrable_fluxes = []
+    for f in yield_fluxes_at_each_observed_wavelength(fluxes):
+        if len(f) == 1:
+            integrable_fluxes.append(f[0])
+        else:
+            integrable_fluxes.append(combine_fluxes(f))
+    return integrable_fluxes
+
 def get_quasi_bolometric_flux(integral_calculator, 
                               uncertainty_calculator, 
                               fluxes):
@@ -33,9 +61,11 @@ def get_quasi_bolometric_flux(integral_calculator,
             "Cannot calculate quasi-bolometric flux with fewer " +
             "than two fluxes, {0} received".format(len(fluxes)))
 
+    integrable_fluxes = get_integrable_fluxes(fluxes)
+
     return QuasiBolometricFlux(
-            value = integral_calculator.calculate(fluxes),
-            uncertainty = uncertainty_calculator(fluxes),
+            value = integral_calculator.calculate(integrable_fluxes),
+            uncertainty = uncertainty_calculator(integrable_fluxes),
             time = fluxes[0].time)
 
 class TrapezoidalIntegralCalculator(object):
@@ -43,25 +73,14 @@ class TrapezoidalIntegralCalculator(object):
     def calculate(self, fluxes):
         """Calculate the integral using numpy.trapz"""
         self._sort_fluxes_by_wavelength(fluxes)
-        flux_list, wavelength_list = self._average_repeated_fluxes(fluxes)
+        flux_list = self._get_flux_list(fluxes)
+        wavelength_list = self._get_wavelength_list(fluxes)
         return np.trapz(flux_list, wavelength_list)
 
     def _sort_fluxes_by_wavelength(self, fluxes):
         """Sort the fluxes in-place by wavelength"""
         fluxes.sort(key = lambda x: x.wavelength)
 
-    def _average_repeated_fluxes(self, fluxes):
-        """Average together fluxes with the same wavelength"""
-        flux_array = np.array(self._get_flux_list(fluxes))
-        wavelength_array = np.array(self._get_wavelength_list(fluxes))
-        result_wavelengths = np.unique(wavelength_array)
-        result_fluxes = np.empty(result_wavelengths.shape)
-
-        for i, wavelength in enumerate(result_wavelengths):
-            result_fluxes[i] = np.mean(flux_array[wavelength_array == wavelength])
-
-        return result_fluxes, result_wavelengths
-        
     def _get_flux_list(self, fluxes):
         """Return a list of flux values"""
         return [f.flux for f in fluxes]

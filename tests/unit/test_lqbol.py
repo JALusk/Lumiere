@@ -146,12 +146,7 @@ class TestTrapezoidalIntegralCalculator(unittest.TestCase):
                                                 flux_uncertainty = 8,
                                                 wavelength= 2,
                                                 time = 0)
-        self.flux4 = mag2flux.MonochromaticFlux(flux = 250,
-                                                flux_uncertainty = 8,
-                                                wavelength= 2,
-                                                time = 0)
         self.fluxes = [self.flux1, self.flux2, self.flux3]
-        self.repeated_fluxes = [self.flux1, self.flux2, self.flux3, self.flux4]
     
     def test_flux_list(self):
         flux_list = self.integral_calculator._get_flux_list(self.fluxes)
@@ -165,17 +160,57 @@ class TestTrapezoidalIntegralCalculator(unittest.TestCase):
         integral = self.integral_calculator.calculate(self.fluxes)
         self.assertEqual(325, integral)
 
-    def test_average_repeated_fluxes(self):
-        expected_fluxes = np.array([100, 200, 200])
-        expected_wavelengths = np.array([0, 1, 2])
-        flux_list, wavelength_list = self.integral_calculator._average_repeated_fluxes(self.repeated_fluxes)
-        np.testing.assert_array_equal(expected_fluxes, flux_list)
-        np.testing.assert_array_equal(expected_wavelengths, wavelength_list)
+class TestCombineFluxes(unittest.TestCase):
 
-    def test_repeated_fluxes(self):
-        """Should average together repeated fluxes"""
-        integral = self.integral_calculator.calculate(self.repeated_fluxes)
-        self.assertEqual(350, integral)
+    def setUp(self):
+        self.flux1 = mag2flux.MonochromaticFlux(flux = 100,
+                                                flux_uncertainty = 10,
+                                                wavelength = 1,
+                                                time = 0)
+        self.flux2 = mag2flux.MonochromaticFlux(flux = 200,
+                                                flux_uncertainty = 10,
+                                                wavelength= 1,
+                                                time = 0)
+        self.flux3 = mag2flux.MonochromaticFlux(flux = 150,
+                                                flux_uncertainty = 8,
+                                                wavelength= 2,
+                                                time = 0)
+        self.flux4 = mag2flux.MonochromaticFlux(flux = 50,
+                                                flux_uncertainty = 8,
+                                                wavelength= 3,
+                                                time = 0)
+        self.flux5 = mag2flux.MonochromaticFlux(flux = 60,
+                                                flux_uncertainty = 8,
+                                                wavelength= 3,
+                                                time = 0)
+
+        self.fluxes = [self.flux1, self.flux2, self.flux3, self.flux4, self.flux5]
+        self.repeated_fluxes1 = [self.flux1, self.flux2]
+        self.repeated_fluxes3 = [self.flux4, self.flux5]
+
+    def test_combine_fluxes(self):
+        result = lqbol.combine_fluxes(self.repeated_fluxes1)
+        expected = mag2flux.MonochromaticFlux(flux = 150,
+                                              flux_uncertainty = np.sqrt(200)/2.,
+                                              wavelength = 1,
+                                              time = 0)
+        self.assertEqual(expected, result)
+
+    def test_yield_fluxes_at_each_observed_wavelength(self):
+        result_generator = lqbol.yield_fluxes_at_each_observed_wavelength(self.fluxes)
+        expected1 = self.repeated_fluxes1
+        expected3 = self.repeated_fluxes3
+        self.assertEqual(expected1, next(result_generator))
+        self.assertEqual([self.flux3], next(result_generator))
+        self.assertEqual(expected3, next(result_generator))
+        with self.assertRaises(StopIteration):
+            next(result_generator)
+
+    def test_get_integrable_fluxes(self):
+        result = lqbol.get_integrable_fluxes(self.fluxes)
+        expected = [mag2flux.MonochromaticFlux(150, np.sqrt(200)/2., 1, 0), self.flux3,
+                    mag2flux.MonochromaticFlux(55, np.sqrt(128)/2., 3, 0)]
+        self.assertEqual(expected, result)
 
 class TestFluxLuminosityConverter(unittest.TestCase):
 
