@@ -28,6 +28,12 @@ class MonochromaticFlux(object):
         self.wavelength = wavelength
         self.time = time
 
+    def __str__(self):
+        return str(self.__dict__)
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
 class MagnitudeToFluxConverter(object):
 
     def _calculate_flux(self, magnitude, flux_conversion_factor):
