@@ -26,10 +26,36 @@ class QuasiBolometricLuminosity(object):
         self.uncertainty = uncertainty
         self.time = time
 
+def get_weights(uncertainties):
+    """Calculate weights from uncertainties"""
+    weights = [1/s**2 for s in uncertainties]
+    return weights
+
+def weighted_average(values, uncertainties):
+    """Calculate the weighed average of values with uncertainties"""
+    weights = get_weights(uncertainties)
+    denominator = sum(weights)
+    numerator = sum([weights[i] * values[i] for i in range(len(values))])
+    return numerator/denominator
+
+def weighted_average_uncertainty(uncertainties):
+    """Calculate the uncertainty in a weighted average"""
+    weights = get_weights(uncertainties)
+    uncertainty = 1.0/math.sqrt(sum(weights))
+    return uncertainty
+
+def get_flux_values(fluxes):
+    return [f.flux for f in fluxes]
+
+def get_flux_uncertainties(fluxes):
+    return [f.flux_uncertainty for f in fluxes]
+
 def combine_fluxes(fluxes):
-    """Combine a list of MonochromaticFluxes into one average MonochromaticFlux"""
-    combined_flux = np.mean([f.flux for f in fluxes])
-    combined_uncertainty = np.sqrt(sum(f.flux_uncertainty**2 for f in fluxes)) / len(fluxes)
+    """Combine a list of MonochromaticFluxes using a weighted average"""
+    values = get_flux_values(fluxes)
+    uncertainties = get_flux_uncertainties(fluxes)
+    combined_flux = weighted_average(values, uncertainties)
+    combined_uncertainty = weighted_average_uncertainty(uncertainties)
     wavelength = fluxes[0].wavelength
     time = fluxes[0].time
     return mag2flux.MonochromaticFlux(combined_flux,

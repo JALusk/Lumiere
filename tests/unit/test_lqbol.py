@@ -147,6 +147,12 @@ class TestTrapezoidalIntegralCalculator(unittest.TestCase):
                                                 wavelength= 2,
                                                 time = 0)
         self.fluxes = [self.flux1, self.flux2, self.flux3]
+
+    def test_sort_fluxes(self):
+        fluxes = [self.flux2, self.flux1, self.flux3]
+        expected = [self.flux1, self.flux2, self.flux3]
+        self.integral_calculator._sort_fluxes_by_wavelength(fluxes) 
+        self.assertEqual(fluxes, expected)
     
     def test_flux_list(self):
         flux_list = self.integral_calculator._get_flux_list(self.fluxes)
@@ -183,18 +189,28 @@ class TestCombineFluxes(unittest.TestCase):
                                                 flux_uncertainty = 8,
                                                 wavelength= 3,
                                                 time = 0)
-
         self.fluxes = [self.flux1, self.flux2, self.flux3, self.flux4, self.flux5]
         self.repeated_fluxes1 = [self.flux1, self.flux2]
         self.repeated_fluxes3 = [self.flux4, self.flux5]
 
-    def test_combine_fluxes(self):
+    def test_combine_fluxes_equal_uncertainties(self):
         result = lqbol.combine_fluxes(self.repeated_fluxes1)
         expected = mag2flux.MonochromaticFlux(flux = 150,
                                               flux_uncertainty = np.sqrt(200)/2.,
                                               wavelength = 1,
                                               time = 0)
         self.assertEqual(expected, result)
+
+    def test_combine_fluxes_unequal_uncertainties(self):
+        fluxes = [self.flux1, self.flux3]
+        result = lqbol.combine_fluxes(fluxes)
+        expected = mag2flux.MonochromaticFlux(flux = 130.488,
+                                              flux_uncertainty = 6.247,
+                                              wavelength = 1,
+                                              time = 0)
+        self.assertAlmostEqual(expected.flux, result.flux, 3)
+        self.assertAlmostEqual(expected.flux_uncertainty, result.flux_uncertainty, 3)
+
 
     def test_yield_fluxes_at_each_observed_wavelength(self):
         result_generator = lqbol.yield_fluxes_at_each_observed_wavelength(self.fluxes)
@@ -209,7 +225,29 @@ class TestCombineFluxes(unittest.TestCase):
     def test_get_integrable_fluxes(self):
         result = lqbol.get_integrable_fluxes(self.fluxes)
         expected = [mag2flux.MonochromaticFlux(150, np.sqrt(200)/2., 1, 0), self.flux3,
-                    mag2flux.MonochromaticFlux(55, np.sqrt(128)/2., 3, 0)]
+                    mag2flux.MonochromaticFlux(55.0, np.sqrt(128)/2., 3, 0)]
+
+        # Ugly
+        for i, flux in enumerate(result):
+            self.assertAlmostEqual(result[i].flux, expected[i].flux)
+            self.assertAlmostEqual(result[i].flux_uncertainty, expected[i].flux_uncertainty)
+
+
+    def test_weighted_average(self):
+        expected = 10.4
+        result = lqbol.weighted_average([10.0, 12.0], [0.5, 1.0])
+        self.assertEqual(expected, result)
+
+    def test_weighted_average_uncertainty(self):
+        expected = 0.69
+        uncertainties = [1, 1, 3]
+        result = lqbol.weighted_average_uncertainty(uncertainties)
+        self.assertAlmostEqual(expected, result, 2)
+
+    def test_get_weights(self):
+        expected = [4, 1]
+        uncertainties = [0.5, 1.0]
+        result = lqbol.get_weights(uncertainties)
         self.assertEqual(expected, result)
 
 class TestFluxLuminosityConverter(unittest.TestCase):
