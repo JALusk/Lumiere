@@ -7,6 +7,9 @@ from superbol import mag2flux
 
 from scipy.interpolate import interp1d
 
+class MissingFluxOutOfBounds(Exception):
+    pass
+
 def group_fluxes(fluxes, keyfunc=math.floor):
     """Group fluxes by applying keyfunc() to each flux.time in the fluxes.
 
@@ -88,18 +91,21 @@ def get_interpolated_fluxes(lightcurve, observed_times):
     unobserved_times = get_unobserved_times(lightcurve, observed_times)
     interpolated_fluxes = []
     for unobserved_time in unobserved_times:
-        previous_flux = get_previous_flux(lightcurve, unobserved_time)
-        next_flux = get_next_flux(lightcurve, unobserved_time)
-        if next_flux.time - previous_flux.time <= 2:
-            f = interp1d([previous_flux.time, next_flux.time], 
-                         [previous_flux.flux, next_flux.flux])
-            interpolated_flux_value = f(unobserved_time)
-            interpolated_flux_uncertainty = get_interpolated_flux_uncertainty(
-                                                previous_flux,
-                                                next_flux,
-                                                unobserved_time)
-            interpolated_flux = mag2flux.MonochromaticFlux(interpolated_flux_value, interpolated_flux_uncertainty, previous_flux.wavelength, unobserved_time)
-            interpolated_fluxes.append(interpolated_flux)
+        try:
+            previous_flux = get_previous_flux(lightcurve, unobserved_time)
+            next_flux = get_next_flux(lightcurve, unobserved_time)
+            if next_flux.time - previous_flux.time <= 2:
+                f = interp1d([previous_flux.time, next_flux.time], 
+                          [previous_flux.flux, next_flux.flux])
+                interpolated_flux_value = f(unobserved_time)
+                interpolated_flux_uncertainty = get_interpolated_flux_uncertainty(
+                                                 previous_flux,
+                                                 next_flux,
+                                                 unobserved_time)
+                interpolated_flux = mag2flux.MonochromaticFlux(interpolated_flux_value, interpolated_flux_uncertainty, previous_flux.wavelength, unobserved_time)
+                interpolated_fluxes.append(interpolated_flux)
+        except MissingFluxOutOfBounds:
+            pass
     return interpolated_fluxes
 
 def get_interpolated_flux_uncertainty(previous_flux, next_flux, unobserved_time):
@@ -113,6 +119,8 @@ def get_previous_flux(monochromatic_lightcurve, unobserved_time):
         delta = unobserved_time - flux.time
         if delta > 0:
             earlier_fluxes.append(flux)
+    if earlier_fluxes == []:
+        raise MissingFluxOutOfBounds
     return max(earlier_fluxes, key=lambda flux: flux.time)
 
 def get_next_flux(monochromatic_lightcurve, unobserved_time):
@@ -121,6 +129,8 @@ def get_next_flux(monochromatic_lightcurve, unobserved_time):
         delta = unobserved_time - flux.time
         if delta < 0:
             later_fluxes.append(flux)
+    if later_fluxes == []:
+        raise MissingFluxOutOfBounds
     return min(later_fluxes, key=lambda flux: flux.time)
 
 def get_gap_size(times, unobserved_time):

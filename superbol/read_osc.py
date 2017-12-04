@@ -31,7 +31,7 @@ def get_observed_magnitude(osc_photometry_dict):
     if 'e_magnitude' in osc_photometry_dict.keys():
         uncertainty = float(osc_photometry_dict['e_magnitude'])
     else:
-        uncertainty = 0.0
+        uncertainty = 0.1 * magnitude
 
     return mag2flux.ObservedMagnitude(magnitude, uncertainty, band, time)
 

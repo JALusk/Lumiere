@@ -25,5 +25,5 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
 
     def test_no_negative_luminosities(self):
         for luminosity in self.lc_00cb:
-            print(luminosity.value, luminosity.uncertainty, luminosity.time)
+            print(luminosity.time, luminosity.time - 51656, 4.1, luminosity.value, luminosity.uncertainty)
         self.assertTrue([luminosity.value > 0 for luminosity in self.lc_00cb])
