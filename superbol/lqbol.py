@@ -31,7 +31,7 @@ def get_quasi_bolometric_flux(integral_calculator,
                               uncertainty_calculator, 
                               fluxes):
     """Calculate Fqbol using the supplied integration technique"""
-    SED = sed.get_integrable_fluxes(fluxes)
+    SED = sed.get_SED(fluxes)
     if len(SED) < 2:
         raise InsufficientFluxes(
             "Cannot calculate quasi-bolometric flux with fewer " +
