@@ -15,11 +15,14 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
         sn00cb_osc_photometry = read_osc.retrieve_osc_photometry('SN2000cb', path="/home/jlusk/src/superbol/data/SN2000cb.json")
         fluxes = []
         for photometry_dict in sn00cb_osc_photometry:
-            magnitude = read_osc.get_observed_magnitude(photometry_dict)
-            extinction_value = extinction.get_extinction_by_name(extinction_table, magnitude.band)
-            magnitude.magnitude = extinction.correct_observed_magnitude(magnitude, extinction_value)
-            fluxes.append(magnitude.convert_to_flux())
-
+            try:
+                observed_magnitude = read_osc.get_observed_magnitude(photometry_dict)
+                extinction_value = extinction.get_extinction_by_name(extinction_table, observed_magnitude.band)
+                observed_magnitude.magnitude = extinction.correct_observed_magnitude(observed_magnitude, extinction_value)
+                fluxes.append(observed_magnitude.convert_to_flux())
+            except:
+                pass
+        
         distance = lqbol.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
         self.lc_00cb = lightcurve.calculate_lightcurve(fluxes, distance, lqbol.calculate_qbol_luminosity)
 

@@ -14,25 +14,26 @@ class NoTimeGiven(Exception):
 class NoBandFound(Exception):
     pass
 
+class NoUncertainty(Exception):
+    pass
+
 def get_observed_magnitude(osc_photometry_dict):
     """Turn photometry from the OSC into an ObservedMagnitude"""
-    if 'magnitude' not in osc_photometry_dict.keys():
-        raise NoMagnitude
-    elif 'band' not in osc_photometry_dict.keys():
-        raise NoBandNameGiven
-    elif 'time' not in osc_photometry_dict.keys():
-        raise NoTimeGiven
-
-    magnitude = float(osc_photometry_dict['magnitude'])
-    band = get_band(osc_photometry_dict['band'])
-    # This is a dirty hack to get around the way IRSA names bands
-    time = float(osc_photometry_dict['time'])
-    
-    if 'e_magnitude' in osc_photometry_dict.keys():
+    try:
+        magnitude = float(osc_photometry_dict['magnitude'])
         uncertainty = float(osc_photometry_dict['e_magnitude'])
-    else:
-        uncertainty = 0.1 * magnitude
-
+        band = get_band(osc_photometry_dict['band'])
+        time = float(osc_photometry_dict['time'])
+    except KeyError:
+        if 'magnitude' not in osc_photometry_dict.keys():
+            raise NoMagnitude
+        if 'e_magnitude' not in osc_photometry_dict.keys():
+            raise NoUncertainty
+        elif 'band' not in osc_photometry_dict.keys():
+            raise NoBandNameGiven
+        elif 'time' not in osc_photometry_dict.keys():
+            raise NoTimeGiven
+    
     return mag2flux.ObservedMagnitude(magnitude, uncertainty, band, time)
 
 def get_band(band_name):
