@@ -1,7 +1,6 @@
 import math
 import numpy as np
 
-from collections import UserList
 from itertools import groupby
 from superbol import mag2flux
 
