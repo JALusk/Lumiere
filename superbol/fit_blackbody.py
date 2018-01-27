@@ -92,20 +92,22 @@ def dbb_total_flux_dT(temperature, angular_radius):
     bb_total_flux = bb_total_flux.to(u.erg / (u.s * u.cm**2 * u.K))
     return bb_total_flux.value
 
-def bb_fit_parameters(wavelengths, fluxes, flux_uncertainties):
-    """Fit a blackbody to observed `wavelengths` and `fluxes`.
+def bb_fit_parameters(SED):
+    """Fit a blackbody to the observed `SED`.
     
     The initial guesses for the `temperature` and `angular_radius` are :math:`T = 5000` K and :math:`\\theta = 1.0 \\times 10^{-10}`. These are typical for an extragalactic supernovae, but should be used with caution for any other objects.
 
     Args:
-        wavelengths (list): List of wavelengths at which the fluxes were observed.
-        fluxes (list): List of observed monochromatic fluxes.
+        SED (list): List of observed MonochromaticFlux objects.
 
     Returns:
         tuple: Tuple containing the best fit `temperature`, `angular_radius`, as well as perr, a 2-tuple containing the `temperature` error and the `angular_radius` error.
 
         (temperature, angular_radius, perr)
     """
+    wavelengths = [f.wavelength for f in SED]
+    fluxes = [f.flux for f in SED]
+    flux_uncertainties = [f.flux_uncertainty for f in SED]
     popt, pcov = curve_fit(bb_flux_nounits, wavelengths, fluxes, p0=[5000, 1.0e-10], sigma=flux_uncertainties, absolute_sigma=True)
     temperature = popt[0]
     angular_radius = popt[1]

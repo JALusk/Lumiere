@@ -3,6 +3,8 @@ import numpy as np
 from astropy import units as u
 from scipy.optimize import curve_fit
 from .context import superbol
+from superbol import mag2flux
+from superbol import sed
 from superbol.planck import planck_function
 from superbol.fit_blackbody import *
 
@@ -12,17 +14,27 @@ class TestFitBlackbody(unittest.TestCase):
         self.wavelength = 5000. * u.Angstrom
         self.temperature = 13000. * u.K
         self.angular_radius = 0.2e-10
-        self.flux_array = u.Quantity([5.87565760e-12, 3.79417256e-11, 
-                                      6.40953095e-11, 5.90280490e-11, 
-                                      3.41930932e-11], 
-                                      u.erg / (u.Angstrom * u.cm**2 * u.s))
-        self.flux_uncertainties = u.Quantity([1.0e-13, 1.0e-12, 
-                                      1.0e-12, 1.0e-12, 
-                                      1.0e-12], 
-                                      u.erg / (u.Angstrom * u.cm**2 * u.s))
-
-        self.eff_wl_array = u.Quantity([3660., 4380., 5450., 6410., 7980.],
-                                        u.Angstrom)
+        self.flux1 = mag2flux.MonochromaticFlux(flux = 5.87565760e-12,
+                                                flux_uncertainty = 1.0e-13,
+                                                wavelength = 3600.0,
+                                                time = 0)
+        self.flux2 = mag2flux.MonochromaticFlux(flux = 3.79417256e-11,
+                                                flux_uncertainty = 1.0e-12,
+                                                wavelength = 4380.0,
+                                                time = 0)
+        self.flux3 = mag2flux.MonochromaticFlux(flux = 6.40953095e-11,
+                                                flux_uncertainty = 1.0e-12,
+                                                wavelength = 5450.0,
+                                                time = 0)
+        self.flux4 = mag2flux.MonochromaticFlux(flux = 5.90280490e-11,
+                                                flux_uncertainty = 1.0e-12,
+                                                wavelength = 6410.0,
+                                                time = 0)
+        self.flux5 = mag2flux.MonochromaticFlux(flux = 3.41930932e-11,
+                                                flux_uncertainty = 1.0e-12,
+                                                wavelength = 7980.0,
+                                                time = 0)
+        self.SED = [self.flux1, self.flux2, self.flux3, self.flux4, self.flux5]
 
     def test_bb_flux_returns_expected_flux(self):
         expected = (np.pi * u.sr) \
@@ -43,14 +55,16 @@ class TestFitBlackbody(unittest.TestCase):
         self.assertEqual(expected.value, result)
 
     def test_bb_fit_parameters_returns_expected_parameters(self):
-        popt, pcov = curve_fit(bb_flux_nounits, self.eff_wl_array.value, self.flux_array.value,
-                               p0=[5000, 1.0e-10], sigma=self.flux_uncertainties.value,
+        wavelengths = [f.wavelength for f in self.SED]
+        fluxes = sed.get_flux_values(self.SED)
+        flux_uncertainties = sed.get_flux_uncertainties(self.SED)
+        popt, pcov = curve_fit(bb_flux_nounits, wavelengths, fluxes,
+                               p0=[5000, 1.0e-10], sigma=flux_uncertainties,
                                absolute_sigma=True)
         expected_temp = popt[0]
         expected_radius = popt[1]
         expected_perr = np.sqrt(np.diag(pcov))
-        result_temp, result_radius, result_perr = bb_fit_parameters(self.eff_wl_array.value,
-                                                       self.flux_array.value, self.flux_uncertainties.value)
+        result_temp, result_radius, result_perr = bb_fit_parameters(self.SED)
         self.assertEqual((expected_temp, expected_radius, expected_perr[0], expected_perr[1]), 
                          (result_temp, result_radius, result_perr[0], result_perr[1]))
 
@@ -74,38 +88,50 @@ class TestFitBlackbodyToBlackbody(unittest.TestCase):
         # Cool, warm, and hot BB flux errors (1%)
         self.cool_errors = [3.3786134983627783e-21, 1.825359587379945e-20, 8.074018141103508e-20, 1.7444713955287287e-19, 3.414668965720534e-19, 3.923967095683563e-19, 2.3130894084061456e-19]
         self.warm_errors = [4.5613153169705906e-16, 3.611905858092645e-16, 2.3921603708586965e-16, 1.639405566514862e-16, 9.126671293767318e-17, 9.177243109359599e-18, 3.1983381109924263e-18]
-        self.hot_errors = [1.0241915540933445e-17, 1.4831860746515914e-17, 1.7682275165286134e-17, 1.717175744676841e-17, 1.3887713520412634e-17, 2.8004081263434603e-18, 1.1313249474986263e-18] 
+        self.hot_errors = [1.0241915540933445e-17, 1.4831860746515914e-17, 1.7682275165286134e-17, 1.717175744676841e-17, 1.3887713520412634e-17, 2.8004081263434603e-18, 1.1313249474986263e-18]
+
+        # Build SEDs
+        self.cool_SED = []
+        self.warm_SED = []
+        self.hot_SED = []
+        for i in range(len(self.wavelengths)):
+            cool_flux = mag2flux.MonochromaticFlux(self.cool_fluxes[i], self.cool_errors[i], self.wavelengths[i], 0)
+            warm_flux = mag2flux.MonochromaticFlux(self.warm_fluxes[i], self.warm_errors[i], self.wavelengths[i], 0)
+            hot_flux = mag2flux.MonochromaticFlux(self.hot_fluxes[i], self.hot_errors[i], self.wavelengths[i], 0)
+            self.cool_SED.append(cool_flux)
+            self.warm_SED.append(warm_flux)
+            self.hot_SED.append(hot_flux)
 
         # Supernova-ish angular radiua
         self.theta = 2.0e-11
     
     def test_fit_blackbody_cool_temp(self):
-        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.cool_fluxes, self.cool_errors)
+        result_T, result_theta, result_perr = bb_fit_parameters(self.cool_SED)
 
         self.assertAlmostEqual(self.cool_temp, result_T, 2)
 
     def test_fit_blackbody_cool_theta(self):
-        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.cool_fluxes, self.cool_errors)
+        result_T, result_theta, result_perr = bb_fit_parameters(self.cool_SED)
 
         self.assertAlmostEqual(self.theta, result_theta)
 
     def test_fit_blackbody_warm_temp(self):
-        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.warm_fluxes, self.warm_errors)
+        result_T, result_theta, result_perr = bb_fit_parameters(self.warm_SED)
 
         self.assertAlmostEqual(self.warm_temp, result_T, 2)
 
     def test_fit_blackbody_warm_theta(self):
-        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.warm_fluxes, self.warm_errors)
+        result_T, result_theta, result_perr = bb_fit_parameters(self.warm_SED)
 
         self.assertAlmostEqual(self.theta, result_theta)
 
     def test_fit_blackbody_hot_temp(self):
-        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.hot_fluxes, self.hot_errors)
+        result_T, result_theta, result_perr = bb_fit_parameters(self.hot_SED)
 
         self.assertAlmostEqual(self.hot_temp, result_T, 2)
 
     def test_fit_blackbody_hot_theta(self):
-        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.hot_fluxes, self.hot_errors)
+        result_T, result_theta, result_perr = bb_fit_parameters(self.hot_SED)
 
         self.assertAlmostEqual(self.theta, result_theta)
 
@@ -152,20 +178,33 @@ class TestFitBlackbodyTemperatureToWD(unittest.TestCase):
                            5.18996112e-16, 3.47907287e-16, 2.88964217e-16,
                            7.41997460e-17, 2.71298841e-17, 9.29630830e-18]
 
+        # Build SEDs
+        self.cool_SED = []
+        self.warm_SED = []
+        self.hot_SED = []
+        for i in range(len(self.wavelengths)):
+            cool_flux = mag2flux.MonochromaticFlux(self.cool_fluxes[i], self.cool_errors[i], self.wavelengths[i], 0)
+            warm_flux = mag2flux.MonochromaticFlux(self.warm_fluxes[i], self.warm_errors[i], self.wavelengths[i], 0)
+            hot_flux = mag2flux.MonochromaticFlux(self.hot_fluxes[i], self.hot_errors[i], self.wavelengths[i], 0)
+            self.cool_SED.append(cool_flux)
+            self.warm_SED.append(warm_flux)
+            self.hot_SED.append(hot_flux)
+
+
     def test_fit_blackbody_cool_WD(self):
-        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.cool_fluxes, self.cool_errors)
+        result_T, result_theta, result_perr = bb_fit_parameters(self.cool_SED)
 
         expected = 3300.274543
         self.assertAlmostEqual(expected, result_T, 2)
 
     def test_fit_blackbody_warm_WD(self):
-        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.warm_fluxes, self.warm_errors)
+        result_T, result_theta, result_perr = bb_fit_parameters(self.warm_SED)
 
         expected = 4983.36073925
         self.assertAlmostEqual(expected, result_T, 2)
 
     def test_fit_blackbody_hot_WD(self):
-        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.hot_fluxes, self.hot_errors)
+        result_T, result_theta, result_perr = bb_fit_parameters(self.hot_SED)
 
         expected = 11196.3769245
         self.assertAlmostEqual(expected, result_T, 2)
@@ -178,8 +217,13 @@ class TestFitBlackbodyTemperatureToSN(unittest.TestCase):
         self.fluxes = [1.42159582e-16, 2.09548255e-16, 3.70796730e-16, 4.53049602e-16, 3.36788260e-16]
         self.flux_errs = [2.21846926e-17, 1.18302183e-17, 1.17834356e-17, 1.53145455e-17, 1.24389601e-17]
 
+        self.SED = []
+        for i in range(len(self.wavelengths)):
+            flux = mag2flux.MonochromaticFlux(self.fluxes[i], self.flux_errs[i], self.wavelengths[i], 0)
+            self.SED.append(flux)
+
     def test_fit_blackbody_SN98A(self):
-        result_T, result_theta, result_perr = bb_fit_parameters(self.wavelengths, self.fluxes, self.flux_errs)
+        result_T, result_theta, result_perr = bb_fit_parameters(self.SED)
 
         expected = 4331.7954035003195
         self.assertAlmostEqual(expected, result_T, 2)
