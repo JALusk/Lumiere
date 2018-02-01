@@ -28,16 +28,16 @@ class TestTrimSED(unittest.TestCase):
                                                 flux_uncertainty = 1,
                                                 wavelength = 7980.0,
                                                 time = self.time)
-        self.sed = [self.flux1, self.flux2, self.flux3, self.flux4, self.flux5]
+        self.SED = [self.flux1, self.flux2, self.flux3, self.flux4, self.flux5]
 
-    def test_trim_sed_5000_angstroms(self):
+    def test_trim_SED_5000_angstroms(self):
         expected = [self.flux3, self.flux4, self.flux5]
-        result = laug.trim_sed(self.sed, 5000.0)
+        result = laug.trim_SED(self.SED, 5000.0)
         
         self.assertEqual(expected, result)
 
-    def test_trim_sed_7000_angstroms(self):
+    def test_trim_SED_7000_angstroms(self):
         expected = [self.flux5]
-        result = laug.trim_sed(self.sed, 7000.0)
+        result = laug.trim_SED(self.SED, 7000.0)
 
         self.assertEqual(expected, result)
