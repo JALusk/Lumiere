@@ -3,6 +3,7 @@ import unittest
 from .context import superbol
 from superbol import laug
 from superbol import mag2flux
+from superbol import blackbody
 
 class TestTrimSED(unittest.TestCase):
 
@@ -41,3 +42,6 @@ class TestTrimSED(unittest.TestCase):
         result = laug.trim_SED(self.SED, 7000.0)
 
         self.assertEqual(expected, result)
+
+class TestIRCorrection(unittest.TestCase):
+    pass
