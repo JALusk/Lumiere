@@ -100,3 +100,14 @@ class TestCombineMagnitudes(unittest.TestCase):
         self.assertEqual(expected_V, next(result_generator))
         with self.assertRaises(StopIteration):
             next(result_generator)
+
+    def test_get_multi_band_photometry(self):
+        result = photometry.get_multi_band_photometry(self.magnitudes)
+        expected = [self.mag3, mag2flux.ObservedMagnitude(150, np.sqrt(200)/2., 'U', 0),
+                    mag2flux.ObservedMagnitude(55.0, np.sqrt(128)/2., 'V', 0)]
+
+        # Ugly
+        for i, flux in enumerate(result):
+            self.assertAlmostEqual(result[i].magnitude, expected[i].magnitude)
+            self.assertAlmostEqual(result[i].uncertainty, expected[i].uncertainty)
+

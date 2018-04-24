@@ -54,3 +54,14 @@ def yield_observed_magnitudes_at_each_observed_band(observed_magnitudes):
     list_of_bands = sorted(list(set(obs.band for obs in observed_magnitudes)))
     for band in list_of_bands:
         yield [obs for obs in observed_magnitudes if obs.band == band]
+
+def get_multi_band_photometry(observed_magnitudes):
+    """Return a list of ObservedMagnitudes with duplicates averaged"""
+    multi_band_photometry = []
+    for obs in yield_observed_magnitudes_at_each_observed_band(observed_magnitudes):
+        if len(obs) == 1:
+            multi_band_photometry.append(obs[0])
+        else:
+            multi_band_photometry.append(combine_observed_magnitudes(obs))
+    return multi_band_photometry
+
