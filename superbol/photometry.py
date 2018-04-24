@@ -65,3 +65,9 @@ def get_multi_band_photometry(observed_magnitudes):
             multi_band_photometry.append(combine_observed_magnitudes(obs))
     return multi_band_photometry
 
+def get_observed_band_names(mutli_band_photometry_set):
+    band_names = []
+    for multi_band_photometry in mutli_band_photometry_set:
+        band_names += [obs.band for obs in multi_band_photometry]
+    return sorted(list(set(band_names)))
+

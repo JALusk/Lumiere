@@ -128,3 +128,27 @@ class TestCombineMagnitudes(unittest.TestCase):
         result = photometry.get_weights(uncertainties)
         self.assertEqual(expected, result)
 
+class TestInterpolateSED(unittest.TestCase):
+
+    def setUp(self):
+        self.mag01 = mag2flux.ObservedMagnitude(100, 2, 'U', 0)
+        self.mag02 = mag2flux.ObservedMagnitude(200, 2, 'B', 0)
+        self.mag03 = mag2flux.ObservedMagnitude(150, 2, 'V', 0)
+        self.mag11 = mag2flux.ObservedMagnitude(100, 2, 'U', 1)
+        self.mag13 = mag2flux.ObservedMagnitude(150, 2, 'V', 1)
+        self.mag21 = mag2flux.ObservedMagnitude(100, 2, 'U', 2)
+        self.mag22 = mag2flux.ObservedMagnitude(200, 2, 'B', 2)
+        self.mag23 = mag2flux.ObservedMagnitude(150, 2, 'V', 2)
+        self.mag31 = mag2flux.ObservedMagnitude(150, 2, 'U', 3)
+        self.mag32 = mag2flux.ObservedMagnitude(150, 2, 'B', 3)
+        self.multi_band_photometry0 = photometry.get_multi_band_photometry([self.mag01, self.mag02, self.mag03])
+        self.multi_band_photometry1 = photometry.get_multi_band_photometry([self.mag11, self.mag13])
+        self.multi_band_photometry2 = photometry.get_multi_band_photometry([self.mag21, self.mag22, self.mag23])
+        self.mutli_band_photometry3 = photometry.get_multi_band_photometry([self.mag31, self.mag32])
+
+    def test_get_observed_band_names(self):
+        expected = ['B', 'U', 'V']
+        result = photometry.get_observed_band_names([self.multi_band_photometry0, self.multi_band_photometry1, self.multi_band_photometry2])
+        self.assertEqual(expected, result)
+
+
