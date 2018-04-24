@@ -49,3 +49,8 @@ def get_weights(uncertainties):
     weights = [1/s**2 for s in uncertainties]
     return weights
 
+def yield_observed_magnitudes_at_each_observed_band(observed_magnitudes):
+    """Yield lists of ObservedMagnitudes with the same band"""
+    list_of_bands = sorted(list(set(obs.band for obs in observed_magnitudes)))
+    for band in list_of_bands:
+        yield [obs for obs in observed_magnitudes if obs.band == band]

@@ -70,11 +70,11 @@ class TestCombineMagnitudes(unittest.TestCase):
                                                band = 'V',
                                                time = 0)
         self.magnitudes = [self.mag1, self.mag2, self.mag3, self.mag4, self.mag5]
-        self.repeated_magnitudes1 = [self.mag1, self.mag2]
-        self.repeated_magnitudes3 = [self.mag4, self.mag5]
+        self.repeated_magnitudes_U = [self.mag1, self.mag2]
+        self.repeated_magnitudes_V = [self.mag4, self.mag5]
 
     def test_combine_magnitudes_equal_uncertainties(self):
-        result = photometry.combine_observed_magnitudes(self.repeated_magnitudes1)
+        result = photometry.combine_observed_magnitudes(self.repeated_magnitudes_U)
         expected = mag2flux.ObservedMagnitude(magnitude = 150,
                                               uncertainty = np.sqrt(200)/2.,
                                               band = 'U',
@@ -91,3 +91,12 @@ class TestCombineMagnitudes(unittest.TestCase):
         self.assertAlmostEqual(expected.magnitude, result.magnitude, 3)
         self.assertAlmostEqual(expected.uncertainty, result.uncertainty, 3)
 
+    def test_yield_magnitudes_at_each_observed_band(self):
+        result_generator = photometry.yield_observed_magnitudes_at_each_observed_band(self.magnitudes)
+        expected_U = self.repeated_magnitudes_U
+        expected_V = self.repeated_magnitudes_V
+        self.assertEqual([self.mag3], next(result_generator))
+        self.assertEqual(expected_U, next(result_generator))
+        self.assertEqual(expected_V, next(result_generator))
+        with self.assertRaises(StopIteration):
+            next(result_generator)
