@@ -116,3 +116,9 @@ class TestCombineMagnitudes(unittest.TestCase):
         result = photometry.weighted_average([10.0, 12.0], [0.5, 1.0])
         self.assertEqual(expected, result)
 
+    def test_weighted_average_uncertainty(self):
+        expected = 0.69
+        uncertainties = [1, 1, 3]
+        result = photometry.weighted_average_uncertainty(uncertainties)
+        self.assertAlmostEqual(expected, result, 2)
+
