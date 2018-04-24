@@ -74,9 +74,20 @@ class TestCombineMagnitudes(unittest.TestCase):
         self.repeated_magnitudes3 = [self.mag4, self.mag5]
 
     def test_combine_magnitudes_equal_uncertainties(self):
-        result = photometry.combine_magnitudes(self.repeated_magnitudes1)
+        result = photometry.combine_observed_magnitudes(self.repeated_magnitudes1)
         expected = mag2flux.ObservedMagnitude(magnitude = 150,
                                               uncertainty = np.sqrt(200)/2.,
                                               band = 'U',
                                               time = 0)
         self.assertEqual(expected, result)
+
+    def test_combine_magnitudes_unequal_uncertainties(self):
+        magnitudes = [self.mag1, self.mag3]
+        result = photometry.combine_observed_magnitudes(magnitudes)
+        expected = mag2flux.ObservedMagnitude(magnitude = 130.488,
+                                              uncertainty = 6.247,
+                                              band = 'U',
+                                              time = 0)
+        self.assertAlmostEqual(expected.magnitude, result.magnitude, 3)
+        self.assertAlmostEqual(expected.uncertainty, result.uncertainty, 3)
+

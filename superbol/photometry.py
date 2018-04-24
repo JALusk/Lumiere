@@ -12,7 +12,7 @@ def group_magnitudes(magnitudes, keyfunc=math.floor):
     grouped_magnitudes = [list(it) for k, it in groupby(magnitudes, lambda x: keyfunc(x.time))]
     return grouped_magnitudes
 
-def combine_magnitudes(observed_magnitudes):
+def combine_observed_magnitudes(observed_magnitudes):
     """Combine a list of ObservedMagnitudes using a weighted average"""
     values = get_observed_magnitude_values(observed_magnitudes)
     uncertainties = get_observed_magnitude_uncertainties(observed_magnitudes)
