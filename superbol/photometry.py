@@ -76,3 +76,15 @@ def get_observed_times(multi_band_photometry_set):
     for multi_band_photometry in multi_band_photometry_set:
         times += get_times(multi_band_photometry)
     return sorted(list(set(times)))
+
+def get_unobserved_times(lightcurve, observed_times):
+    times = get_times(lightcurve)
+    unobserved_times = []
+    for observed_time in observed_times:
+        if observed_time not in times:
+            unobserved_times.append(observed_time)
+    return unobserved_times
+
+def get_times(multi_band_photometry):
+    return [obs.time for obs in multi_band_photometry]
+
