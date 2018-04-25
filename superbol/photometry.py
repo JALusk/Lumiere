@@ -88,3 +88,9 @@ def get_unobserved_times(lightcurve, observed_times):
 def get_times(multi_band_photometry):
     return [obs.time for obs in multi_band_photometry]
 
+def get_lightcurve(multi_band_photometry_set, band):
+    """Get list of all observed magnitudes in a given band """
+    lightcurve = []
+    for multi_band_photometry in multi_band_photometry_set:
+        lightcurve += [obs for obs in multi_band_photometry if obs.band == band]
+    return lightcurve

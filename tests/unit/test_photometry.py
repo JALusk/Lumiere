@@ -164,3 +164,11 @@ class TestInterpolateMultiBandPhotometry(unittest.TestCase):
                                                         self.multi_band_photometry3])
         unobserved_times = photometry.get_unobserved_times(lightcurve, observed_times)
         self.assertEqual([1], unobserved_times)
+
+    def test_get_lightcurve(self):
+        expected = [self.mag01, self.mag11, self.mag21]
+        result = photometry.get_lightcurve([self.multi_band_photometry0,
+                                            self.multi_band_photometry1,
+                                            self.multi_band_photometry2], 'U')
+        self.assertEqual(expected, result)
+
