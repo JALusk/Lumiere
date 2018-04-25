@@ -71,3 +71,8 @@ def get_observed_band_names(mutli_band_photometry_set):
         band_names += [obs.band for obs in multi_band_photometry]
     return sorted(list(set(band_names)))
 
+def get_observed_times(multi_band_photometry_set):
+    times = []
+    for multi_band_photometry in multi_band_photometry_set:
+        times += get_times(multi_band_photometry)
+    return sorted(list(set(times)))
