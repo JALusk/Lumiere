@@ -1,3 +1,4 @@
+import math
 import unittest
 import numpy as np
 
@@ -146,6 +147,7 @@ class TestInterpolateMultiBandPhotometry(unittest.TestCase):
         self.multi_band_photometry2 = photometry.get_multi_band_photometry([self.mag21, self.mag22, self.mag23])
         self.multi_band_photometry3 = photometry.get_multi_band_photometry([self.mag31, self.mag32])
 
+    #check
     def test_get_observed_band_names(self):
         expected = ['B', 'U', 'V']
         result = photometry.get_observed_band_names([self.multi_band_photometry0, self.multi_band_photometry1, self.multi_band_photometry2])
@@ -156,11 +158,13 @@ class TestInterpolateMultiBandPhotometry(unittest.TestCase):
         result = photometry.get_times([self.mag01, self.mag13, self.mag21, self.mag32])
         self.assertEqual(expected, result)
 
+    #check
     def test_get_observed_times(self):
         expected = [0, 1, 2]
         result = photometry.get_observed_times([self.multi_band_photometry0, self.multi_band_photometry1, self.multi_band_photometry2])
         self.assertEqual(expected, result)
 
+    #check
     def test_get_unobserved_times(self):
         lightcurve = [self.mag02, self.mag22, self.mag32]
         observed_times = photometry.get_observed_times([self.multi_band_photometry0,
@@ -170,6 +174,7 @@ class TestInterpolateMultiBandPhotometry(unittest.TestCase):
         unobserved_times = photometry.get_unobserved_times(lightcurve, observed_times)
         self.assertEqual([1], unobserved_times)
 
+    #check
     def test_get_lightcurve(self):
         expected = [self.mag01, self.mag11, self.mag21]
         result = photometry.get_lightcurve([self.multi_band_photometry0,
@@ -177,3 +182,81 @@ class TestInterpolateMultiBandPhotometry(unittest.TestCase):
                                             self.multi_band_photometry2], 'U')
         self.assertEqual(expected, result)
 
+    #check
+    def test_get_previous_observed_magnitude(self):
+        lightcurve = [self.mag02, self.mag22, self.mag32]
+        unobserved_time = 1
+        previous_observed_magnitude = photometry.get_previous_observed_magnitude(lightcurve, unobserved_time)
+        self.assertEqual(self.mag02, previous_observed_magnitude)
+
+    def test_get_previous_observed_magnitude_out_of_bounds(self):
+        lightcurve = [self.mag22, self.mag32]
+        unobserved_time = 1
+        with self.assertRaises(photometry.MissingMagnitudeOutOfBounds):
+            photometry.get_previous_observed_magnitude(lightcurve, unobserved_time)
+
+    #check
+    def test_get_next_observed_magnitude(self):
+        lightcurve = [self.mag02, self.mag22, self.mag32]
+        unobserved_time = 1
+        next_observed_magnitude = photometry.get_next_observed_magnitude(lightcurve, unobserved_time)
+        self.assertEqual(self.mag22, next_observed_magnitude)
+
+    def test_get_next_observed_magnitude_out_of_bounds(self):
+        lightcurve = [self.mag02, self.mag22, self.mag32]
+        unobserved_time = 4
+        with self.assertRaises(photometry.MissingMagnitudeOutOfBounds):
+            photometry.get_next_observed_magnitude(lightcurve, unobserved_time)
+
+    #check
+    def test_get_interpolated_magnitudes(self):
+        lightcurve = [self.mag02, self.mag22, self.mag32]
+        previous_observed_magnitude = self.mag02
+        next_observed_magnitude = self.mag22
+        unobserved_time = 1
+        weight1 = (2-1)/(2-0)
+        weight2 = (1-0)/(2-0)
+        uncertainty = math.sqrt(weight1**2 * previous_observed_magnitude.uncertainty**2 + weight2**2 + next_observed_magnitude.uncertainty**2)
+        expected = [mag2flux.ObservedMagnitude(200.0, uncertainty , 'B', 1)]
+        result = photometry.get_interpolated_magnitudes(lightcurve, [1])
+        self.assertEqual(expected, result)
+
+    #check
+    def test_get_interpolated_magnitude_uncertainty(self):
+        previous_magnitude = self.mag02
+        next_magnitude = self.mag22
+        unobserved_time = 1
+        weight1 = (2-1)/(2-0)
+        weight2 = (1-0)/(2-0)
+        expected = math.sqrt(weight1**2 * previous_magnitude.uncertainty**2 + weight2**2 + next_magnitude.uncertainty**2)
+        result = photometry.get_interpolated_magnitude_uncertainty(previous_magnitude, next_magnitude, unobserved_time)
+        self.assertEqual(expected, result)
+
+
+    #check
+    def test_big_gap(self):
+        lightcurve = [self.mag01, self.mag31]
+        interpolated_lc = photometry.get_interpolated_magnitudes(lightcurve, [0, 1, 2, 3])
+        self.assertEqual([], interpolated_lc)
+
+
+    #check
+    def test_append_interpolated_magnitudes_to_multi_band_photometry_set(self):
+        magnitude = mag2flux.ObservedMagnitude(200.0, 2, 'B', 1)
+        multi_band_photometry = self.multi_band_photometry1
+        photometry.append_interpolated_magnitudes_to_multi_band_photometry_set([magnitude], [multi_band_photometry])
+        self.assertTrue(magnitude in multi_band_photometry)
+
+    #check
+    def test_simple_interpolation(self):
+        photometry.interpolate_missing_magnitudes([self.multi_band_photometry0,
+                                                   self.multi_band_photometry1,
+                                                   self.multi_band_photometry2])
+        previous_magnitude = self.mag02
+        next_magnitude = self.mag22
+        unobserved_time = 1
+        weight1 = (2-1)/(2-0)
+        weight2 = (1-0)/(2-0)
+        uncertainty = math.sqrt(weight1**2 * previous_magnitude.uncertainty**2 + weight2**2 + next_magnitude.uncertainty**2)
+        interpolated_magnitude = mag2flux.ObservedMagnitude(200, uncertainty, 'B', 1)
+        self.assertTrue(interpolated_magnitude in self.multi_band_photometry1)
