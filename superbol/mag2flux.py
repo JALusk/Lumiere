@@ -8,6 +8,12 @@ class ObservedMagnitude(object):
         self.band = band
         self.time = time
 
+    def __str__(self):
+        return str(self.__dict__)
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
     def convert_to_flux(self):
         monochromatic_flux = MagnitudeToFluxConverter().convert(self)
         return monochromatic_flux
