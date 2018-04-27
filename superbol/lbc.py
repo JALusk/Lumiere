@@ -38,6 +38,7 @@ def calculate_bc_luminosity(obs_group, distance):
                 pass
             except InvalidFilterCombination:
                 pass
+    return BCLuminosity(np.mean([x.value for x in lbc]), np.mean([x.uncertainty for x in lbc]), np.mean([x.time for x in lbc]))
 
 def compute_bolometric_correction(method_name, obs1, obs2):
     """Calculate the bolometric correction for obs1-obs2 using specified method"""
@@ -88,7 +89,6 @@ def apply_bolometric_correction(bc, observed_magnitude):
     return BolometricMagnitude(mbol_value, mbol_uncertainty, mbol_time)
 
 
-    return BCLuminosity(np.mean([x.value for x in lbc]), np.mean([x.uncertainty for x in lbc]), np.mean([x.time for x in lbc]))
 
 class InvalidColor(Exception):
     pass
