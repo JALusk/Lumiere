@@ -5,33 +5,37 @@ import numpy as np
 from superbol import mag2flux
 from superbol import photometry
 
+U_band = mag2flux.Band('U', 'CTIO U', 3660.0, 417.5E-11)
+B_band = mag2flux.Band('B', 'CTIO B', 4380.0, 632.0E-11)
+V_band = mag2flux.Band('V', 'CTIO V', 5450.0, 363.1E-11)
+
 class TestGroupObservedMagnitudes(unittest.TestCase):
 
     def setUp(self):
 
         self.mag10 = mag2flux.ObservedMagnitude(magnitude = 0,
                                                 uncertainty = 0,
-                                                band = 'U',
+                                                band = U_band,
                                                 time = 1)
 
         self.mag11 = mag2flux.ObservedMagnitude(magnitude = 0,
                                                 uncertainty = 0,
-                                                band = 'B',
+                                                band = B_band,
                                                 time = 1.1)
 
         self.mag12 = mag2flux.ObservedMagnitude(magnitude = 0,
                                                 uncertainty = 0,
-                                                band = 'V',
+                                                band = V_band,
                                                 time = 1.2)
 
         self.mag21 = mag2flux.ObservedMagnitude(magnitude = 0,
                                                 uncertainty = 0,
-                                                band = 'U',
+                                                band = U_band,
                                                 time = 2.1)
 
         self.mag27 = mag2flux.ObservedMagnitude(magnitude = 0,
                                                 uncertainty = 0,
-                                                band = 'B',
+                                                band = B_band,
                                                 time = 2.7)
 
     def test_group_magnitudes_floor_same_day(self):
@@ -52,23 +56,23 @@ class TestCombineMagnitudes(unittest.TestCase):
     def setUp(self):
         self.mag1 = mag2flux.ObservedMagnitude(magnitude = 100,
                                                uncertainty = 10,
-                                               band = 'U',
+                                               band = U_band,
                                                time = 0)
         self.mag2 = mag2flux.ObservedMagnitude(magnitude = 200,
                                                uncertainty = 10,
-                                               band = 'U',
+                                               band = U_band,
                                                time = 0)
         self.mag3 = mag2flux.ObservedMagnitude(magnitude = 150,
                                                uncertainty = 8,
-                                               band = 'B',
+                                               band = B_band,
                                                time = 0)
         self.mag4 = mag2flux.ObservedMagnitude(magnitude = 50,
                                                uncertainty = 8,
-                                               band = 'V',
+                                               band = V_band,
                                                time = 0)
         self.mag5 = mag2flux.ObservedMagnitude(magnitude = 60,
                                                uncertainty = 8,
-                                               band = 'V',
+                                               band = V_band,
                                                time = 0)
         self.magnitudes = [self.mag1, self.mag2, self.mag3, self.mag4, self.mag5]
         self.repeated_magnitudes_U = [self.mag1, self.mag2]
@@ -78,7 +82,7 @@ class TestCombineMagnitudes(unittest.TestCase):
         result = photometry.combine_observed_magnitudes(self.repeated_magnitudes_U)
         expected = mag2flux.ObservedMagnitude(magnitude = 150,
                                               uncertainty = np.sqrt(200)/2.,
-                                              band = 'U',
+                                              band = U_band,
                                               time = 0)
         self.assertEqual(expected, result)
 
@@ -87,7 +91,7 @@ class TestCombineMagnitudes(unittest.TestCase):
         result = photometry.combine_observed_magnitudes(magnitudes)
         expected = mag2flux.ObservedMagnitude(magnitude = 130.488,
                                               uncertainty = 6.247,
-                                              band = 'U',
+                                              band = U_band,
                                               time = 0)
         self.assertAlmostEqual(expected.magnitude, result.magnitude, 3)
         self.assertAlmostEqual(expected.uncertainty, result.uncertainty, 3)
@@ -104,8 +108,8 @@ class TestCombineMagnitudes(unittest.TestCase):
 
     def test_get_multi_band_photometry(self):
         result = photometry.get_multi_band_photometry(self.magnitudes)
-        expected = [self.mag3, mag2flux.ObservedMagnitude(150, np.sqrt(200)/2., 'U', 0),
-                    mag2flux.ObservedMagnitude(55.0, np.sqrt(128)/2., 'V', 0)]
+        expected = [self.mag3, mag2flux.ObservedMagnitude(150, np.sqrt(200)/2., U_band, 0),
+                    mag2flux.ObservedMagnitude(55.0, np.sqrt(128)/2., V_band, 0)]
 
         # Ugly
         for i, flux in enumerate(result):
@@ -132,16 +136,16 @@ class TestCombineMagnitudes(unittest.TestCase):
 class TestInterpolateMultiBandPhotometry(unittest.TestCase):
 
     def setUp(self):
-        self.mag01 = mag2flux.ObservedMagnitude(100, 2, 'U', 0)
-        self.mag02 = mag2flux.ObservedMagnitude(200, 2, 'B', 0)
-        self.mag03 = mag2flux.ObservedMagnitude(150, 2, 'V', 0)
-        self.mag11 = mag2flux.ObservedMagnitude(100, 2, 'U', 1)
-        self.mag13 = mag2flux.ObservedMagnitude(150, 2, 'V', 1)
-        self.mag21 = mag2flux.ObservedMagnitude(100, 2, 'U', 2)
-        self.mag22 = mag2flux.ObservedMagnitude(200, 2, 'B', 2)
-        self.mag23 = mag2flux.ObservedMagnitude(150, 2, 'V', 2)
-        self.mag31 = mag2flux.ObservedMagnitude(150, 2, 'U', 3)
-        self.mag32 = mag2flux.ObservedMagnitude(150, 2, 'B', 3)
+        self.mag01 = mag2flux.ObservedMagnitude(100, 2, U_band, 0)
+        self.mag02 = mag2flux.ObservedMagnitude(200, 2, B_band, 0)
+        self.mag03 = mag2flux.ObservedMagnitude(150, 2, V_band, 0)
+        self.mag11 = mag2flux.ObservedMagnitude(100, 2, U_band, 1)
+        self.mag13 = mag2flux.ObservedMagnitude(150, 2, V_band, 1)
+        self.mag21 = mag2flux.ObservedMagnitude(100, 2, U_band, 2)
+        self.mag22 = mag2flux.ObservedMagnitude(200, 2, B_band, 2)
+        self.mag23 = mag2flux.ObservedMagnitude(150, 2, V_band, 2)
+        self.mag31 = mag2flux.ObservedMagnitude(150, 2, U_band, 3)
+        self.mag32 = mag2flux.ObservedMagnitude(150, 2, B_band, 3)
         self.multi_band_photometry0 = photometry.get_multi_band_photometry([self.mag01, self.mag02, self.mag03])
         self.multi_band_photometry1 = photometry.get_multi_band_photometry([self.mag11, self.mag13])
         self.multi_band_photometry2 = photometry.get_multi_band_photometry([self.mag21, self.mag22, self.mag23])
@@ -217,7 +221,7 @@ class TestInterpolateMultiBandPhotometry(unittest.TestCase):
         weight1 = (2-1)/(2-0)
         weight2 = (1-0)/(2-0)
         uncertainty = math.sqrt(weight1**2 * previous_observed_magnitude.uncertainty**2 + weight2**2 + next_observed_magnitude.uncertainty**2)
-        expected = [mag2flux.ObservedMagnitude(200.0, uncertainty , 'B', 1)]
+        expected = [mag2flux.ObservedMagnitude(200.0, uncertainty , B_band, 1)]
         result = photometry.get_interpolated_magnitudes(lightcurve, [1])
         self.assertEqual(expected, result)
 
@@ -258,5 +262,5 @@ class TestInterpolateMultiBandPhotometry(unittest.TestCase):
         weight1 = (2-1)/(2-0)
         weight2 = (1-0)/(2-0)
         uncertainty = math.sqrt(weight1**2 * previous_magnitude.uncertainty**2 + weight2**2 + next_magnitude.uncertainty**2)
-        interpolated_magnitude = mag2flux.ObservedMagnitude(200, uncertainty, 'B', 1)
+        interpolated_magnitude = mag2flux.ObservedMagnitude(200, uncertainty, B_band, 1)
         self.assertTrue(interpolated_magnitude in self.multi_band_photometry1)
