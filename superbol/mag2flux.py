@@ -26,6 +26,9 @@ class Band(object):
         self.effective_wavelength = effective_wavelength
         self.flux_conversion_factor = flux_conversion_factor
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
 class MonochromaticFlux(object):
 
     def __init__(self, flux, flux_uncertainty, wavelength, time):

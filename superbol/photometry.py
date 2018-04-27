@@ -56,9 +56,9 @@ def get_weights(uncertainties):
 
 def yield_observed_magnitudes_at_each_observed_band(observed_magnitudes):
     """Yield lists of ObservedMagnitudes with the same band"""
-    list_of_bands = sorted(list(set(obs.band for obs in observed_magnitudes)))
-    for band in list_of_bands:
-        yield [obs for obs in observed_magnitudes if obs.band == band]
+    list_of_band_names = sorted(list(set(obs.band.name for obs in observed_magnitudes)))
+    for band_name in list_of_band_names:
+        yield [obs for obs in observed_magnitudes if obs.band.name == band_name]
 
 def get_multi_band_photometry(observed_magnitudes):
     """Return a list of ObservedMagnitudes with duplicates averaged"""
@@ -114,7 +114,7 @@ def append_interpolated_magnitudes_to_multi_band_photometry_set(interpolated_mag
 def get_observed_band_names(mutli_band_photometry_set):
     band_names = []
     for multi_band_photometry in mutli_band_photometry_set:
-        band_names += [obs.band for obs in multi_band_photometry]
+        band_names += [obs.band.name for obs in multi_band_photometry]
     return sorted(list(set(band_names)))
 
 def get_observed_times(multi_band_photometry_set):
@@ -134,11 +134,11 @@ def get_unobserved_times(lightcurve, observed_times):
 def get_times(observed_magnitudes):
     return [obs.time for obs in observed_magnitudes]
 
-def get_lightcurve(multi_band_photometry_set, band):
+def get_lightcurve(multi_band_photometry_set, band_name):
     """Get list of all observed magnitudes in a given band """
     lightcurve = []
     for multi_band_photometry in multi_band_photometry_set:
-        lightcurve += [obs for obs in multi_band_photometry if obs.band == band]
+        lightcurve += [obs for obs in multi_band_photometry if obs.band.name == band_name]
     return lightcurve
 
 def get_previous_observed_magnitude(lightcurve, unobserved_time):
