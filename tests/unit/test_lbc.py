@@ -8,7 +8,7 @@ from unittest.mock import patch
 from .context import superbol
 from superbol import lbc
 from superbol import mag2flux
-from superbol import lqbol
+from superbol import luminosity
 
 bc_color_json_data = """{
     "H01":{
@@ -220,39 +220,6 @@ class TestComputePolynomialDerivative(unittest.TestCase):
         result = lbc.compute_polynomial_derivative(color, coefficients)
         self.assertEqual(expected, result)
 
-class TestBCLuminosity(unittest.TestCase):
-
-    def setUp(self):
-        # IAU 2015 Resolution B2 value (in erg/s)
-        self.L0 = 3.0128E35
-
-    def test_convert_zero_magnitude_to_bolometric_luminosity(self):
-        expected = self.L0
-        Mbol_zero = lbc.BolometricMagnitude(0, 0, 0)
-        result = lbc.convert_Mbol_to_Lbol(Mbol_zero)
-        self.assertEqual(expected, result.value)
-
-    def test_convert_solar_magnitude_to_bolometric_luminosity(self):
-        Msun = lbc.BolometricMagnitude(4.74, 0, 0)
-        expected = self.L0 * 10**(-0.4 * Msun.value)
-        result = lbc.convert_Mbol_to_Lbol(Msun)
-        self.assertEqual(expected, result.value)
-
-    def test_convert_magnitude_to_bolometric_luminosity_uncertainty(self):
-        Mtest = lbc.BolometricMagnitude(5.0, 0.1, 0)
-        expected = -0.4 * self.L0 * 10**(-0.4 * Mtest.value)
-
-class TestDistanceModulus(unittest.TestCase):
-
-    def setUp(self):
-        self.msun = lbc.BolometricMagnitude(-26.832,0,0)
-        self.dsun = lqbol.Distance(1.496E13, 0.0)
-
-    def test_convert_solar_apparent_to_absolute_magnitude(self):
-        expected = 4.74
-        result = lbc.convert_apparent_to_absolute_magnitude(self.msun, self.dsun)
-        self.assertAlmostEqual(expected, result.value, 3)
-
 class TestBolometricCorrectionTechniqueH01(unittest.TestCase):
 
     def setUp(self):
@@ -269,22 +236,14 @@ class TestBolometricCorrectionTechniqueH01(unittest.TestCase):
         self.multi_band_photometryBV = [self.B_obs, self.V_obs]
         self.multi_band_photometryVI = [self.V_obs, self.I_obs]
 
-    def test_calculate_bc_luminosityBV(self):
-        expected = 8.844E41
-        distance_pc = 3.135E7
-        distance_pc_err = 4.62E7
-        distance_cm = distance_pc * 3.086E18
-        distance_cm_err = distance_pc_err * 3.086E18
-        distance = lqbol.Distance(distance_cm, distance_cm_err)
-        result = lbc.calculate_bc_luminosity_h01(self.multi_band_photometryBV, distance)
-        self.assertAlmostEqual(expected, result.value, delta = 0.01E41)
+    def test_calculate_bc_flux_BV(self):
+        expected = 7.519E-12
+        result = lbc.calculate_bc_flux_h01(self.multi_band_photometryBV)
+        print(expected, result.value)
+        self.assertAlmostEqual(expected, result.value, delta = 0.01E-12)
 
-    def test_calculate_bc_luminsotyVI(self):
-        expected = 9.48E41
-        distance_pc = 3.135E7
-        distance_pc_err = 4.62E7
-        distance_cm = distance_pc * 3.086E18
-        distance_cm_err = distance_pc_err * 3.086E18
-        distance = lqbol.Distance(distance_cm, distance_cm_err)
-        result = lbc.calculate_bc_luminosity_h01(self.multi_band_photometryVI, distance)
-        self.assertAlmostEqual(expected, result.value, delta = 0.01E41)
+    def test_calculate_bc_flux_VI(self):
+        expected = 8.060E-12
+        result = lbc.calculate_bc_flux_h01(self.multi_band_photometryVI)
+        print(expected, result.value)
+        self.assertAlmostEqual(expected, result.value, delta = 0.01E-12)

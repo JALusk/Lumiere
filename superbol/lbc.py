@@ -4,46 +4,47 @@ import numpy as np
 import itertools
 
 from astropy import units as u
+from superbol.luminosity import BolometricFlux
 
-def calculate_bc_luminosity_h01(obs_group, distance):
-    """Turn a group of observations into an average BC luminosity"""
+def calculate_bc_flux_h01(obs_group):
+    """Turn a group of observations into an average BC flux"""
     obs_group.sort(key=lambda x: x.band.effective_wavelength)
     if 'V' in [x.band.name for x in obs_group]:
-        lbc = []
+        fbc = []
         for obs_pair in itertools.combinations(obs_group, 2):
             try:
                 bc = compute_bolometric_correction('H01', obs_pair[0], obs_pair[1])
                 mbol = apply_bolometric_correction(bc, next(obs for obs in obs_group if obs.band.name == 'V'))
                 zeropoint = -10.88802466
-                Lbol = convert_mbol_to_Lbol(mbol, distance, zeropoint)
-                lbc.append(Lbol)
+                Fbol = convert_mbol_to_Fbol(mbol, zeropoint)
+                fbc.append(Fbol)
             except InvalidColor:
                 pass
             except InvalidBCMethod:
                 pass
             except InvalidFilterCombination:
                 pass
-    return BCLuminosity(np.mean([x.value for x in lbc]), np.mean([x.uncertainty for x in lbc]), np.mean([x.time for x in lbc]))
+    return BCBolometricFlux(np.mean([x.value for x in fbc]), np.mean([x.uncertainty for x in fbc]), np.mean([x.time for x in fbc]))
 
-def calculate_bc_luminosity_bh09(obs_group, distance):
-    """Turn a group of observations into an average BC luminosity"""
+def calculate_bc_flux_bh09(obs_group):
+    """Turn a group of observations into an average BC flux"""
     obs_group.sort(key=lambda x: x.band.effective_wavelength)
     if 'V' in [x.band.name for x in obs_group]:
-        lbc = []
+        fbc = []
         for obs_pair in itertools.combinations(obs_group, 2):
             try:
                 bc = compute_bolometric_correction('BH09', obs_pair[0], obs_pair[1])
                 mbol = apply_bolometric_correction(bc, next(obs for obs in obs_group if obs.band.name == 'V'))
                 zeropoint = -11.64
-                Lbol = convert_mbol_to_Lbol(mbol, distance, zeropoint)
-                lbc.append(Lbol)
+                Fbol = convert_mbol_to_Fbol(mbol, zeropoint)
+                fbc.append(Fbol)
             except InvalidColor:
                 pass
             except InvalidBCMethod:
                 pass
             except InvalidFilterCombination:
                 pass
-    return BCLuminosity(np.mean([x.value for x in lbc]), np.mean([x.uncertainty for x in lbc]), np.mean([x.time for x in lbc]))
+    return BCBolometricFlux(np.mean([x.value for x in fbc]), np.mean([x.uncertainty for x in fbc]), np.mean([x.time for x in fbc]))
 
 
 def compute_bolometric_correction(method_name, obs1, obs2):
@@ -115,25 +116,23 @@ class BolometricMagnitude(object):
         self.uncertainty = uncertainty
         self.time = time
 
-class BCLuminosity(object):
+class BCBolometricFlux(BolometricFlux):
 
     def __init__(self, value, uncertainty, time):
-        self.value = value
-        self.uncertainty = uncertainty
+        super().__init__(value, uncertainty)
         self.time = time
+   
+    def to_lbol(self, distance):
+        lbol = super().to_lbol(distance)
+        lbol.time = self.time
+        return lbol
+
 
 class BolometricCorrection(object):
 
     def __init__(self, value, uncertainty):
         self.value = value
         self.uncertainty = uncertainty
-
-class AbsoluteMagnitude(object):
-
-    def __init__(self, value, uncertainty, time):
-        self.value = value
-        self.uncertainty = uncertainty
-        self.time = time
 
 def compute_polynomial(color, coefficients):
     """Compute the bc-color polynomial"""
@@ -152,19 +151,7 @@ def compute_polynomial_derivative(color, coefficients):
             result += n * coefficient * color**(n-1)
     return result
 
-def convert_mbol_to_Lbol(mbol, distance, zeropoint):
-    log_Lbol = (-mbol.value + zeropoint)/2.5 + math.log(4.0 * math.pi * distance.value**2, 10)
-    Lbol_uncertainty = np.sqrt((2.0 * 10**(log_Lbol)/distance.value * distance.uncertainty)**2 + (math.log(10)/2.5 * 10**(log_Lbol) * mbol.uncertainty)**2)
-    return BCLuminosity(10**(log_Lbol), Lbol_uncertainty, mbol.time)
-
-def convert_Mbol_to_Lbol(bolometric_magnitude):
-    L0 = 3.0128E35
-    L = L0 * 10**(-0.4 * bolometric_magnitude.value)
-    L_uncertainty = 0.4 * math.log(10) * L * bolometric_magnitude.uncertainty
-    return BCLuminosity(L, L_uncertainty, bolometric_magnitude.time)
-
-def convert_apparent_to_absolute_magnitude(apparent_magnitude, distance):
-    distance_pc = distance.value / 3.086E+18
-    absolute_magnitude = apparent_magnitude.value - 5.0 * math.log(distance_pc / 10.0, 10)
-    uncertainty = math.sqrt(apparent_magnitude.uncertainty**2 + (5 / (distance_pc * math.log(10)) * distance.uncertainty / 3.086E+18)**2)
-    return AbsoluteMagnitude(absolute_magnitude, uncertainty, apparent_magnitude.time)
+def convert_mbol_to_Fbol(mbol, zeropoint):
+    Fbol = 10**((-mbol.value + zeropoint)/2.5)
+    Fbol_uncertainty = np.abs(math.log(10)/2.5 * Fbol * mbol.uncertainty)
+    return BCBolometricFlux(Fbol, Fbol_uncertainty, mbol.time)
