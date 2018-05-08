@@ -3,29 +3,21 @@ import numpy as np
 
 from superbol import mag2flux
 from superbol import sed
+from superbol.luminosity import BolometricFlux
 
 class InsufficientFluxes(Exception):
     pass
 
-class Distance(object):
-
-    def __init__(self, value, uncertainty):
-        self.value = value
-        self.uncertainty = uncertainty
-
-class QuasiBolometricFlux(object):
+class QuasiBolometricFlux(BolometricFlux):
 
     def __init__(self, value, uncertainty, time):
-        self.value = value
-        self.uncertainty = uncertainty
+        super().__init__(value, uncertainty)
         self.time = time
 
-class QuasiBolometricLuminosity(object):
-
-    def __init__(self, value, uncertainty, time):
-        self.value = value
-        self.uncertainty = uncertainty
-        self.time = time
+    def to_lbol(self, distance):
+        lbol = super().to_lbol(distance)
+        lbol.time = self.time
+        return lbol
 
 def get_quasi_bolometric_flux(integral_calculator, 
                               uncertainty_calculator, 
@@ -80,21 +72,12 @@ def uncertainty_calculator_trapezoidal(fluxes):
 
     return math.sqrt(radicand)
 
-def convert_flux_to_luminosity(fqbol, distance):
-    """Convert quasi-bolometric flux to quasi-bolometric luminosity"""
-    lbqol_value = fqbol.value * 4.0 * math.pi * distance.value**2
-    lqbol_uncertainty = math.sqrt((4.0 * math.pi * distance.value**2 * fqbol.uncertainty)**2 + (fqbol.value * 8.0 * math.pi * distance.value * distance.uncertainty)**2)
-
-    return QuasiBolometricLuminosity(lbqol_value, lqbol_uncertainty, fqbol.time)
-
-def calculate_qbol_luminosity(flux_group, distance):
-    """Turn a group of fluxes into a quasi-bolometric luminosity"""
+def calculate_qbol_flux(flux_group):
+    """Turn a group of fluxes into a quasi-bolometric flux"""
     integral_calculator = TrapezoidalIntegralCalculator()
     uncertainty_calculator = uncertainty_calculator_trapezoidal
     
     fqbol = get_quasi_bolometric_flux(integral_calculator,
                                       uncertainty_calculator,
                                       flux_group)
-    lqbol = convert_flux_to_luminosity(fqbol, distance)
-    
-    return lqbol
+    return fqbol
