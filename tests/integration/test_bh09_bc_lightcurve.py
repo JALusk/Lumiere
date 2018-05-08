@@ -6,7 +6,7 @@ from astropy.table import Table
 from superbol import read_osc
 from superbol import lightcurve
 from superbol import lbc
-from superbol import luminosity
+from superbol import lum
 from superbol import extinction
 
 extinction_table = Table.read("/home/jlusk/src/superbol/data/sn2000cb_extinction.dat", format = 'ascii')
@@ -25,7 +25,7 @@ class TestBolometricCorrectionLightcurve(unittest.TestCase):
             except:
                 pass
 
-        distance = luminosity.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
+        distance = lum.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
         self.lc_00cb = lightcurve.calculate_bc_lightcurve(observed_magnitudes, distance, lbc.calculate_bc_flux_bh09)
 
     def test_no_negative_luminosities(self):

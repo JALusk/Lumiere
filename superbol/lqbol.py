@@ -3,7 +3,7 @@ import numpy as np
 
 from superbol import mag2flux
 from superbol import sed
-from superbol.luminosity import BolometricFlux
+from superbol.lum import BolometricFlux
 
 class InsufficientFluxes(Exception):
     pass

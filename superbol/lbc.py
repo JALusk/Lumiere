@@ -4,7 +4,7 @@ import numpy as np
 import itertools
 
 from astropy import units as u
-from superbol.luminosity import BolometricFlux
+from superbol.lum import BolometricFlux
 
 def calculate_bc_flux_h01(obs_group):
     """Turn a group of observations into an average BC flux"""

@@ -8,7 +8,7 @@ from unittest.mock import patch
 from .context import superbol
 from superbol import lbc
 from superbol import mag2flux
-from superbol import luminosity
+from superbol import lum
 
 bc_color_json_data = """{
     "H01":{
