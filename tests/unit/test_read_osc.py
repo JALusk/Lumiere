@@ -23,11 +23,13 @@ class TestGetObservedMagnitudes(unittest.TestCase):
         self.uncertainty = 0.06
         self.band_name = "B"
         self.time = 51663.30
+        self.source = '1'
 
         self.osc_photometry_dict = {'magnitude': "18.78", 
                                     'e_magnitude': "0.06", 
                                     'band': self.band_name,
-                                    'time': self.time}
+                                    'time': self.time,
+                                    'source': self.source}
     
     def test_no_magnitude(self):
         with self.assertRaises(read_osc.NoMagnitude):
@@ -64,6 +66,10 @@ class TestGetObservedMagnitudes(unittest.TestCase):
     def test_returns_correct_time(self):
         result = read_osc.get_observed_magnitude(self.osc_photometry_dict)
         self.assertEqual(result.time, self.time)
+
+    def test_returns_correct_source(self):
+        result = read_osc.get_observed_magnitude(self.osc_photometry_dict)
+        self.assertEqual(result.source, self.source)
 
 @patch('builtins.open', mock_open(read_data = filter_data), create=True)
 class TestGetBand(unittest.TestCase):
@@ -119,14 +125,16 @@ osc_json_data = """{
                        "band":"B",
                        "e_magnitude":"0.014",
                        "magnitude":"18.793",
-                       "u_time":"MJD"
+                       "u_time":"MJD",
+				       "source":"1"
                       },
                       {
                        "time":"51663.30",
                         "band":"I",
                         "e_magnitude":"0.015",
                         "magnitude":"17.553",
-                        "u_time":"MJD"
+                        "u_time":"MJD",
+				        "source":"1"
                        }
                       ]
        }
@@ -141,4 +149,5 @@ class TestRetrieveOSCPhotometry(unittest.TestCase):
                                      "band":"B",
                                      "e_magnitude":"0.014",
                                      "magnitude":"18.793",
-                                     "u_time":"MJD"})
+                                     "u_time":"MJD",
+                                     "source":"1"})

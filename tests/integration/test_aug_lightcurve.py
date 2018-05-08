@@ -9,7 +9,7 @@ from superbol import extinction
 
 extinction_table = Table.read("/home/jlusk/src/superbol/data/sn2000cb_extinction.dat", format = 'ascii')
 
-class TestAugmentedBolometricLightcurve(unittest.TestCase):
+class TestQuasiBolometricLightcurve(unittest.TestCase):
 
     def setUp(self):
         sn00cb_osc_photometry = read_osc.retrieve_osc_photometry('SN2000cb', path="/home/jlusk/src/superbol/data/SN2000cb.json")

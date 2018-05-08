@@ -11,9 +11,6 @@ from superbol import extinction
 
 extinction_table = Table.read("/home/jlusk/src/superbol/data/sn2000cb_extinction.dat", format = 'ascii')
 
-def round2(number):
-    return round(number, 1)
-
 class TestBolometricCorrectionLightcurve(unittest.TestCase):
 
     def setUp(self):
@@ -29,9 +26,10 @@ class TestBolometricCorrectionLightcurve(unittest.TestCase):
                 pass
 
         distance = lqbol.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
-        self.lc_00cb = lightcurve.calculate_bc_lightcurve(observed_magnitudes, distance, lbc.calculate_bc_luminosity)
+        self.lc_00cb = lightcurve.calculate_bc_lightcurve(observed_magnitudes, distance, lbc.calculate_bc_luminosity_bh09)
 
     def test_no_negative_luminosities(self):
+        print("")
         for luminosity in self.lc_00cb:
-            print(luminosity.time, luminosity.time - 51656, 4.1, luminosity.value, luminosity.uncertainty)
+            print("{0:9.2f}, {1:5.2f}, 4.1, {2:4.2E}, {3:4.2E}".format(luminosity.time + 2400000.5, luminosity.time + 2400000.5 - 2451656, luminosity.value, luminosity.uncertainty))
         self.assertTrue([luminosity.value > 0.0 for luminosity in self.lc_00cb])
