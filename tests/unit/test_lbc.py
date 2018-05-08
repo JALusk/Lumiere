@@ -10,13 +10,45 @@ from superbol import lbc
 from superbol import mag2flux
 from superbol import lqbol
 
-from superbol.lbc import BCColorRelation
-
 bc_color_json_data = """{
-    "BH09":{
+    "H01":{
+        "properties":{
             "source":{
-            "bibcode":"2009ApJ...701..200B",
-            "reference":"Bersten & Hamuy (2009)"
+                "bibcode":"2001PhDT.......173H",
+                "reference":"Hamuy (2001)"
+            },
+            "ZP": -10.88802466
+        },
+        "B-V":{
+            "range_min": -0.2,
+            "range_max": 1.6,
+            "coefficients": [0.199215,
+                             1.654947,
+                             -6.576745,
+                             18.46060,
+                             -25.27718,
+                             15.98919,
+                             -3.783559],
+            "rms": 0.113
+        },
+        "V-I":{
+            "range_min": -0.2,
+            "range_max": 1.5,
+            "coefficients": [-0.017371,
+                             2.232705,
+                             -1.246158,
+                             -1.412987,
+                             0.862287],
+            "rms": 0.109
+        }
+    },
+    "BH09":{
+        "properties":{
+            "source":{
+                "bibcode":"2009ApJ...701..200B",
+                "reference":"Bersten & Hamuy (2009)"
+            },
+            "ZP": -11.64
         },
         "B-V":{
             "range_min": -0.2,
@@ -58,29 +90,6 @@ bc_color_json_data = """{
     }
 }"""
 
-class TestBCColorRelation(unittest.TestCase):
-
-    def setUp(self):
-        self.coefficients = [-0.823, 5.027, -13.409, 20.133, -18.096, 9.084, -1.950]
-        self.bc_color_relation = BCColorRelation()
-        self.B_band = mag2flux.Band('B', '', 0, 0)
-        self.V_band = mag2flux.Band('V', '', 0, 0)
-        self.I_band = mag2flux.Band('I', '', 0, 0)
-
-    def test_get_coefficients_BV(self):
-        result = self.bc_color_relation.get_coefficients(self.B_band, self.V_band)
-        self.assertEqual(self.coefficients, result)
-
-    def test_get_coefficients_VI(self):
-        expected = [-1.355, 6.262, -2.676, -22.973, 35.542, -15.340]
-        result = self.bc_color_relation.get_coefficients(self.V_band, self.I_band)
-        self.assertEqual(expected, result)
-
-    def get_bolometric_correction(self):
-        bc = self.bc_color_relation.get_bolometric_correction(self.B_obs, self.V_obs)
-        expected = -0.0170
-        self.assertEqual(expected, bc.value)
-
 class TestBolometricCorrection(unittest.TestCase):
 
     def setUp(self):
@@ -112,6 +121,11 @@ class TestRetrieveBolometricCorrectionData(unittest.TestCase):
     def test_retrieve_bc_color_coefficients(self):
         expected = [-0.823, 5.027, -13.409, 20.133, -18.096, 9.084, -1.950]
         result = lbc.get_bc_method_coefficients(self.method_data, self.B_band, self.V_band)
+        self.assertEqual(expected, result)
+
+    def test_retrieve_zeropoint(self):
+        expected = -11.64
+        result = lbc.get_bc_method_zeropoint(self.method_data)
         self.assertEqual(expected, result)
 
     def test_retrieve_bc_color_coefficients_raises_invalid_filter_combination(self):
@@ -183,6 +197,29 @@ class TestComputePolynomial(unittest.TestCase):
         result = lbc.compute_polynomial(color, coefficients)
         self.assertEqual(expected, result)
 
+class TestComputePolynomialDerivative(unittest.TestCase):
+
+    def test_simple_example(self):
+        coefficients = [1, 2, 3, 4]
+        color = 2.0
+        expected = 62
+        result = lbc.compute_polynomial_derivative(color, coefficients)
+        self.assertEqual(expected, result)
+
+    def test_zero_color(self):
+        coefficients = [1, 2, 3, 4]
+        color = 0.0
+        expected = 2
+        result = lbc.compute_polynomial_derivative(color, coefficients)
+        self.assertEqual(expected, result)
+
+    def test_negative_color(self):
+        coefficients = [1, 2, 3, 4]
+        color = -2.0
+        expected = 38
+        result = lbc.compute_polynomial_derivative(color, coefficients)
+        self.assertEqual(expected, result)
+
 class TestBCLuminosity(unittest.TestCase):
 
     def setUp(self):
@@ -215,3 +252,39 @@ class TestDistanceModulus(unittest.TestCase):
         expected = 4.74
         result = lbc.convert_apparent_to_absolute_magnitude(self.msun, self.dsun)
         self.assertAlmostEqual(expected, result.value, 3)
+
+class TestBolometricCorrectionTechniqueH01(unittest.TestCase):
+
+    def setUp(self):
+        self.B_band = mag2flux.Band('B', 'CTIO B', 4380.0, 632.0E-11)
+        self.V_band = mag2flux.Band('V', 'CTIO V', 5450.0, 363.1E-11)
+        self.I_band = mag2flux.Band('I', 'CTIO I', 7980.0, 112.6E-11)
+        self.B_obs = mag2flux.ObservedMagnitude(17.53, 0.015, self.B_band,
+                                                2451663.30)
+        self.V_obs = mag2flux.ObservedMagnitude(16.217, 0.015, self.V_band,
+                                                2451663.30)
+        self.I_obs = mag2flux.ObservedMagnitude(15.462, 0.015, self.I_band,
+                                                2451663.30)
+
+        self.multi_band_photometryBV = [self.B_obs, self.V_obs]
+        self.multi_band_photometryVI = [self.V_obs, self.I_obs]
+
+    def test_calculate_bc_luminosityBV(self):
+        expected = 8.844E41
+        distance_pc = 3.135E7
+        distance_pc_err = 4.62E7
+        distance_cm = distance_pc * 3.086E18
+        distance_cm_err = distance_pc_err * 3.086E18
+        distance = lqbol.Distance(distance_cm, distance_cm_err)
+        result = lbc.calculate_bc_luminosity_h01(self.multi_band_photometryBV, distance)
+        self.assertAlmostEqual(expected, result.value, delta = 0.01E41)
+
+    def test_calculate_bc_luminsotyVI(self):
+        expected = 9.48E41
+        distance_pc = 3.135E7
+        distance_pc_err = 4.62E7
+        distance_cm = distance_pc * 3.086E18
+        distance_cm_err = distance_pc_err * 3.086E18
+        distance = lqbol.Distance(distance_cm, distance_cm_err)
+        result = lbc.calculate_bc_luminosity_h01(self.multi_band_photometryVI, distance)
+        self.assertAlmostEqual(expected, result.value, delta = 0.01E41)

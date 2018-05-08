@@ -5,33 +5,18 @@ import itertools
 
 from astropy import units as u
 
-class BCColorRelation(object):
-
-    def get_coefficients(self, band1, band2):
-        """Get coefficients for color combination band1 - band2"""
-        color = band1.name + "-" + band2.name
-        if color == "B-V":
-            return self.coefficients_BV()
-        elif color == "V-I":
-            return self.coefficients_VI()
-
-    def coefficients_BV(self):
-        return [-0.823, 5.027, -13.409, 20.133, -18.096, 9.084, -1.950]
-
-    def coefficients_VI(self):
-        return [-1.355, 6.262, -2.676, -22.973, 35.542, -15.340]
-
-def calculate_bc_luminosity(obs_group, distance):
+def calculate_bc_luminosity_h01(obs_group, distance):
     """Turn a group of observations into an average BC luminosity"""
     obs_group.sort(key=lambda x: x.band.effective_wavelength)
     if 'V' in [x.band.name for x in obs_group]:
         lbc = []
         for obs_pair in itertools.combinations(obs_group, 2):
             try:
-                bc = compute_bolometric_correction('BH09', obs_pair[0], obs_pair[1])
+                bc = compute_bolometric_correction('H01', obs_pair[0], obs_pair[1])
                 mbol = apply_bolometric_correction(bc, next(obs for obs in obs_group if obs.band.name == 'V'))
-                Mbol = convert_apparent_to_absolute_magnitude(mbol, distance)
-                lbc.append(convert_Mbol_to_Lbol(Mbol))
+                zeropoint = -10.88802466
+                Lbol = convert_mbol_to_Lbol(mbol, distance, zeropoint)
+                lbc.append(Lbol)
             except InvalidColor:
                 pass
             except InvalidBCMethod:
@@ -40,17 +25,40 @@ def calculate_bc_luminosity(obs_group, distance):
                 pass
     return BCLuminosity(np.mean([x.value for x in lbc]), np.mean([x.uncertainty for x in lbc]), np.mean([x.time for x in lbc]))
 
+def calculate_bc_luminosity_bh09(obs_group, distance):
+    """Turn a group of observations into an average BC luminosity"""
+    obs_group.sort(key=lambda x: x.band.effective_wavelength)
+    if 'V' in [x.band.name for x in obs_group]:
+        lbc = []
+        for obs_pair in itertools.combinations(obs_group, 2):
+            try:
+                bc = compute_bolometric_correction('BH09', obs_pair[0], obs_pair[1])
+                mbol = apply_bolometric_correction(bc, next(obs for obs in obs_group if obs.band.name == 'V'))
+                zeropoint = -11.64
+                Lbol = convert_mbol_to_Lbol(mbol, distance, zeropoint)
+                lbc.append(Lbol)
+            except InvalidColor:
+                pass
+            except InvalidBCMethod:
+                pass
+            except InvalidFilterCombination:
+                pass
+    return BCLuminosity(np.mean([x.value for x in lbc]), np.mean([x.uncertainty for x in lbc]), np.mean([x.time for x in lbc]))
+
+
 def compute_bolometric_correction(method_name, obs1, obs2):
     """Calculate the bolometric correction for obs1-obs2 using specified method"""
     bc_method_data = retrieve_bc_method_data(method_name)
     color = obs1.magnitude - obs2.magnitude
+    color_err = np.sqrt(obs1.uncertainty**2 + obs2.uncertainty**2)
     coefficients = get_bc_method_coefficients(bc_method_data, obs1.band, obs2.band)
     range_min, range_max = get_bc_method_range(bc_method_data, obs1.band, obs2.band)
     rms = get_bc_method_rms(bc_method_data, obs1.band, obs2.band)
     if range_min <= color <= range_max:
         bc = compute_polynomial(color, coefficients)
-        uncertainty = rms
-        return BolometricCorrection(bc, rms)
+        poly_deriv = compute_polynomial_derivative(color, coefficients)
+        uncertainty = np.sqrt(rms**2 + (poly_deriv * color_err)**2)
+        return BolometricCorrection(bc, uncertainty)
     else:
         raise InvalidColor("Cannot calculate bolometric correction, given " +
                            "{0}-{1} color outside the allowable range for " +
@@ -80,6 +88,8 @@ def get_bc_method_range(method_data, band1, band2):
 def get_bc_method_rms(method_data, band1, band2):
     return method_data[band1.name + '-' + band2.name]['rms']
 
+def get_bc_method_zeropoint(method_data):
+    return method_data['properties']['ZP']
 
 def apply_bolometric_correction(bc, observed_magnitude):
     """Apply the bolometric correction to the observed magnitude"""
@@ -87,7 +97,6 @@ def apply_bolometric_correction(bc, observed_magnitude):
     mbol_uncertainty = math.sqrt(bc.uncertainty**2 + observed_magnitude.uncertainty**2)
     mbol_time = observed_magnitude.time
     return BolometricMagnitude(mbol_value, mbol_uncertainty, mbol_time)
-
 
 
 class InvalidColor(Exception):
@@ -126,7 +135,6 @@ class AbsoluteMagnitude(object):
         self.uncertainty = uncertainty
         self.time = time
 
-
 def compute_polynomial(color, coefficients):
     """Compute the bc-color polynomial"""
     result = 0.0
@@ -134,11 +142,25 @@ def compute_polynomial(color, coefficients):
         result += coefficient * color**n
     return result
 
+def compute_polynomial_derivative(color, coefficients):
+    """Compute the derivative of the bc-color polynomial"""
+    result = 0.0
+    if color == 0.0:
+        result = coefficients[1]
+    else:    
+        for n, coefficient in enumerate(coefficients):
+            result += n * coefficient * color**(n-1)
+    return result
+
+def convert_mbol_to_Lbol(mbol, distance, zeropoint):
+    log_Lbol = (-mbol.value + zeropoint)/2.5 + math.log(4.0 * math.pi * distance.value**2, 10)
+    Lbol_uncertainty = np.sqrt((2.0 * 10**(log_Lbol)/distance.value * distance.uncertainty)**2 + (math.log(10)/2.5 * 10**(log_Lbol) * mbol.uncertainty)**2)
+    return BCLuminosity(10**(log_Lbol), Lbol_uncertainty, mbol.time)
 
 def convert_Mbol_to_Lbol(bolometric_magnitude):
     L0 = 3.0128E35
     L = L0 * 10**(-0.4 * bolometric_magnitude.value)
-    L_uncertainty = -0.4 * math.log(10) * L * bolometric_magnitude.uncertainty
+    L_uncertainty = 0.4 * math.log(10) * L * bolometric_magnitude.uncertainty
     return BCLuminosity(L, L_uncertainty, bolometric_magnitude.time)
 
 def convert_apparent_to_absolute_magnitude(apparent_magnitude, distance):
