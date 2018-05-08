@@ -23,5 +23,17 @@
             "alt_name": "CTIO I",
             "effective_wavelength":   7980.0,
             "flux_conversion_factor": 112.6E-11
+        },
+    "J":{
+            "alt_name": "2MASS J",
+            "effective_wavelength":   12200.0,
+            "flux_conversion_factor": 31.46E-11
+        },
+    "H":{
+            "alt_name": "2MASS H",
+            "effective_wavelength":   16300.0,
+            "flux_conversion_factor": 11.38E-11
         }
+
+
 }
