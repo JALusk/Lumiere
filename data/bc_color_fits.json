@@ -1,8 +1,11 @@
 {
     "BH09":{
-        "source":{
-            "bibcode":"2009ApJ...701..200B",
-            "reference":"Bersten & Hamuy (2009)"
+        "properties":{
+            "source":{
+                "bibcode":"2009ApJ...701..200B",
+                "reference":"Bersten & Hamuy (2009)"
+            },
+            "ZP": -11.64
         },
         "B-V":{
             "range_min": -0.2,
@@ -43,9 +46,12 @@
         }
     },
     "H01":{
-        "source":{
-            "bibcode":"2001PhDT.......173H",
-            "reference":"Hamuy (2001)"
+        "properties":{
+            "source":{
+                "bibcode":"2001PhDT.......173H",
+                "reference":"Hamuy (2001)"
+            },
+            "ZP": -8.14
         },
         "B-V":{
             "range_min": -0.2,
@@ -65,9 +71,8 @@
             "coefficients": [-0.017371,
                              2.232705,
                              -1.246158,
-                             0.862287,
-                             0.000000,
-                             0.000000],
+                             -1.412987,
+                             0.862287],
             "rms": 0.109
         }
     }
