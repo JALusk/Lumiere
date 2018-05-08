@@ -24,6 +24,7 @@ def get_observed_magnitude(osc_photometry_dict):
         uncertainty = float(osc_photometry_dict['e_magnitude'])
         band = get_band(osc_photometry_dict['band'])
         time = float(osc_photometry_dict['time'])
+        source = osc_photometry_dict['source']
     except KeyError:
         if 'magnitude' not in osc_photometry_dict.keys():
             raise NoMagnitude
@@ -33,8 +34,11 @@ def get_observed_magnitude(osc_photometry_dict):
             raise NoBandNameGiven
         elif 'time' not in osc_photometry_dict.keys():
             raise NoTimeGiven
-    
-    return mag2flux.ObservedMagnitude(magnitude, uncertainty, band, time)
+
+    observed_magnitude = mag2flux.ObservedMagnitude(magnitude, uncertainty, band, time)
+    observed_magnitude.source = source
+
+    return observed_magnitude
 
 def get_band(band_name):
     """Make a Band object using the band_name given"""
