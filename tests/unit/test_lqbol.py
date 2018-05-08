@@ -165,24 +165,3 @@ class TestTrapezoidalIntegralCalculator(unittest.TestCase):
     def test_trapezoidal_integral(self):
         integral = self.integral_calculator.calculate(self.fluxes)
         self.assertEqual(325, integral)
-
-class TestFluxLuminosityConverter(unittest.TestCase):
-
-    def setUp(self):
-        self.fqbol = lqbol.QuasiBolometricFlux(value = 10, uncertainty = 1, time = 0)
-        self.distance = lqbol.Distance(value = 100, uncertainty = 10)
-
-    def test_convert_flux_to_luminosity(self):
-        expected = self.fqbol.value * 4.0 * math.pi * self.distance.value**2
-        result = lqbol.convert_flux_to_luminosity(self.fqbol, self.distance)
-        self.assertEqual(expected, result.value)
-
-    def test_convert_flux_to_luminosity_uncertainty(self):
-        expected = math.sqrt((4.0 * math.pi * self.distance.value**2 * self.fqbol.uncertainty)**2 + (self.fqbol.value * 8.0 * math.pi * self.distance.value * self.distance.uncertainty)**2)
-        result = lqbol.convert_flux_to_luminosity(self.fqbol, self.distance)
-        self.assertEqual(expected, result.uncertainty)
-
-    def test_convert_flux_to_luminosity_time(self):
-        expected = 0
-        result = lqbol.convert_flux_to_luminosity(self.fqbol, self.distance)
-        self.assertEqual(expected, result.time)

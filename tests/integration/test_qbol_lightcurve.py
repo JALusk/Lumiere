@@ -5,11 +5,12 @@ from astropy.table import Table
 from superbol import read_osc
 from superbol import lightcurve
 from superbol import lqbol
+from superbol import luminosity
 from superbol import extinction
 
 extinction_table = Table.read("/home/jlusk/src/superbol/data/sn2000cb_extinction.dat", format = 'ascii')
 
-class TestAugmentedBolometricLightcurve(unittest.TestCase):
+class TestQuasiBolometricLightcurve(unittest.TestCase):
 
     def setUp(self):
         sn00cb_osc_photometry = read_osc.retrieve_osc_photometry('SN2000cb', path="/home/jlusk/src/superbol/data/SN2000cb.json")
@@ -23,10 +24,10 @@ class TestAugmentedBolometricLightcurve(unittest.TestCase):
             except:
                 pass
         
-        distance = lqbol.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
-        self.lc_00cb = lightcurve.calculate_lightcurve(fluxes, distance, lqbol.calculate_qbol_luminosity)
+        distance = luminosity.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
+        self.lc_00cb = lightcurve.calculate_lightcurve(fluxes, distance, lqbol.calculate_qbol_flux)
 
-    def test_no_negative_luminosities(self):
+    def test_00cb_qbol_lightcurve(self):
+        print("")
         for luminosity in self.lc_00cb:
-            print(luminosity.time, luminosity.time - 51656, 4.1, luminosity.value, luminosity.uncertainty)
-        self.assertTrue([luminosity.value > 0 for luminosity in self.lc_00cb])
+            print("{0:9.2f}, {1:5.2f}, 4.1, {2:4.2E}, {3:4.2E}".format(luminosity.time + 2400000.5, luminosity.time + 2400000.5 - 2451656, luminosity.value, luminosity.uncertainty))
