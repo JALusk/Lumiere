@@ -1,10 +1,14 @@
 import math
+import itertools
 import json
 import numpy as np
-import itertools
+import os
 
 from astropy import units as u
 from superbol.lum import BolometricFlux
+
+dirname = os.path.dirname(__file__)
+bc_color_fits = os.path.join(dirname, '../data/bc_color_fits.json')
 
 def calculate_bc_flux_h01(obs_group):
     """Turn a group of observations into an average BC flux"""
@@ -67,7 +71,7 @@ def compute_bolometric_correction(method_name, obs1, obs2):
                                                     obs2.band.name,
                                                     method_name))
 
-def retrieve_bc_method_data(method_name, path="/home/jlusk/src/superbol/data/bc_color_fits.json"):
+def retrieve_bc_method_data(method_name, path=bc_color_fits):
     with open(path, 'r') as bc_color_data_file:
         file_content = json.load(bc_color_data_file)
         try:

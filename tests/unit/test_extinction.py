@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from .context import superbol
@@ -5,7 +6,9 @@ from astropy.table import Table
 from superbol import mag2flux
 from superbol import extinction
 
-extinction_table = Table.read("/home/jlusk/src/superbol/data/sn2000cb_extinction.dat", format = 'ascii')
+dirname = os.path.dirname(__file__)
+sn2000cb_extinction = os.path.join(dirname, '../../data/sn2000cb_extinction.dat')
+extinction_table = Table.read(sn2000cb_extinction, format = 'ascii')
 
 class TestExtinctionCorrection(unittest.TestCase):
 

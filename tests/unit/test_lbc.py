@@ -1,5 +1,5 @@
-import unittest
 import math
+import unittest
 
 from unittest.mock import Mock
 from unittest.mock import mock_open
@@ -9,6 +9,8 @@ from .context import superbol
 from superbol import lbc
 from superbol import mag2flux
 from superbol import lum
+
+
 
 bc_color_json_data = """{
     "H01":{
