@@ -1,4 +1,5 @@
 import unittest
+import os
 
 from .context import superbol
 from astropy.table import Table
@@ -8,12 +9,15 @@ from superbol import lqbol
 from superbol import lum
 from superbol import extinction
 
-extinction_table = Table.read("/home/jlusk/src/superbol/data/sn2000cb_extinction.dat", format = 'ascii')
+dirname = os.path.dirname(__file__)
+sn2000cb_extinction = os.path.join(dirname, '../../data/sn2000cb_extinction.dat')
+extinction_table = Table.read(sn2000cb_extinction, format = 'ascii')
+sn00cb_photometry = os.path.join(dirname, '../../data/SN2000cb.json')
 
 class TestQuasiBolometricLightcurve(unittest.TestCase):
 
     def setUp(self):
-        sn00cb_osc_photometry = read_osc.retrieve_osc_photometry('SN2000cb', path="/home/jlusk/src/superbol/data/SN2000cb.json")
+        sn00cb_osc_photometry = read_osc.retrieve_osc_photometry('SN2000cb', path=sn00cb_photometry)
         fluxes = []
         for photometry_dict in sn00cb_osc_photometry:
             try:

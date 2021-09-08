@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from .context import superbol
@@ -12,6 +13,10 @@ from superbol import lqbol
 from superbol import lum
 from superbol import lbc
 from superbol import extinction
+
+dirname = os.path.dirname(__file__)
+sn2000cb_extinction = os.path.join(dirname, '../../data/sn2000cb_extinction.dat')
+extinction_table = Table.read(sn2000cb_extinction, format = 'ascii')
 
 sn00cb_synphot_data = """{
 "SN2000cb":{
@@ -467,8 +472,6 @@ sn00cb_synphot_data = """{
            }
 }"""
 
-
-extinction_table = Table.read("/home/jlusk/src/superbol/data/sn2000cb_extinction.dat", format = 'ascii')
 
 class TestQuasiBolometricLightcurve(unittest.TestCase):
 
