@@ -511,13 +511,13 @@ class TestBolometricCorrectionLightcurve(unittest.TestCase):
         self.lc_00cb_bh09 = lightcurve.calculate_bc_lightcurve(observed_magnitudes, distance, lbc.calculate_bc_flux_bh09)
         self.lc_00cb_h01 = lightcurve.calculate_bc_lightcurve(observed_magnitudes, distance, lbc.calculate_bc_flux_h01)
 
-    def test_bh09_lightcurve(self):
+    def test_no_negatives_in_bh09_lightcurve(self):
         print("")
         for luminosity in self.lc_00cb_bh09:
             print("{0:4.2E}, {1:4.2E} +/- {2:4.2E}".format(luminosity.time, luminosity.value, luminosity.uncertainty))
         self.assertTrue([luminosity.value > 0.0 for luminosity in self.lc_00cb_bh09])
 
-    def test_h01_lightcurve(self):
+    def test_no_negatives_in_h01_lightcurve(self):
         print("")
         for luminosity in self.lc_00cb_h01:
             print("{0:4.2E}, {1:4.2E} +/- {2:4.2E}".format(luminosity.time, luminosity.value, luminosity.uncertainty))

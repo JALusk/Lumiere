@@ -51,7 +51,7 @@ def get_band(band_name):
                          effective_wavelength, 
                          flux_conversion_factor)
 
-def retrieve_band_dict(band_name, path='/home/jlusk/src/superbol/data/bands.json'):
+def retrieve_band_dict(band_name, path='./data/bands.json'):
     """Load the Band attributes from a JSON file"""
     try:
         with open(path, 'r') as data_file:
@@ -59,8 +59,9 @@ def retrieve_band_dict(band_name, path='/home/jlusk/src/superbol/data/bands.json
         
         return file_content[band_name]
     except KeyError:
-        raise NoBandFound("The band {0} was not found in the SuperBoL band catalog.".format(band_name))
+        raise NoBandFound("The band {band_name} was not found in the SuperBoL band catalog.".format(band_name))
 
+# TODO Add default value?
 def retrieve_osc_photometry(sn_name, path=None):
     """Load the SN photometry from an OSC-formatted JSON file"""
     with open(path, 'r') as osc_data_file:
