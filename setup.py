@@ -22,5 +22,10 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Topic :: Scientific/Engineering :: Astronomy",
         ],
-    #install_requires=[],
+    install_requires=[
+        'astropy',
+        'numpy',
+        'pyerfa',
+        'scipy'
+    ],
     )   

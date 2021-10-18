@@ -11,7 +11,14 @@ dirname = os.path.dirname(__file__)
 bc_color_fits = os.path.join(dirname, '../data/bc_color_fits.json')
 
 def calculate_bc_flux_h01(obs_group):
-    """Turn a group of observations into an average BC flux"""
+    """Turn a group of observations into an average BC flux
+    
+    Args: 
+        obs_group: Observed photometry
+
+    Returns: 
+        BC Bolemetric flux
+    """  
     obs_group.sort(key=lambda x: x.band.effective_wavelength)
     if 'V' in [x.band.name for x in obs_group]:
         fbc = []
