@@ -14,7 +14,7 @@ def calculate_bc_flux_h01(obs_group):
     """Turn a group of observations into an average BC flux
     
     Args: 
-        obs_group: Observed photometry
+        obs_group: observed photometry
 
     Returns: 
         BC Bolemetric flux

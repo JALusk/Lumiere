@@ -11,4 +11,4 @@ To activate env:
 .\env\Scripts\activate
 
 To run tests in Windows: 
-python3.6 -m unittest discover -s tests.unit -v
+python -m unittest discover -s tests.unit -v
