@@ -1,5 +1,6 @@
 import math
 
+# TODO Doc these
 class ObservedMagnitude(object):
 
     def __init__(self, magnitude, uncertainty, band, time):
@@ -15,8 +16,7 @@ class ObservedMagnitude(object):
         return self.__dict__ == other.__dict__
 
     def convert_to_flux(self):
-        monochromatic_flux = MagnitudeToFluxConverter().convert(self)
-        return monochromatic_flux
+        return MagnitudeToFluxConverter().convert(self)
 
 class Band(object):
     
@@ -46,12 +46,10 @@ class MonochromaticFlux(object):
 class MagnitudeToFluxConverter(object):
 
     def _calculate_flux(self, magnitude, flux_conversion_factor):
-        flux = flux_conversion_factor * 10**(-0.4 * magnitude)
-        return flux
+        return flux_conversion_factor * 10**(-0.4 * magnitude)
 
     def _calculate_flux_uncertainty(self, flux, magnitude_uncertainty):
-        flux_uncertainty = flux * 0.4 * math.log(10) * magnitude_uncertainty
-        return flux_uncertainty
+        return flux * 0.4 * math.log(10) * magnitude_uncertainty
 
     def convert(self, observed_magnitude):
         """Convert an observed magnitude to a monochromatic flux"""

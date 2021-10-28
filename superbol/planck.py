@@ -1,6 +1,8 @@
 import numpy as np
 from astropy import constants as const
 from astropy import units as u
+import functools
+
 
 def planck_function(wavelength, temperature):
     """Planck function at given `wavelength` and `temperature` in cgs.
@@ -14,7 +16,7 @@ def planck_function(wavelength, temperature):
     Args:
         wavelength (float): Wavelength in Angstrom
         tempereature (float): Temperature in Kelvin
-    
+
     Returns:
         Astropy Quantity: The specific intensity of the 
         Planck function in :math:`erg \\; s^{-1} cm^{-2} sterad^{-1} Angstrom^{-1}`
@@ -28,8 +30,9 @@ def planck_function(wavelength, temperature):
     B_lambda = (C1 / wavelength**5) / \
                (np.expm1(C2 / (wavelength * temperature))) / u.sr
     B_lambda = B_lambda.to(u.erg / (u.s * u.cm**2 * u.AA * u.sr))
-    
+
     return B_lambda
+
 
 def planck_integral(wavelength, temperature):
     """Integrate the Planck function over a finite wavelength interval.
@@ -59,14 +62,13 @@ def planck_integral(wavelength, temperature):
     x = C2 / (wavelength.to(u.cm) * temperature)
     iterations = min(int(2.0 + 20.0/x.value), 512)
 
-    series = 0.0
-    for i in range(1, iterations):
-        term = (x**3/i + 3*x**2/i**2 + 6*x/i**3 + 6.0/i**4) * np.exp(-i * x)
-        series += term
+    series = functools.reduce(
+        lambda acc, i: acc + (x**3/i + 3*x**2/i**2 + 6*x/i**3 + 6.0/i**4) * np.exp(-i * x), range(1, iterations), 0)
 
     B_integral = (C1 * temperature**4 / C2**4) * series / u.sr
-    
+
     return B_integral.to(u.erg / (u.s * u.cm**2 * u.sr))
+
 
 def d_planck_integral_dT(wavelength, temperature):
     """Derivative of the integrated Planck function from :math:`\\lambda = 0` to 
@@ -100,5 +102,5 @@ def d_planck_integral_dT(wavelength, temperature):
         series += (term1 + term2 + term3 + term4 + term5) * np.exp(-i*x)
 
     dB_integral_dT = series / u.sr
-    
+
     return dB_integral_dT.to(u.erg / (u.s * u.cm**2 * u.K * u.sr))

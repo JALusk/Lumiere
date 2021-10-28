@@ -24,9 +24,7 @@ def bb_flux_nounits(wavelength, temperature, angular_radius):
 
     This function is needed because curve_fit() does not play nice with functions that return Astropy quantities.
     """
-    flux = bb_flux(wavelength, temperature, angular_radius)
-
-    return flux.value
+    return bb_flux(wavelength, temperature, angular_radius).value
 
 def bb_total_flux(self):
     """Integrate the planck function from :math:`\\lambda = 0` to
@@ -43,7 +41,6 @@ def bb_total_flux(self):
     Returns:
         float: The value of :math:`\\sigma \\frac{R^2}{D^2} T^4`
     """
-    temperature = u.Quantity(self.temperature, u.K)
     bb_total_flux = (const.sigma_sb * self.angular_radius**2
                      * self.temperature**4)
     bb_total_flux = bb_total_flux.to(u.erg / (u.s * u.cm**2))

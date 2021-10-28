@@ -74,10 +74,6 @@ def uncertainty_calculator_trapezoidal(fluxes):
 
 def calculate_qbol_flux(flux_group):
     """Turn a group of fluxes into a quasi-bolometric flux"""
-    integral_calculator = TrapezoidalIntegralCalculator()
-    uncertainty_calculator = uncertainty_calculator_trapezoidal
-    
-    fqbol = get_quasi_bolometric_flux(integral_calculator,
-                                      uncertainty_calculator,
-                                      flux_group)
-    return fqbol
+    return get_quasi_bolometric_flux(TrapezoidalIntegralCalculator(),
+                                     uncertainty_calculator_trapezoidal,
+                                     flux_group)

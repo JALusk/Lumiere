@@ -20,7 +20,7 @@ class TestDistance(unittest.TestCase):
 
     def test_negative_distance_raises_exception(self):
         with self.assertRaises(ValueError):
-            negative_distance = lum.Distance(-1, 0.1)
+            lum.Distance(-1, 0.1)
 
 class TestBolometricLuminosity(unittest.TestCase):
 
@@ -39,7 +39,7 @@ class TestBolometricLuminosity(unittest.TestCase):
 
     def test_negative_distance_raises_exception(self):
         with self.assertRaises(ValueError):
-            negative_lbol = lum.BolometricLuminosity(-1, 0.1)
+            lum.BolometricLuminosity(-1, 0.1)
 
 class TestBolometricFlux(unittest.TestCase):
 
@@ -58,7 +58,7 @@ class TestBolometricFlux(unittest.TestCase):
 
     def test_negative_distance_raises_exception(self):
         with self.assertRaises(ValueError):
-            negative_fbol = lum.BolometricFlux(-1, 0.1)
+            lum.BolometricFlux(-1, 0.1)
 
     def test_convert_flux_value_to_lum_value(self):
         distance = lum.Distance(2, 0.2)
