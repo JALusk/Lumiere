@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>superbol.read_osc &#8212; SuperBoL 0.3.4 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for superbol.read_osc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">superbol</span> <span class="kn">import</span> <span class="n">mag2flux</span>
+
+<div class="viewcode-block" id="NoMagnitude"><a class="viewcode-back" href="../../superbol.html#superbol.read_osc.NoMagnitude">[docs]</a><span class="k">class</span> <span class="nc">NoMagnitude</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="NoBandNameGiven"><a class="viewcode-back" href="../../superbol.html#superbol.read_osc.NoBandNameGiven">[docs]</a><span class="k">class</span> <span class="nc">NoBandNameGiven</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="NoTimeGiven"><a class="viewcode-back" href="../../superbol.html#superbol.read_osc.NoTimeGiven">[docs]</a><span class="k">class</span> <span class="nc">NoTimeGiven</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="NoBandFound"><a class="viewcode-back" href="../../superbol.html#superbol.read_osc.NoBandFound">[docs]</a><span class="k">class</span> <span class="nc">NoBandFound</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="NoUncertainty"><a class="viewcode-back" href="../../superbol.html#superbol.read_osc.NoUncertainty">[docs]</a><span class="k">class</span> <span class="nc">NoUncertainty</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="get_observed_magnitude"><a class="viewcode-back" href="../../superbol.html#superbol.read_osc.get_observed_magnitude">[docs]</a><span class="k">def</span> <span class="nf">get_observed_magnitude</span><span class="p">(</span><span class="n">osc_photometry_dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Turn photometry from the OSC into an ObservedMagnitude&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">magnitude</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">osc_photometry_dict</span><span class="p">[</span><span class="s1">&#39;magnitude&#39;</span><span class="p">])</span>
+        <span class="n">uncertainty</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">osc_photometry_dict</span><span class="p">[</span><span class="s1">&#39;e_magnitude&#39;</span><span class="p">])</span>
+        <span class="n">band</span> <span class="o">=</span> <span class="n">get_band</span><span class="p">(</span><span class="n">osc_photometry_dict</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">])</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">osc_photometry_dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">osc_photometry_dict</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;magnitude&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">osc_photometry_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">NoMagnitude</span>
+        <span class="k">if</span> <span class="s1">&#39;e_magnitude&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">osc_photometry_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">NoUncertainty</span>
+        <span class="k">elif</span> <span class="s1">&#39;band&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">osc_photometry_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">NoBandNameGiven</span>
+        <span class="k">elif</span> <span class="s1">&#39;time&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">osc_photometry_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">NoTimeGiven</span>
+
+    <span class="n">observed_magnitude</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="o">.</span><span class="n">ObservedMagnitude</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">uncertainty</span><span class="p">,</span> <span class="n">band</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+    <span class="n">observed_magnitude</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
+
+    <span class="k">return</span> <span class="n">observed_magnitude</span></div>
+
+<div class="viewcode-block" id="get_band"><a class="viewcode-back" href="../../superbol.html#superbol.read_osc.get_band">[docs]</a><span class="k">def</span> <span class="nf">get_band</span><span class="p">(</span><span class="n">band_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a Band object using the band_name given&quot;&quot;&quot;</span>
+    <span class="n">band_dict</span> <span class="o">=</span> <span class="n">retrieve_band_dict</span><span class="p">(</span><span class="n">band_name</span><span class="p">)</span>
+    <span class="n">band_alt_name</span> <span class="o">=</span> <span class="n">band_dict</span><span class="p">[</span><span class="s1">&#39;alt_name&#39;</span><span class="p">]</span>
+    <span class="n">effective_wavelength</span> <span class="o">=</span> <span class="n">band_dict</span><span class="p">[</span><span class="s1">&#39;effective_wavelength&#39;</span><span class="p">]</span>
+    <span class="n">flux_conversion_factor</span> <span class="o">=</span> <span class="n">band_dict</span><span class="p">[</span><span class="s1">&#39;flux_conversion_factor&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">mag2flux</span><span class="o">.</span><span class="n">Band</span><span class="p">(</span><span class="n">band_name</span><span class="p">,</span>
+                         <span class="n">band_alt_name</span><span class="p">,</span>
+                         <span class="n">effective_wavelength</span><span class="p">,</span> 
+                         <span class="n">flux_conversion_factor</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="retrieve_band_dict"><a class="viewcode-back" href="../../superbol.html#superbol.read_osc.retrieve_band_dict">[docs]</a><span class="k">def</span> <span class="nf">retrieve_band_dict</span><span class="p">(</span><span class="n">band_name</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./data/bands.json&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load the Band attributes from a JSON file&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_file</span><span class="p">:</span>
+            <span class="n">file_content</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">file_content</span><span class="p">[</span><span class="n">band_name</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">NoBandFound</span><span class="p">(</span><span class="s2">&quot;The band </span><span class="si">{0}</span><span class="s2"> was not found in the SuperBoL band catalog.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">band_name</span><span class="p">))</span></div>
+
+<span class="c1"># TODO Add default value?</span>
+<div class="viewcode-block" id="retrieve_osc_photometry"><a class="viewcode-back" href="../../superbol.html#superbol.read_osc.retrieve_osc_photometry">[docs]</a><span class="k">def</span> <span class="nf">retrieve_osc_photometry</span><span class="p">(</span><span class="n">sn_name</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load the SN photometry from an OSC-formatted JSON file&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">osc_data_file</span><span class="p">:</span>
+        <span class="n">file_content</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osc_data_file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">file_content</span><span class="p">[</span><span class="n">sn_name</span><span class="p">][</span><span class="s2">&quot;photometry&quot;</span><span class="p">]</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SuperBoL</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../superbol.html">superbol package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, JALusk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

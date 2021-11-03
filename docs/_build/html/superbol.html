@@ -1,0 +1,926 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>superbol package &#8212; SuperBoL 0.3.4 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to SuperBoL’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="superbol-package">
+<h1>superbol package<a class="headerlink" href="#superbol-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-superbol.blackbody">
+<span id="superbol-blackbody-module"></span><h2>superbol.blackbody module<a class="headerlink" href="#module-superbol.blackbody" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.blackbody.BlackbodyFit">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.blackbody.</span></span><span class="sig-name descname"><span class="pre">BlackbodyFit</span></span><a class="reference internal" href="_modules/superbol/blackbody.html#BlackbodyFit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.blackbody.BlackbodyFit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="superbol.blackbody.BlackbodyFit.fit_to_SED">
+<span class="sig-name descname"><span class="pre">fit_to_SED</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SED</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/blackbody.html#BlackbodyFit.fit_to_SED"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.blackbody.BlackbodyFit.fit_to_SED" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits the temperature and angular_radius of a blackbody to the SED</p>
+<p>The initial guesses for the <cite>temperature</cite> and <cite>angular_radius</cite> are
+<span class="math notranslate nohighlight">\(T = 5000\)</span> K and <span class="math notranslate nohighlight">\(\theta = 1.0 \times 10^{-10}\)</span>.
+These are typical for an extragalactic supernovae, but should be used
+with caution for any other objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>SED</strong> (<em>list</em>) – List of observed MonochromaticFlux objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.blackbody.bb_flux">
+<span class="sig-prename descclassname"><span class="pre">superbol.blackbody.</span></span><span class="sig-name descname"><span class="pre">bb_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/blackbody.html#bb_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.blackbody.bb_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Observed flux at <cite>wavelength</cite> from a blackbody of <cite>temperature</cite> and <cite>angular_radius</cite> in cgs units</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wavelength</strong> (<em>float</em>) – Wavelength in Angstroms</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature in Kelvin</p></li>
+<li><p><strong>angular_radius</strong> (<em>float</em>) – Angular radius <span class="math notranslate nohighlight">\((\theta = \frac{R}{D})\)</span></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>blackbody flux in <span class="math notranslate nohighlight">\(erg \; s^{-1} cm^{-2} Anstrom^{-1}\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Astropy Quantity</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.blackbody.bb_flux_integrated">
+<span class="sig-prename descclassname"><span class="pre">superbol.blackbody.</span></span><span class="sig-name descname"><span class="pre">bb_flux_integrated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/blackbody.html#bb_flux_integrated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.blackbody.bb_flux_integrated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integrate the planck function from <span class="math notranslate nohighlight">\(\lambda = 0\)</span> to <span class="math notranslate nohighlight">\(\lambda =\)</span> <cite>wavelength</cite>, then convert result to observed flux</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wavelength</strong> (<em>float</em>) – Wavelength in Angstroms</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature in Kelvin</p></li>
+<li><p><strong>angular_radius</strong> (<em>float</em>) – Angular radius <span class="math notranslate nohighlight">\((\theta = \frac{R}{D})\)</span></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value of the integrated flux in <span class="math notranslate nohighlight">\(erg \; s^{-1} cm^{-2}\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.blackbody.bb_flux_nounits">
+<span class="sig-prename descclassname"><span class="pre">superbol.blackbody.</span></span><span class="sig-name descname"><span class="pre">bb_flux_nounits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/blackbody.html#bb_flux_nounits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.blackbody.bb_flux_nounits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identical to bb_flux, but returns the value rather than the Astropy Quantity.</p>
+<p>This function is needed because curve_fit() does not play nice with functions that return Astropy quantities.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.blackbody.bb_total_flux">
+<span class="sig-prename descclassname"><span class="pre">superbol.blackbody.</span></span><span class="sig-name descname"><span class="pre">bb_total_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/blackbody.html#bb_total_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.blackbody.bb_total_flux" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Integrate the planck function from <span class="math notranslate nohighlight">\(\lambda = 0\)</span> to</dt><dd><p><span class="math notranslate nohighlight">\(\lambda = \infty\)</span>, then convert result to observed flux.</p>
+</dd>
+</dl>
+<p>The calculation is done using the Stefan-Boltxmann law, rather than
+performing an actual integral using numerical integration. The
+<cite>angular_radius</cite> is included to convert the result to an observed flux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature in Kelvin</p></li>
+<li><p><strong>angular_radius</strong> (<em>float</em>) – Angular radius <span class="math notranslate nohighlight">\((\theta = \frac{R}{D})\)</span></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The value of <span class="math notranslate nohighlight">\(\sigma \frac{R^2}{D^2} T^4\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.blackbody.dbb_flux_integrated_dT">
+<span class="sig-prename descclassname"><span class="pre">superbol.blackbody.</span></span><span class="sig-name descname"><span class="pre">dbb_flux_integrated_dT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/blackbody.html#dbb_flux_integrated_dT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.blackbody.dbb_flux_integrated_dT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take the derivative of the integrated planck function, then convert result to observed flux. This is used in error propagation calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wavelength</strong> (<em>float</em>) – Wavelength in Angstroms</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature in Kelvin</p></li>
+<li><p><strong>angular_radius</strong> (<em>float</em>) – Angular radius <span class="math notranslate nohighlight">\((\theta = \frac{R}{D})\)</span></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Derivative of the integrated blackbody flux at <cite>wavelength</cite> with respect to <cite>temperature</cite></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.blackbody.dbb_total_flux_dT">
+<span class="sig-prename descclassname"><span class="pre">superbol.blackbody.</span></span><span class="sig-name descname"><span class="pre">dbb_total_flux_dT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/blackbody.html#dbb_total_flux_dT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.blackbody.dbb_total_flux_dT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take the derivative of the total blackbody flux with respect to temperature</p>
+<p>The calculation takes a derivative of the Stefan-Boltzmann law with respect to temperature. The <cite>angular_radius</cite> is present to convert the result to an observed flux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature in Kelvin</p></li>
+<li><p><strong>angular_radius</strong> (<em>float</em>) – Angular radius <span class="math notranslate nohighlight">\((\theta = \frac{R}{D})\)</span></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The value of <span class="math notranslate nohighlight">\(4 \sigma \frac{R^2}{D^2} T^3\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-superbol.extinction">
+<span id="superbol-extinction-module"></span><h2>superbol.extinction module<a class="headerlink" href="#module-superbol.extinction" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.extinction.correct_observed_magnitude">
+<span class="sig-prename descclassname"><span class="pre">superbol.extinction.</span></span><span class="sig-name descname"><span class="pre">correct_observed_magnitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_magnitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extinction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/extinction.html#correct_observed_magnitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.extinction.correct_observed_magnitude" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.extinction.get_extinction_by_name">
+<span class="sig-prename descclassname"><span class="pre">superbol.extinction.</span></span><span class="sig-name descname"><span class="pre">get_extinction_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extinction_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/extinction.html#get_extinction_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.extinction.get_extinction_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-superbol.laug">
+<span id="superbol-laug-module"></span><h2>superbol.laug module<a class="headerlink" href="#module-superbol.laug" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.laug.trim_SED">
+<span class="sig-prename descclassname"><span class="pre">superbol.laug.</span></span><span class="sig-name descname"><span class="pre">trim_SED</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SED</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/laug.html#trim_SED"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.laug.trim_SED" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trim SED to only include fluxes greater than the <cite>min_wavelength</cite></p>
+</dd></dl>
+
+</section>
+<section id="module-superbol.lbc">
+<span id="superbol-lbc-module"></span><h2>superbol.lbc module<a class="headerlink" href="#module-superbol.lbc" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.lbc.BCBolometricFlux">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">BCBolometricFlux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#BCBolometricFlux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.BCBolometricFlux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#superbol.lum.BolometricFlux" title="superbol.lum.BolometricFlux"><code class="xref py py-class docutils literal notranslate"><span class="pre">superbol.lum.BolometricFlux</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="superbol.lbc.BCBolometricFlux.to_lbol">
+<span class="sig-name descname"><span class="pre">to_lbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#BCBolometricFlux.to_lbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.BCBolometricFlux.to_lbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert bolometric flux to bolometric luminosity</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.lbc.BolometricCorrection">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">BolometricCorrection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#BolometricCorrection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.BolometricCorrection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.lbc.BolometricMagnitude">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">BolometricMagnitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#BolometricMagnitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.BolometricMagnitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.lbc.InvalidBCMethod">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">InvalidBCMethod</span></span><a class="reference internal" href="_modules/superbol/lbc.html#InvalidBCMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.InvalidBCMethod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.lbc.InvalidColor">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">InvalidColor</span></span><a class="reference internal" href="_modules/superbol/lbc.html#InvalidColor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.InvalidColor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.lbc.InvalidFilterCombination">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">InvalidFilterCombination</span></span><a class="reference internal" href="_modules/superbol/lbc.html#InvalidFilterCombination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.InvalidFilterCombination" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.apply_bolometric_correction">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">apply_bolometric_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_magnitude</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#apply_bolometric_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.apply_bolometric_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the bolometric correction to the observed magnitude</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.calculate_bc_flux_bh09">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">calculate_bc_flux_bh09</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_group</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#calculate_bc_flux_bh09"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.calculate_bc_flux_bh09" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a group of observations into an average BC flux</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.calculate_bc_flux_h01">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">calculate_bc_flux_h01</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_group</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#calculate_bc_flux_h01"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.calculate_bc_flux_h01" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a group of observations into an average BC flux</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obs_group</strong> – observed photometry</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BC Bolemetric flux</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.compute_bolometric_correction">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">compute_bolometric_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#compute_bolometric_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.compute_bolometric_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the bolometric correction for obs1-obs2 using specified method</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.compute_polynomial">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">compute_polynomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#compute_polynomial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.compute_polynomial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the bc-color polynomial</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.compute_polynomial_derivative">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">compute_polynomial_derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#compute_polynomial_derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.compute_polynomial_derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the derivative of the bc-color polynomial</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.convert_mbol_to_Fbol">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">convert_mbol_to_Fbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeropoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#convert_mbol_to_Fbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.convert_mbol_to_Fbol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.get_bc_method_coefficients">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">get_bc_method_coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#get_bc_method_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.get_bc_method_coefficients" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.get_bc_method_range">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">get_bc_method_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#get_bc_method_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.get_bc_method_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.get_bc_method_rms">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">get_bc_method_rms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#get_bc_method_rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.get_bc_method_rms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.get_bc_method_zeropoint">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">get_bc_method_zeropoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#get_bc_method_zeropoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.get_bc_method_zeropoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lbc.retrieve_bc_method_data">
+<span class="sig-prename descclassname"><span class="pre">superbol.lbc.</span></span><span class="sig-name descname"><span class="pre">retrieve_bc_method_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/jlusk/Software/SuperBoL/superbol/../data/bc_color_fits.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lbc.html#retrieve_bc_method_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lbc.retrieve_bc_method_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-superbol.lightcurve">
+<span id="superbol-lightcurve-module"></span><h2>superbol.lightcurve module<a class="headerlink" href="#module-superbol.lightcurve" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lightcurve.calculate_bc_lightcurve">
+<span class="sig-prename descclassname"><span class="pre">superbol.lightcurve.</span></span><span class="sig-name descname"><span class="pre">calculate_bc_lightcurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">magnitudes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_calculator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lightcurve.html#calculate_bc_lightcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lightcurve.calculate_bc_lightcurve" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lightcurve.calculate_lightcurve">
+<span class="sig-prename descclassname"><span class="pre">superbol.lightcurve.</span></span><span class="sig-name descname"><span class="pre">calculate_lightcurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fluxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_calculator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lightcurve.html#calculate_lightcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lightcurve.calculate_lightcurve" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-superbol.lqbol">
+<span id="superbol-lqbol-module"></span><h2>superbol.lqbol module<a class="headerlink" href="#module-superbol.lqbol" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.lqbol.InsufficientFluxes">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lqbol.</span></span><span class="sig-name descname"><span class="pre">InsufficientFluxes</span></span><a class="reference internal" href="_modules/superbol/lqbol.html#InsufficientFluxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lqbol.InsufficientFluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.lqbol.QuasiBolometricFlux">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lqbol.</span></span><span class="sig-name descname"><span class="pre">QuasiBolometricFlux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lqbol.html#QuasiBolometricFlux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lqbol.QuasiBolometricFlux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#superbol.lum.BolometricFlux" title="superbol.lum.BolometricFlux"><code class="xref py py-class docutils literal notranslate"><span class="pre">superbol.lum.BolometricFlux</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="superbol.lqbol.QuasiBolometricFlux.to_lbol">
+<span class="sig-name descname"><span class="pre">to_lbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lqbol.html#QuasiBolometricFlux.to_lbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lqbol.QuasiBolometricFlux.to_lbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert bolometric flux to bolometric luminosity</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.lqbol.TrapezoidalIntegralCalculator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lqbol.</span></span><span class="sig-name descname"><span class="pre">TrapezoidalIntegralCalculator</span></span><a class="reference internal" href="_modules/superbol/lqbol.html#TrapezoidalIntegralCalculator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lqbol.TrapezoidalIntegralCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Integrate between fluxes using the trapezoidal method</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="superbol.lqbol.TrapezoidalIntegralCalculator.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fluxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lqbol.html#TrapezoidalIntegralCalculator.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lqbol.TrapezoidalIntegralCalculator.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the integral using numpy.trapz</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lqbol.calculate_qbol_flux">
+<span class="sig-prename descclassname"><span class="pre">superbol.lqbol.</span></span><span class="sig-name descname"><span class="pre">calculate_qbol_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux_group</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lqbol.html#calculate_qbol_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lqbol.calculate_qbol_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a group of fluxes into a quasi-bolometric flux</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lqbol.get_quasi_bolometric_flux">
+<span class="sig-prename descclassname"><span class="pre">superbol.lqbol.</span></span><span class="sig-name descname"><span class="pre">get_quasi_bolometric_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">integral_calculator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty_calculator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fluxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lqbol.html#get_quasi_bolometric_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lqbol.get_quasi_bolometric_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Fqbol using the supplied integration technique</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lqbol.uncertainty_calculator_trapezoidal">
+<span class="sig-prename descclassname"><span class="pre">superbol.lqbol.</span></span><span class="sig-name descname"><span class="pre">uncertainty_calculator_trapezoidal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fluxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lqbol.html#uncertainty_calculator_trapezoidal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lqbol.uncertainty_calculator_trapezoidal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate uncertainty in trapezoidal integral of fluxes</p>
+</dd></dl>
+
+</section>
+<section id="module-superbol.lum">
+<span id="superbol-lum-module"></span><h2>superbol.lum module<a class="headerlink" href="#module-superbol.lum" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.lum.BolometricFlux">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lum.</span></span><span class="sig-name descname"><span class="pre">BolometricFlux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lum.html#BolometricFlux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lum.BolometricFlux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="superbol.lum.BolometricFlux.to_lbol">
+<span class="sig-name descname"><span class="pre">to_lbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lum.html#BolometricFlux.to_lbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lum.BolometricFlux.to_lbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert bolometric flux to bolometric luminosity</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.lum.BolometricLuminosity">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lum.</span></span><span class="sig-name descname"><span class="pre">BolometricLuminosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lum.html#BolometricLuminosity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lum.BolometricLuminosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.lum.Distance">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.lum.</span></span><span class="sig-name descname"><span class="pre">Distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lum.html#Distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lum.Distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.lum.convert_flux_to_luminosity">
+<span class="sig-prename descclassname"><span class="pre">superbol.lum.</span></span><span class="sig-name descname"><span class="pre">convert_flux_to_luminosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/lum.html#convert_flux_to_luminosity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.lum.convert_flux_to_luminosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert bolometric flux to bolometric luminosity</p>
+</dd></dl>
+
+</section>
+<section id="module-superbol.mag2flux">
+<span id="superbol-mag2flux-module"></span><h2>superbol.mag2flux module<a class="headerlink" href="#module-superbol.mag2flux" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.mag2flux.Band">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.mag2flux.</span></span><span class="sig-name descname"><span class="pre">Band</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">effective_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_conversion_factor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/mag2flux.html#Band"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.mag2flux.Band" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.mag2flux.MagnitudeToFluxConverter">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.mag2flux.</span></span><span class="sig-name descname"><span class="pre">MagnitudeToFluxConverter</span></span><a class="reference internal" href="_modules/superbol/mag2flux.html#MagnitudeToFluxConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.mag2flux.MagnitudeToFluxConverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="superbol.mag2flux.MagnitudeToFluxConverter.convert">
+<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_magnitude</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/mag2flux.html#MagnitudeToFluxConverter.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.mag2flux.MagnitudeToFluxConverter.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an observed magnitude to a monochromatic flux</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.mag2flux.MonochromaticFlux">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.mag2flux.</span></span><span class="sig-name descname"><span class="pre">MonochromaticFlux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_uncertainty</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/mag2flux.html#MonochromaticFlux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.mag2flux.MonochromaticFlux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="superbol.mag2flux.ObservedMagnitude">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.mag2flux.</span></span><span class="sig-name descname"><span class="pre">ObservedMagnitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">magnitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/mag2flux.html#ObservedMagnitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.mag2flux.ObservedMagnitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="superbol.mag2flux.ObservedMagnitude.convert_to_flux">
+<span class="sig-name descname"><span class="pre">convert_to_flux</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/mag2flux.html#ObservedMagnitude.convert_to_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.mag2flux.ObservedMagnitude.convert_to_flux" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-superbol.photometry">
+<span id="superbol-photometry-module"></span><h2>superbol.photometry module<a class="headerlink" href="#module-superbol.photometry" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.photometry.MissingMagnitudeOutOfBounds">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">MissingMagnitudeOutOfBounds</span></span><a class="reference internal" href="_modules/superbol/photometry.html#MissingMagnitudeOutOfBounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.MissingMagnitudeOutOfBounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.append_interpolated_magnitudes_to_multi_band_photometry_set">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">append_interpolated_magnitudes_to_multi_band_photometry_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interpolated_magnitudes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_band_photometry_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#append_interpolated_magnitudes_to_multi_band_photometry_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.append_interpolated_magnitudes_to_multi_band_photometry_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.combine_observed_magnitudes">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">combine_observed_magnitudes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_magnitudes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#combine_observed_magnitudes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.combine_observed_magnitudes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine a list of ObservedMagnitudes using a weighted average</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_interpolated_magnitude_uncertainty">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_interpolated_magnitude_uncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">previous_observed_magnitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_observed_magnitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unobserved_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_interpolated_magnitude_uncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_interpolated_magnitude_uncertainty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_interpolated_magnitudes">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_interpolated_magnitudes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lightcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_interpolated_magnitudes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_interpolated_magnitudes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_lightcurve">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_lightcurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multi_band_photometry_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_lightcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_lightcurve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of all observed magnitudes in a given band</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_multi_band_photometry">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_multi_band_photometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_magnitudes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_multi_band_photometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_multi_band_photometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of ObservedMagnitudes with duplicates averaged</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_next_observed_magnitude">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_next_observed_magnitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lightcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unobserved_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_next_observed_magnitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_next_observed_magnitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the most recently observed magnitude after the unobserved time</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_observed_band_names">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_observed_band_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mutli_band_photometry_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_observed_band_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_observed_band_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_observed_magnitude_uncertainties">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_observed_magnitude_uncertainties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_magnitudes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_observed_magnitude_uncertainties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_observed_magnitude_uncertainties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_observed_magnitude_values">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_observed_magnitude_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_magnitudes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_observed_magnitude_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_observed_magnitude_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_observed_times">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_observed_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multi_band_photometry_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_observed_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_observed_times" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_previous_observed_magnitude">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_previous_observed_magnitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lightcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unobserved_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_previous_observed_magnitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_previous_observed_magnitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the most recently observed magnitude before the unobserved time</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_times">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_magnitudes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_times" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_unobserved_times">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_unobserved_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lightcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_unobserved_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_unobserved_times" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.get_weights">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">get_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uncertainties</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#get_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.get_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate weights from uncertainties</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.group_magnitudes">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">group_magnitudes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">magnitudes</span></em>, <em class="sig-param"><span class="pre">keyfunc=&lt;built-in</span> <span class="pre">function</span> <span class="pre">floor&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#group_magnitudes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.group_magnitudes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group magnitudes by applying keyfunc() to each magnitude.time.</p>
+<p>Magnitudes with the same return value for keyfunc(magnitude.time) will be
+part of the same group.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.interpolate_missing_magnitudes">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">interpolate_missing_magnitudes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multi_band_photometry_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#interpolate_missing_magnitudes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.interpolate_missing_magnitudes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.weighted_average">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">weighted_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainties</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#weighted_average"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.weighted_average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the weighed average of values with uncertainties</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.weighted_average_uncertainty">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">weighted_average_uncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uncertainties</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#weighted_average_uncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.weighted_average_uncertainty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the uncertainty in a weighted average</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.photometry.yield_observed_magnitudes_at_each_observed_band">
+<span class="sig-prename descclassname"><span class="pre">superbol.photometry.</span></span><span class="sig-name descname"><span class="pre">yield_observed_magnitudes_at_each_observed_band</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_magnitudes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/photometry.html#yield_observed_magnitudes_at_each_observed_band"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.photometry.yield_observed_magnitudes_at_each_observed_band" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield lists of ObservedMagnitudes with the same band</p>
+</dd></dl>
+
+</section>
+<section id="module-superbol.planck">
+<span id="superbol-planck-module"></span><h2>superbol.planck module<a class="headerlink" href="#module-superbol.planck" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.planck.d_planck_integral_dT">
+<span class="sig-prename descclassname"><span class="pre">superbol.planck.</span></span><span class="sig-name descname"><span class="pre">d_planck_integral_dT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/planck.html#d_planck_integral_dT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.planck.d_planck_integral_dT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Derivative of the integrated Planck function from <span class="math notranslate nohighlight">\(\lambda = 0\)</span> to
+<span class="math notranslate nohighlight">\(\lambda =\)</span> <cite>wavelength</cite> using the infinite series approximation of the
+integral. This is used in the error propagation calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wavelength</strong> (<em>float</em>) – Upper bound for the wavelength in Angstrom.</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Derivative of the integral of the planck function
+with respect to T in <span class="math notranslate nohighlight">\(erg \; s^{-1} cm^{-2} sterad^{-1} K^{-1}\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Astropy Quantity</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.planck.planck_function">
+<span class="sig-prename descclassname"><span class="pre">superbol.planck.</span></span><span class="sig-name descname"><span class="pre">planck_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/planck.html#planck_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.planck.planck_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planck function at given <cite>wavelength</cite> and <cite>temperature</cite> in cgs.</p>
+<p>The specific intensity of radiation from a blackbody source is given by:</p>
+<p><span class="math notranslate nohighlight">\(B_{\lambda}(\lambda, T) = \displaystyle\frac{C_1}{\lambda^5} \frac{1}{e^{\frac{C_2}{\lambda T}} - 1}\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(C_1 = 2hc^2\)</span> and <span class="math notranslate nohighlight">\(C_2 = hc/k_B\)</span> are the first and second radiation constants.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wavelength</strong> (<em>float</em>) – Wavelength in Angstrom</p></li>
+<li><p><strong>tempereature</strong> (<em>float</em>) – Temperature in Kelvin</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The specific intensity of the
+Planck function in <span class="math notranslate nohighlight">\(erg \; s^{-1} cm^{-2} sterad^{-1} Angstrom^{-1}\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Astropy Quantity</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.planck.planck_integral">
+<span class="sig-prename descclassname"><span class="pre">superbol.planck.</span></span><span class="sig-name descname"><span class="pre">planck_integral</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/planck.html#planck_integral"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.planck.planck_integral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integrate the Planck function over a finite wavelength interval.</p>
+<p>The integral is taken from <span class="math notranslate nohighlight">\(\lambda = 0\)</span> to <span class="math notranslate nohighlight">\(\lambda =\)</span> <cite>wavelength</cite>
+using the infinite series approximation of the integral:</p>
+<p><span class="math notranslate nohighlight">\(\displaystyle\int_{0}^{\lambda_1} B_{\lambda}(\lambda, T) \; d\lambda = \frac{C_1 T^4}{C_2^4} \sum_{n = 1}^{\infty}\left(\frac{x_1^3}{n} + \frac{3x_1^2}{n^2} + \frac{6x_1}{n^3} + \frac{6}{n^4}\right) e^{-nx_1}\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(C_1 = 2hc^2\)</span> and <span class="math notranslate nohighlight">\(C_2 = hc/k_B\)</span> are the first and second radiation constants, and <span class="math notranslate nohighlight">\(x_1 = C_2/\lambda_1 T\)</span>
+is a change of variables to make the integral easier to represent in this series form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wavelength</strong> (<em>float</em>) – Upper bound for the wavelength in Angstrom.</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Integral of the planck function in
+<span class="math notranslate nohighlight">\(erg \; s^{-1} cm^{-2} sterad^{-1}\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Astropy Quantity</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-superbol.read_osc">
+<span id="superbol-read-osc-module"></span><h2>superbol.read_osc module<a class="headerlink" href="#module-superbol.read_osc" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.read_osc.NoBandFound">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.read_osc.</span></span><span class="sig-name descname"><span class="pre">NoBandFound</span></span><a class="reference internal" href="_modules/superbol/read_osc.html#NoBandFound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.read_osc.NoBandFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.read_osc.NoBandNameGiven">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.read_osc.</span></span><span class="sig-name descname"><span class="pre">NoBandNameGiven</span></span><a class="reference internal" href="_modules/superbol/read_osc.html#NoBandNameGiven"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.read_osc.NoBandNameGiven" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.read_osc.NoMagnitude">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.read_osc.</span></span><span class="sig-name descname"><span class="pre">NoMagnitude</span></span><a class="reference internal" href="_modules/superbol/read_osc.html#NoMagnitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.read_osc.NoMagnitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.read_osc.NoTimeGiven">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.read_osc.</span></span><span class="sig-name descname"><span class="pre">NoTimeGiven</span></span><a class="reference internal" href="_modules/superbol/read_osc.html#NoTimeGiven"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.read_osc.NoTimeGiven" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.read_osc.NoUncertainty">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.read_osc.</span></span><span class="sig-name descname"><span class="pre">NoUncertainty</span></span><a class="reference internal" href="_modules/superbol/read_osc.html#NoUncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.read_osc.NoUncertainty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.read_osc.get_band">
+<span class="sig-prename descclassname"><span class="pre">superbol.read_osc.</span></span><span class="sig-name descname"><span class="pre">get_band</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/read_osc.html#get_band"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.read_osc.get_band" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a Band object using the band_name given</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.read_osc.get_observed_magnitude">
+<span class="sig-prename descclassname"><span class="pre">superbol.read_osc.</span></span><span class="sig-name descname"><span class="pre">get_observed_magnitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">osc_photometry_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/read_osc.html#get_observed_magnitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.read_osc.get_observed_magnitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn photometry from the OSC into an ObservedMagnitude</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.read_osc.retrieve_band_dict">
+<span class="sig-prename descclassname"><span class="pre">superbol.read_osc.</span></span><span class="sig-name descname"><span class="pre">retrieve_band_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./data/bands.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/read_osc.html#retrieve_band_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.read_osc.retrieve_band_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the Band attributes from a JSON file</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.read_osc.retrieve_osc_photometry">
+<span class="sig-prename descclassname"><span class="pre">superbol.read_osc.</span></span><span class="sig-name descname"><span class="pre">retrieve_osc_photometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sn_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/read_osc.html#retrieve_osc_photometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.read_osc.retrieve_osc_photometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the SN photometry from an OSC-formatted JSON file</p>
+</dd></dl>
+
+</section>
+<section id="module-superbol.sed">
+<span id="superbol-sed-module"></span><h2>superbol.sed module<a class="headerlink" href="#module-superbol.sed" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="superbol.sed.MissingFluxOutOfBounds">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">MissingFluxOutOfBounds</span></span><a class="reference internal" href="_modules/superbol/sed.html#MissingFluxOutOfBounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.MissingFluxOutOfBounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.append_interpolated_fluxes_to_SEDs">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">append_interpolated_fluxes_to_SEDs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interpolated_fluxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SEDs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#append_interpolated_fluxes_to_SEDs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.append_interpolated_fluxes_to_SEDs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.combine_fluxes">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">combine_fluxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fluxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#combine_fluxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.combine_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine a list of MonochromaticFluxes using a weighted average</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_SED">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_SED</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fluxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_SED"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_SED" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of MonochromaticFluxes with duplicates averaged</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_flux_uncertainties">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_flux_uncertainties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fluxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_flux_uncertainties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_flux_uncertainties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_flux_values">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_flux_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fluxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_flux_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_flux_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_gap_size">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_gap_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unobserved_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_gap_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_gap_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_interpolated_flux_uncertainty">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_interpolated_flux_uncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">previous_flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unobserved_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_interpolated_flux_uncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_interpolated_flux_uncertainty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_interpolated_fluxes">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_interpolated_fluxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lightcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_interpolated_fluxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_interpolated_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_monochromatic_lightcurve">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_monochromatic_lightcurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SEDs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_monochromatic_lightcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_monochromatic_lightcurve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of all fluxes at a given wavelength across all SEDs</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_next_flux">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_next_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monochromatic_lightcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unobserved_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_next_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_next_flux" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_observed_times">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_observed_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SEDs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_observed_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_observed_times" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_observed_wavelengths">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_observed_wavelengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SEDs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_observed_wavelengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_observed_wavelengths" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_previous_flux">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_previous_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monochromatic_lightcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unobserved_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_previous_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_previous_flux" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_times">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fluxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_times" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_unobserved_times">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_unobserved_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lightcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_unobserved_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_unobserved_times" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.get_weights">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">get_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uncertainties</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#get_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.get_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate weights from uncertainties</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.group_fluxes">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">group_fluxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">fluxes</span></em>, <em class="sig-param"><span class="pre">keyfunc=&lt;built-in</span> <span class="pre">function</span> <span class="pre">floor&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#group_fluxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.group_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group fluxes by applying keyfunc() to each flux.time in the fluxes.</p>
+<p>Fluxes with the same return value for keyfunc(flux.time) will be
+part of the same group.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.interpolate_missing_fluxes">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">interpolate_missing_fluxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SEDs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#interpolate_missing_fluxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.interpolate_missing_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.weighted_average">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">weighted_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainties</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#weighted_average"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.weighted_average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the weighed average of values with uncertainties</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.weighted_average_uncertainty">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">weighted_average_uncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uncertainties</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#weighted_average_uncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.weighted_average_uncertainty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the uncertainty in a weighted average</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="superbol.sed.yield_fluxes_at_each_observed_wavelength">
+<span class="sig-prename descclassname"><span class="pre">superbol.sed.</span></span><span class="sig-name descname"><span class="pre">yield_fluxes_at_each_observed_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fluxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/superbol/sed.html#yield_fluxes_at_each_observed_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#superbol.sed.yield_fluxes_at_each_observed_wavelength" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield lists of MonochromaticFluxes with the same wavelength</p>
+</dd></dl>
+
+</section>
+<section id="module-superbol">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-superbol" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SuperBoL</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">superbol package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.blackbody">superbol.blackbody module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.extinction">superbol.extinction module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.laug">superbol.laug module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.lbc">superbol.lbc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.lightcurve">superbol.lightcurve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.lqbol">superbol.lqbol module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.lum">superbol.lum module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.mag2flux">superbol.mag2flux module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.photometry">superbol.photometry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.planck">superbol.planck module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.read_osc">superbol.read_osc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol.sed">superbol.sed module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-superbol">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to SuperBoL’s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, JALusk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/superbol.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>superbol.photometry &#8212; SuperBoL 0.3.4 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for superbol.photometry</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">groupby</span>
+<span class="kn">from</span> <span class="nn">superbol</span> <span class="kn">import</span> <span class="n">mag2flux</span>
+
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+
+<div class="viewcode-block" id="MissingMagnitudeOutOfBounds"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.MissingMagnitudeOutOfBounds">[docs]</a><span class="k">class</span> <span class="nc">MissingMagnitudeOutOfBounds</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="group_magnitudes"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.group_magnitudes">[docs]</a><span class="k">def</span> <span class="nf">group_magnitudes</span><span class="p">(</span><span class="n">magnitudes</span><span class="p">,</span> <span class="n">keyfunc</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Group magnitudes by applying keyfunc() to each magnitude.time.</span>
+
+<span class="sd">    Magnitudes with the same return value for keyfunc(magnitude.time) will be </span>
+<span class="sd">    part of the same group.&quot;&quot;&quot;</span>
+    <span class="n">grouped_magnitudes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">magnitudes</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">keyfunc</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">time</span><span class="p">))]</span>
+    <span class="k">return</span> <span class="n">grouped_magnitudes</span></div>
+
+<div class="viewcode-block" id="combine_observed_magnitudes"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.combine_observed_magnitudes">[docs]</a><span class="k">def</span> <span class="nf">combine_observed_magnitudes</span><span class="p">(</span><span class="n">observed_magnitudes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Combine a list of ObservedMagnitudes using a weighted average&quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">get_observed_magnitude_values</span><span class="p">(</span><span class="n">observed_magnitudes</span><span class="p">)</span>
+    <span class="n">uncertainties</span> <span class="o">=</span> <span class="n">get_observed_magnitude_uncertainties</span><span class="p">(</span><span class="n">observed_magnitudes</span><span class="p">)</span>
+    <span class="n">combined_magnitude</span> <span class="o">=</span> <span class="n">weighted_average</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">uncertainties</span><span class="p">)</span>
+    <span class="n">combined_uncertainty</span> <span class="o">=</span> <span class="n">weighted_average_uncertainty</span><span class="p">(</span><span class="n">uncertainties</span><span class="p">)</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="n">observed_magnitudes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">band</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">observed_magnitudes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">time</span>
+    <span class="k">return</span> <span class="n">mag2flux</span><span class="o">.</span><span class="n">ObservedMagnitude</span><span class="p">(</span><span class="n">combined_magnitude</span><span class="p">,</span>
+                                      <span class="n">combined_uncertainty</span><span class="p">,</span>
+                                      <span class="n">band</span><span class="p">,</span>
+                                      <span class="n">time</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_observed_magnitude_values"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_observed_magnitude_values">[docs]</a><span class="k">def</span> <span class="nf">get_observed_magnitude_values</span><span class="p">(</span><span class="n">observed_magnitudes</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">magnitude</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">observed_magnitudes</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="get_observed_magnitude_uncertainties"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_observed_magnitude_uncertainties">[docs]</a><span class="k">def</span> <span class="nf">get_observed_magnitude_uncertainties</span><span class="p">(</span><span class="n">observed_magnitudes</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">observed_magnitudes</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="weighted_average"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.weighted_average">[docs]</a><span class="k">def</span> <span class="nf">weighted_average</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">uncertainties</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the weighed average of values with uncertainties&quot;&quot;&quot;</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">get_weights</span><span class="p">(</span><span class="n">uncertainties</span><span class="p">)</span>
+    <span class="n">denominator</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">numerator</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))])</span>
+    <span class="k">return</span> <span class="n">numerator</span><span class="o">/</span><span class="n">denominator</span></div>
+
+<div class="viewcode-block" id="weighted_average_uncertainty"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.weighted_average_uncertainty">[docs]</a><span class="k">def</span> <span class="nf">weighted_average_uncertainty</span><span class="p">(</span><span class="n">uncertainties</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the uncertainty in a weighted average&quot;&quot;&quot;</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">get_weights</span><span class="p">(</span><span class="n">uncertainties</span><span class="p">)</span>
+    <span class="n">uncertainty</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">uncertainty</span></div>
+
+<div class="viewcode-block" id="get_weights"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_weights">[docs]</a><span class="k">def</span> <span class="nf">get_weights</span><span class="p">(</span><span class="n">uncertainties</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate weights from uncertainties&quot;&quot;&quot;</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="n">s</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">uncertainties</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">weights</span></div>
+
+<div class="viewcode-block" id="yield_observed_magnitudes_at_each_observed_band"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.yield_observed_magnitudes_at_each_observed_band">[docs]</a><span class="k">def</span> <span class="nf">yield_observed_magnitudes_at_each_observed_band</span><span class="p">(</span><span class="n">observed_magnitudes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Yield lists of ObservedMagnitudes with the same band&quot;&quot;&quot;</span>
+    <span class="n">list_of_band_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">band</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">observed_magnitudes</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">band_name</span> <span class="ow">in</span> <span class="n">list_of_band_names</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="p">[</span><span class="n">obs</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">observed_magnitudes</span> <span class="k">if</span> <span class="n">obs</span><span class="o">.</span><span class="n">band</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">band_name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="get_multi_band_photometry"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_multi_band_photometry">[docs]</a><span class="k">def</span> <span class="nf">get_multi_band_photometry</span><span class="p">(</span><span class="n">observed_magnitudes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a list of ObservedMagnitudes with duplicates averaged&quot;&quot;&quot;</span>
+    <span class="n">multi_band_photometry</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">yield_observed_magnitudes_at_each_observed_band</span><span class="p">(</span><span class="n">observed_magnitudes</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">multi_band_photometry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">multi_band_photometry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">combine_observed_magnitudes</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">multi_band_photometry</span></div>
+
+<div class="viewcode-block" id="interpolate_missing_magnitudes"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.interpolate_missing_magnitudes">[docs]</a><span class="k">def</span> <span class="nf">interpolate_missing_magnitudes</span><span class="p">(</span><span class="n">multi_band_photometry_set</span><span class="p">):</span>
+    <span class="n">observed_bands</span> <span class="o">=</span> <span class="n">get_observed_band_names</span><span class="p">(</span><span class="n">multi_band_photometry_set</span><span class="p">)</span>
+    <span class="n">observed_times</span> <span class="o">=</span> <span class="n">get_observed_times</span><span class="p">(</span><span class="n">multi_band_photometry_set</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">observed_bands</span><span class="p">:</span>
+        <span class="n">lightcurve</span> <span class="o">=</span> <span class="n">get_lightcurve</span><span class="p">(</span><span class="n">multi_band_photometry_set</span><span class="p">,</span> <span class="n">band</span><span class="p">)</span>
+        <span class="n">interpolated_magnitudes</span> <span class="o">=</span> <span class="n">get_interpolated_magnitudes</span><span class="p">(</span><span class="n">lightcurve</span><span class="p">,</span> <span class="n">observed_times</span><span class="p">)</span>
+        <span class="n">append_interpolated_magnitudes_to_multi_band_photometry_set</span><span class="p">(</span><span class="n">interpolated_magnitudes</span><span class="p">,</span>
+                <span class="n">multi_band_photometry_set</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_interpolated_magnitudes"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_interpolated_magnitudes">[docs]</a><span class="k">def</span> <span class="nf">get_interpolated_magnitudes</span><span class="p">(</span><span class="n">lightcurve</span><span class="p">,</span> <span class="n">observed_times</span><span class="p">):</span>
+    <span class="n">unobserved_times</span> <span class="o">=</span> <span class="n">get_unobserved_times</span><span class="p">(</span><span class="n">lightcurve</span><span class="p">,</span> <span class="n">observed_times</span><span class="p">)</span>
+    <span class="n">interpolated_magnitudes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">unobserved_time</span> <span class="ow">in</span> <span class="n">unobserved_times</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">previous_observed_magnitude</span> <span class="o">=</span> <span class="n">get_previous_observed_magnitude</span><span class="p">(</span><span class="n">lightcurve</span><span class="p">,</span> <span class="n">unobserved_time</span><span class="p">)</span>
+            <span class="n">next_observed_magnitude</span> <span class="o">=</span> <span class="n">get_next_observed_magnitude</span><span class="p">(</span><span class="n">lightcurve</span><span class="p">,</span> <span class="n">unobserved_time</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">next_observed_magnitude</span><span class="o">.</span><span class="n">time</span> <span class="o">-</span> <span class="n">previous_observed_magnitude</span><span class="o">.</span><span class="n">time</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">([</span><span class="n">previous_observed_magnitude</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">next_observed_magnitude</span><span class="o">.</span><span class="n">time</span><span class="p">],</span> 
+                          <span class="p">[</span><span class="n">previous_observed_magnitude</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">next_observed_magnitude</span><span class="o">.</span><span class="n">magnitude</span><span class="p">])</span>
+                <span class="n">interpolated_magnitude_value</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">unobserved_time</span><span class="p">)</span>
+                <span class="n">interpolated_magnitude_uncertainty</span> <span class="o">=</span> <span class="n">get_interpolated_magnitude_uncertainty</span><span class="p">(</span>
+                                                 <span class="n">previous_observed_magnitude</span><span class="p">,</span>
+                                                 <span class="n">next_observed_magnitude</span><span class="p">,</span>
+                                                 <span class="n">unobserved_time</span><span class="p">)</span>
+                <span class="n">interpolated_magnitude</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="o">.</span><span class="n">ObservedMagnitude</span><span class="p">(</span><span class="n">interpolated_magnitude_value</span><span class="p">,</span> <span class="n">interpolated_magnitude_uncertainty</span><span class="p">,</span> <span class="n">previous_observed_magnitude</span><span class="o">.</span><span class="n">band</span><span class="p">,</span> <span class="n">unobserved_time</span><span class="p">)</span>
+                <span class="n">interpolated_magnitudes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interpolated_magnitude</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">MissingMagnitudeOutOfBounds</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">interpolated_magnitudes</span></div>
+
+<div class="viewcode-block" id="get_interpolated_magnitude_uncertainty"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_interpolated_magnitude_uncertainty">[docs]</a><span class="k">def</span> <span class="nf">get_interpolated_magnitude_uncertainty</span><span class="p">(</span><span class="n">previous_observed_magnitude</span><span class="p">,</span> <span class="n">next_observed_magnitude</span><span class="p">,</span> <span class="n">unobserved_time</span><span class="p">):</span>
+    <span class="n">weight1</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_observed_magnitude</span><span class="o">.</span><span class="n">time</span> <span class="o">-</span> <span class="n">unobserved_time</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">next_observed_magnitude</span><span class="o">.</span><span class="n">time</span> <span class="o">-</span> <span class="n">previous_observed_magnitude</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+    <span class="n">weight2</span> <span class="o">=</span> <span class="p">(</span><span class="n">unobserved_time</span> <span class="o">-</span> <span class="n">previous_observed_magnitude</span><span class="o">.</span><span class="n">time</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">next_observed_magnitude</span><span class="o">.</span><span class="n">time</span> <span class="o">-</span> <span class="n">previous_observed_magnitude</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">weight1</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">previous_observed_magnitude</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">weight2</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">next_observed_magnitude</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="append_interpolated_magnitudes_to_multi_band_photometry_set"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.append_interpolated_magnitudes_to_multi_band_photometry_set">[docs]</a><span class="k">def</span> <span class="nf">append_interpolated_magnitudes_to_multi_band_photometry_set</span><span class="p">(</span><span class="n">interpolated_magnitudes</span><span class="p">,</span> <span class="n">multi_band_photometry_set</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">multi_band_photometry</span> <span class="ow">in</span> <span class="n">multi_band_photometry_set</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">interpolated_magnitude</span> <span class="ow">in</span> <span class="n">interpolated_magnitudes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">interpolated_magnitude</span><span class="o">.</span><span class="n">time</span> <span class="o">==</span> <span class="n">multi_band_photometry</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">time</span><span class="p">:</span>
+                <span class="n">multi_band_photometry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interpolated_magnitude</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_observed_band_names"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_observed_band_names">[docs]</a><span class="k">def</span> <span class="nf">get_observed_band_names</span><span class="p">(</span><span class="n">mutli_band_photometry_set</span><span class="p">):</span>
+    <span class="n">band_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">multi_band_photometry</span> <span class="ow">in</span> <span class="n">mutli_band_photometry_set</span><span class="p">:</span>
+        <span class="n">band_names</span> <span class="o">+=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">band</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">multi_band_photometry</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">band_names</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="get_observed_times"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_observed_times">[docs]</a><span class="k">def</span> <span class="nf">get_observed_times</span><span class="p">(</span><span class="n">multi_band_photometry_set</span><span class="p">):</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">multi_band_photometry</span> <span class="ow">in</span> <span class="n">multi_band_photometry_set</span><span class="p">:</span>
+        <span class="n">times</span> <span class="o">+=</span> <span class="n">get_times</span><span class="p">(</span><span class="n">multi_band_photometry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">times</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="get_unobserved_times"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_unobserved_times">[docs]</a><span class="k">def</span> <span class="nf">get_unobserved_times</span><span class="p">(</span><span class="n">lightcurve</span><span class="p">,</span> <span class="n">observed_times</span><span class="p">):</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="n">get_times</span><span class="p">(</span><span class="n">lightcurve</span><span class="p">)</span>
+    <span class="n">unobserved_times</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">observed_time</span> <span class="ow">in</span> <span class="n">observed_times</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">observed_time</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">times</span><span class="p">:</span>
+            <span class="n">unobserved_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observed_time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">unobserved_times</span></div>
+
+<div class="viewcode-block" id="get_times"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_times">[docs]</a><span class="k">def</span> <span class="nf">get_times</span><span class="p">(</span><span class="n">observed_magnitudes</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">time</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">observed_magnitudes</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="get_lightcurve"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_lightcurve">[docs]</a><span class="k">def</span> <span class="nf">get_lightcurve</span><span class="p">(</span><span class="n">multi_band_photometry_set</span><span class="p">,</span> <span class="n">band_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get list of all observed magnitudes in a given band &quot;&quot;&quot;</span>
+    <span class="n">lightcurve</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">multi_band_photometry</span> <span class="ow">in</span> <span class="n">multi_band_photometry_set</span><span class="p">:</span>
+        <span class="n">lightcurve</span> <span class="o">+=</span> <span class="p">[</span><span class="n">obs</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">multi_band_photometry</span> <span class="k">if</span> <span class="n">obs</span><span class="o">.</span><span class="n">band</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">band_name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">lightcurve</span></div>
+
+<div class="viewcode-block" id="get_previous_observed_magnitude"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_previous_observed_magnitude">[docs]</a><span class="k">def</span> <span class="nf">get_previous_observed_magnitude</span><span class="p">(</span><span class="n">lightcurve</span><span class="p">,</span> <span class="n">unobserved_time</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the most recently observed magnitude before the unobserved time&quot;&quot;&quot;</span>
+    <span class="n">earlier_observed_magnitudes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">observed_magnitude</span> <span class="ow">in</span> <span class="n">lightcurve</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">unobserved_time</span> <span class="o">-</span> <span class="n">observed_magnitude</span><span class="o">.</span><span class="n">time</span>
+        <span class="k">if</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">earlier_observed_magnitudes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observed_magnitude</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">earlier_observed_magnitudes</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="k">raise</span> <span class="n">MissingMagnitudeOutOfBounds</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">earlier_observed_magnitudes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">observed_magnitude</span><span class="p">:</span> <span class="n">observed_magnitude</span><span class="o">.</span><span class="n">time</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_next_observed_magnitude"><a class="viewcode-back" href="../../superbol.html#superbol.photometry.get_next_observed_magnitude">[docs]</a><span class="k">def</span> <span class="nf">get_next_observed_magnitude</span><span class="p">(</span><span class="n">lightcurve</span><span class="p">,</span> <span class="n">unobserved_time</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the most recently observed magnitude after the unobserved time&quot;&quot;&quot;</span>
+    <span class="n">later_observed_magnitudes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">observed_magnitude</span> <span class="ow">in</span> <span class="n">lightcurve</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">unobserved_time</span> <span class="o">-</span> <span class="n">observed_magnitude</span><span class="o">.</span><span class="n">time</span>
+        <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">later_observed_magnitudes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observed_magnitude</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">later_observed_magnitudes</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="k">raise</span> <span class="n">MissingMagnitudeOutOfBounds</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">later_observed_magnitudes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">observed_magnitude</span><span class="p">:</span> <span class="n">observed_magnitude</span><span class="o">.</span><span class="n">time</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SuperBoL</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../superbol.html">superbol package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, JALusk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

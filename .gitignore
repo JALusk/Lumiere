@@ -11,4 +11,4 @@ MANIFEST
 env/
 
 # Sphinx documentation
-docs/build/
+docs/_build/
