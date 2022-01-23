@@ -75,6 +75,9 @@ def d_planck_integral_dT(wavelength, temperature):
     :math:`\\lambda =` `wavelength` using the infinite series approximation of the 
     integral. This is used in the error propagation calculation.
 
+     TODO So uh, i dont' think this function's being tested, and I'm not sure what the first 
+        steps would be to test it. I changed series to zero and the tests all still passed
+
     Args:
         wavelength (float): Upper bound for the wavelength in Angstrom.
         temperature (float): Temperature in Kelvin.

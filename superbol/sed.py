@@ -13,17 +13,7 @@ class MissingFluxOutOfBounds(Exception):
 
 def get_SED(fluxes):
     """Return a list of MonochromaticFluxes with duplicates averaged"""
-    # TODO Should combine_fluxes return f[0]
-    # SED = []
-    # for f in yield_fluxes_at_each_observed_wavelength(fluxes):
-    # SED.append(combine_fluxes(f))
-    # if len(f) == 1:
-    #     SED.append(f[0])
-    # else:
-    #     SED.append(combine_fluxes(f))
-
-    return [flux[0] if len(flux) == 1 else combine_fluxes(flux)
-            for flux in yield_fluxes_at_each_observed_wavelength(fluxes)]
+    return [combine_fluxes(flux) for flux in yield_fluxes_at_each_observed_wavelength(fluxes)]
 
 
 def yield_fluxes_at_each_observed_wavelength(fluxes):
@@ -36,20 +26,23 @@ def combine_fluxes(fluxes):
     """Combine a list of MonochromaticFluxes using a weighted average"""
     values = get_flux_values(fluxes)
     uncertainties = get_flux_uncertainties(fluxes)
+    # This is the function giving me errors
     combined_flux = weighted_average(values, uncertainties)
     combined_uncertainty = weighted_average_uncertainty(uncertainties)
     wavelength = fluxes[0].wavelength
     time = fluxes[0].time
-    return mag2flux.MonochromaticFlux(combined_flux,
-                                      combined_uncertainty,
-                                      wavelength,
-                                      time)
+    res = mag2flux.MonochromaticFlux(combined_flux,
+                                     combined_uncertainty,
+                                     wavelength,
+                                     time)
+    return res
 
 
 def get_flux_values(fluxes):
     return [f.flux for f in fluxes]
 
 
+# TODO Create test for passing flux with uncertainty of 0
 def get_flux_uncertainties(fluxes):
     return [f.flux_uncertainty for f in fluxes]
 
@@ -72,7 +65,7 @@ def weighted_average_uncertainty(uncertainties):
     uncertainty = 1.0/math.sqrt(sum(weights))
     return uncertainty
 
-
+# TODO These functions should have more specific names
 def get_weights(uncertainties):
     """Calculate weights from uncertainties"""
     return [1/s**2 for s in uncertainties]
@@ -135,7 +128,6 @@ def get_interpolated_flux_uncertainty(previous_flux, next_flux, unobserved_time)
     weight2 = (unobserved_time - previous_flux.time) / \
         (next_flux.time - previous_flux.time)
     return math.sqrt(weight1**2 * previous_flux.flux_uncertainty**2 + weight2**2 + next_flux.flux_uncertainty**2)
-
 
 
 # TODO Code review

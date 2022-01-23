@@ -16,7 +16,6 @@ def calculate_lightcurve(fluxes, distance, flux_calculator):
 
 def calculate_bc_lightcurve(magnitudes, distance, flux_calculator):
     grouped_magnitudes = photometry.group_magnitudes(magnitudes, math.floor)
-    # TODO I don't believe this is a set
     multi_band_photometry_set = [
         photometry.get_multi_band_photometry(magnitude_group) for magnitude_group in grouped_magnitudes if len(magnitude_group) > 2]
 
