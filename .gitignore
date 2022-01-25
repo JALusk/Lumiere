@@ -9,6 +9,7 @@ build/
 MANIFEST
 *.egg-info/
 env/
+.venv/
 
 # Sphinx documentation
 docs/build/
