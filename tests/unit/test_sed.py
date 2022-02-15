@@ -130,6 +130,11 @@ class TestCombineFluxes(unittest.TestCase):
         result = sed.get_weights(uncertainties)
         self.assertEqual(expected, result)
 
+    def test_get_weights_zero_uncertainty(self):
+        with self.assertRaises(ZeroDivisionError):
+            uncertainties = [0.5, 1.0, 0.0]
+            sed.get_weights(uncertainties)
+
 class TestInterpolateSED(unittest.TestCase):
 
     def setUp(self):
