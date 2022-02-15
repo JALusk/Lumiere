@@ -84,13 +84,13 @@ def retrieve_bc_method_data(method_name, path=bc_color_fits):
         try:
             return file_content[method_name]
         except KeyError:
-            raise InvalidBCMethod("Bolometric correction method {0} not found".format(method_name))
+            raise InvalidBCMethod(f"Bolometric correction method {method_name} not found")
 
 def get_bc_method_coefficients(method_data, band1, band2):
     try:
         return method_data[band1.name + '-' + band2.name]['coefficients']
     except KeyError:
-        raise InvalidFilterCombination("{0} - {1} not an allowable color for this method".format(band1.name, band2.name))
+        raise InvalidFilterCombination(f"{band1.name} - {band2.name} not an allowable color for this method")
 
 def get_bc_method_range(method_data, band1, band2):
     range_min = method_data[band1.name + '-' + band2.name]['range_min']
@@ -157,7 +157,7 @@ def compute_polynomial_derivative(color, coefficients):
     result = 0.0
     if color == 0.0:
         result = coefficients[1]
-    else:    
+    else:
         for n, coefficient in enumerate(coefficients):
             result += n * coefficient * color**(n-1)
     return result

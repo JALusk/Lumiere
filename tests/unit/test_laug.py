@@ -43,5 +43,6 @@ class TestTrimSED(unittest.TestCase):
 
         self.assertEqual(expected, result)
 
+# TODO Add tests
 class TestIRCorrection(unittest.TestCase):
     pass

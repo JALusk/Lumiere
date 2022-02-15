@@ -130,6 +130,11 @@ class TestCombineFluxes(unittest.TestCase):
         result = sed.get_weights(uncertainties)
         self.assertEqual(expected, result)
 
+    def test_get_weights_zero_uncertainty(self):
+        with self.assertRaises(ZeroDivisionError):
+            uncertainties = [0.5, 1.0, 0.0]
+            sed.get_weights(uncertainties)
+
 class TestInterpolateSED(unittest.TestCase):
 
     def setUp(self):
@@ -152,7 +157,6 @@ class TestInterpolateSED(unittest.TestCase):
         sed.interpolate_missing_fluxes([self.SED0, self.SED1, self.SED2])
         previous_flux = self.flux02
         next_flux = self.flux22
-        unobserved_time = 1
         weight1 = (2-1)/(2-0)
         weight2 = (1-0)/(2-0)
         uncertainty = math.sqrt(weight1**2 * previous_flux.flux_uncertainty**2 + weight2**2 + next_flux.flux_uncertainty**2)
@@ -163,7 +167,6 @@ class TestInterpolateSED(unittest.TestCase):
         lightcurve = [self.flux02, self.flux22, self.flux32]
         previous_flux = self.flux02
         next_flux = self.flux22
-        unobserved_time = 1
         weight1 = (2-1)/(2-0)
         weight2 = (1-0)/(2-0)
         uncertainty = math.sqrt(weight1**2 * previous_flux.flux_uncertainty**2 + weight2**2 + next_flux.flux_uncertainty**2)
