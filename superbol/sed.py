@@ -26,7 +26,6 @@ def combine_fluxes(fluxes):
     """Combine a list of MonochromaticFluxes using a weighted average"""
     values = get_flux_values(fluxes)
     uncertainties = get_flux_uncertainties(fluxes)
-    # This is the function giving me errors
     combined_flux = weighted_average(values, uncertainties)
     combined_uncertainty = weighted_average_uncertainty(uncertainties)
     wavelength = fluxes[0].wavelength
@@ -65,7 +64,7 @@ def weighted_average_uncertainty(uncertainties):
     uncertainty = 1.0/math.sqrt(sum(weights))
     return uncertainty
 
-# TODO These functions should have more specific names
+
 def get_weights(uncertainties):
     """Calculate weights from uncertainties"""
     return [1/s**2 for s in uncertainties]
@@ -78,8 +77,6 @@ def group_fluxes(fluxes, keyfunc=math.floor):
     part of the same group."""
     return [list(it) for k, it in groupby(
         fluxes, lambda x: keyfunc(x.time))]
-
-# TODO Should this return something?
 
 
 def interpolate_missing_fluxes(SEDs):
