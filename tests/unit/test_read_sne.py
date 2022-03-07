@@ -15,8 +15,9 @@ SUPERNOVA_FILE_PATH = os.path.join(
 
 @all_requests
 def google_mock(url, request):
-	content = json.load(open(SUPERNOVA_FILE_PATH))
-	return response(200, content, None, None, 5, request)
+    with open(SUPERNOVA_FILE_PATH, 'r') as f:
+        content = json.load(f)
+        return response(200, content, None, None, 5, request)
 
 class TestReadSne(unittest.TestCase):
     def test_get_photometry(self):
@@ -25,7 +26,7 @@ class TestReadSne(unittest.TestCase):
             file_array = np.array(json.load(f)[SUPERNOVA_NAME]['photometry'])
             assert np.array_equal(req_array, file_array)
 
-    def test_get_photometry(self):
+    def test_get_distance(self):
         with open(SUPERNOVA_FILE_PATH) as f, HTTMock(google_mock):
             req_array = np.array(read_sne.get_supernova_lum_dist(SUPERNOVA_NAME))
             file_array = np.array(json.load(f)[SUPERNOVA_NAME]['lumdist'])

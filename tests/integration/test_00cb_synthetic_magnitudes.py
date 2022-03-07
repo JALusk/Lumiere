@@ -15,8 +15,8 @@ from superbol import lbc
 from superbol import extinction
 
 dirname = os.path.dirname(__file__)
-sn2000cb_extinction = os.path.join(dirname, '../../data/sn2000cb_extinction.dat')
-extinction_table = Table.read(sn2000cb_extinction, format = 'ascii')
+sn2000cb_extinction = os.path.join(dirname, "../../data/sn2000cb_extinction.dat")
+extinction_table = Table.read(sn2000cb_extinction, format="ascii")
 
 sn00cb_synphot_data = """{
 "SN2000cb":{
@@ -474,51 +474,70 @@ sn00cb_synphot_data = """{
 
 
 class TestQuasiBolometricLightcurve(unittest.TestCase):
-
     def setUp(self):
         with patch("builtins.open", mock_open(read_data=sn00cb_synphot_data)):
-            self.sn00cb_osc_photometry = read_osc.retrieve_osc_photometry('SN2000cb')
+            self.sn00cb_osc_photometry = read_osc.retrieve_osc_photometry("SN2000cb")
         fluxes = []
         for photometry_dict in self.sn00cb_osc_photometry:
             try:
                 observed_magnitude = read_osc.get_observed_magnitude(photometry_dict)
                 fluxes.append(observed_magnitude.convert_to_flux())
             except:
+                # TODO No test written?
                 pass
-        
-        distance = lum.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
-        self.lc_00cb = lightcurve.calculate_lightcurve(fluxes, distance, lqbol.calculate_qbol_flux)
+
+        distance = lum.Distance(3.0e7 * 3.086e18, 7.0e6 * 3.086e18)
+        self.lc_00cb = lightcurve.calculate_lightcurve(
+            fluxes, distance, lqbol.calculate_qbol_flux
+        )
 
     def test_qbol_lightcurve(self):
         print("")
         for luminosity in self.lc_00cb:
-            print("{0:4.2E}, {1:4.2E} +/- {2:4.2E}".format(luminosity.time, luminosity.value, luminosity.uncertainty))
+            print(
+                "{0:4.2E}, {1:4.2E} +/- {2:4.2E}".format(
+                    luminosity.time, luminosity.value, luminosity.uncertainty
+                )
+            )
+
 
 class TestBolometricCorrectionLightcurve(unittest.TestCase):
-
     def setUp(self):
         with patch("builtins.open", mock_open(read_data=sn00cb_synphot_data)):
-            sn00cb_osc_photometry = read_osc.retrieve_osc_photometry('SN2000cb')
+            sn00cb_osc_photometry = read_osc.retrieve_osc_photometry("SN2000cb")
         observed_magnitudes = []
         for photometry_dict in sn00cb_osc_photometry:
             try:
                 magnitude = read_osc.get_observed_magnitude(photometry_dict)
                 observed_magnitudes.append(magnitude)
             except:
+                # TODO No test written
                 pass
 
-        distance = lum.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
-        self.lc_00cb_bh09 = lightcurve.calculate_bc_lightcurve(observed_magnitudes, distance, lbc.calculate_bc_flux_bh09)
-        self.lc_00cb_h01 = lightcurve.calculate_bc_lightcurve(observed_magnitudes, distance, lbc.calculate_bc_flux_h01)
+        distance = lum.Distance(3.0e7 * 3.086e18, 7.0e6 * 3.086e18)
+        self.lc_00cb_bh09 = lightcurve.calculate_bc_lightcurve(
+            observed_magnitudes, distance, lbc.calculate_bc_flux_bh09
+        )
+        self.lc_00cb_h01 = lightcurve.calculate_bc_lightcurve(
+            observed_magnitudes, distance, lbc.calculate_bc_flux_h01
+        )
 
     def test_no_negatives_in_bh09_lightcurve(self):
         print("")
         for luminosity in self.lc_00cb_bh09:
-            print("{0:4.2E}, {1:4.2E} +/- {2:4.2E}".format(luminosity.time, luminosity.value, luminosity.uncertainty))
+            print(
+                "{0:4.2E}, {1:4.2E} +/- {2:4.2E}".format(
+                    luminosity.time, luminosity.value, luminosity.uncertainty
+                )
+            )
         self.assertTrue([luminosity.value > 0.0 for luminosity in self.lc_00cb_bh09])
 
     def test_no_negatives_in_h01_lightcurve(self):
         print("")
         for luminosity in self.lc_00cb_h01:
-            print("{0:4.2E}, {1:4.2E} +/- {2:4.2E}".format(luminosity.time, luminosity.value, luminosity.uncertainty))
+            print(
+                "{0:4.2E}, {1:4.2E} +/- {2:4.2E}".format(
+                    luminosity.time, luminosity.value, luminosity.uncertainty
+                )
+            )
         self.assertTrue([luminosity.value > 0.0 for luminosity in self.lc_00cb_h01])
