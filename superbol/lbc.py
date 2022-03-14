@@ -33,11 +33,13 @@ def calculate_bc_flux_h01(obs_group):
                 Fbol = convert_mbol_to_Fbol(mbol, zeropoint)
                 fbc.append(Fbol)
             except InvalidColor:
+                # TODO No test written
                 pass
             except InvalidBCMethod:
                 # TODO No test written
                 pass
             except InvalidFilterCombination:
+                # TODO No test written
                 pass
     return BCBolometricFlux(
         np.mean([x.value for x in fbc]),
@@ -46,6 +48,7 @@ def calculate_bc_flux_h01(obs_group):
     )
 
 
+# TODO No test written
 def calculate_bc_flux_bh09(obs_group):
     """Turn a group of observations into an average BC flux"""
     obs_group.sort(key=lambda x: x.band.effective_wavelength)
@@ -88,6 +91,7 @@ def compute_bolometric_correction(method_name, obs1, obs2):
         uncertainty = np.sqrt(rms**2 + (poly_deriv * color_err) ** 2)
         return BolometricCorrection(bc, uncertainty)
     else:
+        # TODO No test written
         raise InvalidColor(
             "Cannot calculate bolometric correction, given "
             + "{0}-{1} color outside the allowable range for "
@@ -125,6 +129,7 @@ def get_bc_method_rms(method_data, band1, band2):
     return method_data[band1.name + "-" + band2.name]["rms"]
 
 
+# TODO Method not used in integration but still has a unit test
 def get_bc_method_zeropoint(method_data):
     return method_data["properties"]["ZP"]
 
@@ -164,6 +169,7 @@ class BCBolometricFlux(BolometricFlux):
         self.time = time
 
     def to_lbol(self, distance):
+        # TODO No test written
         lbol = super().to_lbol(distance)
         lbol.time = self.time
         return lbol

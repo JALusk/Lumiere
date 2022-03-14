@@ -479,11 +479,11 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
             self.sn00cb_osc_photometry = read_osc.retrieve_osc_photometry("SN2000cb")
         fluxes = []
         for photometry_dict in self.sn00cb_osc_photometry:
+            # TODO Why is there a try catch here?
             try:
                 observed_magnitude = read_osc.get_observed_magnitude(photometry_dict)
                 fluxes.append(observed_magnitude.convert_to_flux())
             except:
-                # TODO No test written?
                 pass
 
         distance = lum.Distance(3.0e7 * 3.086e18, 7.0e6 * 3.086e18)
@@ -507,11 +507,11 @@ class TestBolometricCorrectionLightcurve(unittest.TestCase):
             sn00cb_osc_photometry = read_osc.retrieve_osc_photometry("SN2000cb")
         observed_magnitudes = []
         for photometry_dict in sn00cb_osc_photometry:
+            # TODO Why is there a try catch here?
             try:
                 magnitude = read_osc.get_observed_magnitude(photometry_dict)
                 observed_magnitudes.append(magnitude)
             except:
-                # TODO No test written
                 pass
 
         distance = lum.Distance(3.0e7 * 3.086e18, 7.0e6 * 3.086e18)

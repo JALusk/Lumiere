@@ -109,6 +109,7 @@ def get_interpolated_magnitudes(lightcurve, observed_times):
                     interpolated_magnitude_value, interpolated_magnitude_uncertainty, previous_observed_magnitude.band, unobserved_time)
                 interpolated_magnitudes.append(interpolated_magnitude)
         except MissingMagnitudeOutOfBounds:
+            # TODO No test written
             pass
     return interpolated_magnitudes
 
