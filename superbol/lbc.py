@@ -29,6 +29,7 @@ def calculate_bc_flux_h01(obs_group):
                 mbol = apply_bolometric_correction(
                     bc, next(obs for obs in obs_group if obs.band.name == "V")
                 )
+                # TODO Is this a hard coded value or a constant
                 zeropoint = -10.88802466
                 Fbol = convert_mbol_to_Fbol(mbol, zeropoint)
                 fbc.append(Fbol)
