@@ -8,5 +8,7 @@
         "test_*.py"
     ],
     "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true
+    "python.testing.unittestEnabled": true,
+    "esbonio.server.enabled": true,
+    "python.formatting.provider": "black"
 }

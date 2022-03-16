@@ -2,13 +2,13 @@ import math
 
 # TODO Doc these
 class ObservedMagnitude(object):
-
     def __init__(self, magnitude, uncertainty, band, time):
         self.magnitude = magnitude
         self.uncertainty = uncertainty
         self.band = band
         self.time = time
 
+    # TODO No test written
     def __str__(self):
         return str(self.__dict__)
 
@@ -18,35 +18,37 @@ class ObservedMagnitude(object):
     def convert_to_flux(self):
         return MagnitudeToFluxConverter().convert(self)
 
+
 class Band(object):
-    
     def __init__(self, name, alt_name, effective_wavelength, flux_conversion_factor):
         self.name = name
         self.alt_name = alt_name
         self.effective_wavelength = effective_wavelength
         self.flux_conversion_factor = flux_conversion_factor
 
+    # TODO No test written
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-class MonochromaticFlux(object):
 
+class MonochromaticFlux(object):
     def __init__(self, flux, flux_uncertainty, wavelength, time):
         self.flux = flux
         self.flux_uncertainty = flux_uncertainty
         self.wavelength = wavelength
         self.time = time
 
+    # TODO No test written
     def __str__(self):
         return str(self.__dict__)
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-class MagnitudeToFluxConverter(object):
 
+class MagnitudeToFluxConverter(object):
     def _calculate_flux(self, magnitude, flux_conversion_factor):
-        return flux_conversion_factor * 10**(-0.4 * magnitude)
+        return flux_conversion_factor * 10 ** (-0.4 * magnitude)
 
     def _calculate_flux_uncertainty(self, flux, magnitude_uncertainty):
         return flux * 0.4 * math.log(10) * magnitude_uncertainty
