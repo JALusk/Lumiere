@@ -33,86 +33,8 @@ def bb_flux_nounits(wavelength, temperature, angular_radius):
     return bb_flux(wavelength, temperature, angular_radius).value
 
 
-def bb_total_flux(self):
-    # TODO No test written
-    """Integrate the planck function from :math:`\\lambda = 0` to
-       :math:`\\lambda = \\infty`, then convert result to observed flux.
-
-    The calculation is done using the Stefan-Boltxmann law, rather than
-    performing an actual integral using numerical integration. The
-    `angular_radius` is included to convert the result to an observed flux.
-
-    Args:
-        temperature (float): Temperature in Kelvin
-        angular_radius (float): Angular radius :math:`(\\theta = \\frac{R}{D})`
-
-    Returns:
-        float: The value of :math:`\\sigma \\frac{R^2}{D^2} T^4`
-    """
-    bb_total_flux = const.sigma_sb * self.angular_radius**2 * self.temperature**4
-    bb_total_flux = bb_total_flux.to(u.erg / (u.s * u.cm**2))
-    return bb_total_flux.value
 
 
-def bb_flux_integrated(wavelength, temperature, angular_radius):
-    """Integrate the planck function from :math:`\\lambda = 0` to :math:`\\lambda =` `wavelength`, then convert result to observed flux
-
-    Args:
-        wavelength (float): Wavelength in Angstroms
-        temperature (float): Temperature in Kelvin
-        angular_radius (float): Angular radius :math:`(\\theta = \\frac{R}{D})`
-
-    Returns:
-        float: Value of the integrated flux in :math:`erg \\; s^{-1} cm^{-2}`
-    """
-    # TODO No test written
-    bb_flux_integrated = (
-        (np.pi * u.sr)
-        * planck_integral(wavelength, temperature)
-        * (angular_radius) ** 2
-    )
-
-    return bb_flux_integrated.value
-
-
-def dbb_flux_integrated_dT(wavelength, temperature, angular_radius):
-    """Take the derivative of the integrated planck function, then convert result to observed flux. This is used in error propagation calculations.
-
-    Args:
-        wavelength (float): Wavelength in Angstroms
-        temperature (float): Temperature in Kelvin
-        angular_radius (float): Angular radius :math:`(\\theta = \\frac{R}{D})`
-
-    Returns:
-        float: Derivative of the integrated blackbody flux at `wavelength` with respect to `temperature`
-    """
-    # TODO No test written
-    dbb_flux_integrated_dT = (
-        (np.pi * u.sr)
-        * d_planck_integral_dT(wavelength, temperature)
-        * (angular_radius) ** 2
-    )
-
-    return dbb_flux_integrated_dT.value
-
-
-def dbb_total_flux_dT(temperature, angular_radius):
-    """Take the derivative of the total blackbody flux with respect to temperature
-
-    The calculation takes a derivative of the Stefan-Boltzmann law with respect to temperature. The `angular_radius` is present to convert the result to an observed flux.
-
-    Args:
-        temperature (float): Temperature in Kelvin
-        angular_radius (float): Angular radius :math:`(\\theta = \\frac{R}{D})`
-
-    Returns:
-        float: The value of :math:`4 \\sigma \\frac{R^2}{D^2} T^3`
-    """
-    # TODO No test written
-    temperature = u.Quantity(temperature, u.K)
-    bb_total_flux = 4.0 * const.sigma_sb * (angular_radius**2) * temperature**3
-    bb_total_flux = bb_total_flux.to(u.erg / (u.s * u.cm**2 * u.K))
-    return bb_total_flux.value
 
 
 class BlackbodyFit(object):
@@ -164,6 +86,7 @@ class BlackbodyFit(object):
         Returns:
             bb_flux (float): blackbody flux at given wavelength in cgs units"""
         if self.temperature == None:
+            # TODO No test written
             return None
         else:
             bb_flux = (

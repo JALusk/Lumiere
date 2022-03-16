@@ -115,6 +115,7 @@ def get_interpolated_fluxes(lightcurve, observed_times):
                     interpolated_flux_value, interpolated_flux_uncertainty, previous_flux.wavelength, unobserved_time)
                 interpolated_fluxes.append(interpolated_flux)
         except MissingFluxOutOfBounds:
+            # TODO No test written
             pass
     return interpolated_fluxes
 
@@ -135,6 +136,7 @@ def get_previous_flux(monochromatic_lightcurve, unobserved_time):
         if delta > 0:
             earlier_fluxes.append(flux)
     if earlier_fluxes == []:
+        # TODO No test written
         raise MissingFluxOutOfBounds
     return max(earlier_fluxes, key=lambda flux: flux.time)
 
@@ -143,11 +145,13 @@ def get_next_flux(monochromatic_lightcurve, unobserved_time):
     later_fluxes = [
         flux for flux in monochromatic_lightcurve if unobserved_time - flux.time < 0]
     if later_fluxes == []:
+        # TODO No test written
         raise MissingFluxOutOfBounds
     return min(later_fluxes, key=lambda flux: flux.time)
 
 
 # TODO Code review
+# TODO Has unit test, but not used in integration tests
 def get_gap_size(times, unobserved_time):
     positive_deltas = [
         time - unobserved_time for time in times if time - unobserved_time > 0]
@@ -162,6 +166,7 @@ def get_unobserved_times(lightcurve, observed_times):
         observed_time for observed_time in observed_times if observed_time not in times]
 
 
+# TODO Code review
 def get_observed_wavelengths(SEDs):
     wavelengths = []
     for SED in SEDs:
@@ -169,6 +174,7 @@ def get_observed_wavelengths(SEDs):
     return sorted(list(set(wavelengths)))
 
 
+# TODO Code review
 def get_observed_times(SEDs):
     times = []
     for SED in SEDs:

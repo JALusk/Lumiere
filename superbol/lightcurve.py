@@ -4,6 +4,7 @@ from superbol import sed
 from superbol import photometry
 
 # TODO Doc these
+# TODO No tests written for fns in this file
 def calculate_lightcurve(fluxes, distance, flux_calculator):
     grouped_fluxes = sed.group_fluxes(fluxes, math.floor)
     SEDs = [sed.get_SED(flux_group)

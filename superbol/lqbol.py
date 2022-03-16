@@ -70,6 +70,7 @@ def uncertainty_calculator_trapezoidal(fluxes):
 
     return math.sqrt(radicand)
 
+# TODO No test written
 def calculate_qbol_flux(flux_group):
     """Turn a group of fluxes into a quasi-bolometric flux"""
     return get_quasi_bolometric_flux(TrapezoidalIntegralCalculator(),
