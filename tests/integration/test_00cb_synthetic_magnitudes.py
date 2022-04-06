@@ -483,7 +483,6 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
                 observed_magnitude = read_osc.get_observed_magnitude(photometry_dict)
                 fluxes.append(observed_magnitude.convert_to_flux())
             except:
-                # TODO No test written?
                 pass
 
         distance = lum.Distance(3.0e7 * 3.086e18, 7.0e6 * 3.086e18)
@@ -511,7 +510,6 @@ class TestBolometricCorrectionLightcurve(unittest.TestCase):
                 magnitude = read_osc.get_observed_magnitude(photometry_dict)
                 observed_magnitudes.append(magnitude)
             except:
-                # TODO No test written
                 pass
 
         distance = lum.Distance(3.0e7 * 3.086e18, 7.0e6 * 3.086e18)
