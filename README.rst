@@ -1,6 +1,10 @@
 SuperBoL: Supernova Bolometric Lightcurves
 ==========================================
 
+.. image:: https://github.com/JALusk/SuperBoL/actions/workflows/main.yml/badge.svg?branch=tdd_develop
+   :target: https://github.com/JALusk/SuperBoL/actions/workflows/main.yml
+   :alt: CI
+
 To create a virtual environment: 
 python -m venv env 
 

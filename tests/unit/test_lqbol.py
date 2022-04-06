@@ -19,7 +19,7 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
             lqbol.get_quasi_bolometric_flux(
                 integral_calculator = self.integral_calculator,
                 uncertainty_calculator = self.uncertainty_calculator,
-                fluxes=[])
+                SED=[])
 
     def test_one_flux(self):
         flux = mag2flux.MonochromaticFlux(flux = 200,
@@ -31,7 +31,7 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
             lqbol.get_quasi_bolometric_flux(
                 integral_calculator = self.integral_calculator,
                 uncertainty_calculator = self.uncertainty_calculator,
-                fluxes=[flux])
+                SED=[flux])
 
     def test_two_fluxes(self):
         flux1 = mag2flux.MonochromaticFlux(flux = 100,
@@ -55,7 +55,7 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
         result = lqbol.get_quasi_bolometric_flux(
             integral_calculator = self.integral_calculator,
             uncertainty_calculator = self.uncertainty_calculator,
-            fluxes = two_fluxes)
+            SED = two_fluxes)
 
         self.uncertainty_calculator.assert_called_once_with(two_fluxes)
         self.integral_calculator.calculate.assert_called_once_with(two_fluxes)

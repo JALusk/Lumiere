@@ -11,7 +11,7 @@ from superbol import mag2flux
 from superbol import lum
 
 
-
+# TODO Turn this into a json file
 bc_color_json_data = """{
     "H01":{
         "properties":{

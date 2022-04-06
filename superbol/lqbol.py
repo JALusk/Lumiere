@@ -2,7 +2,6 @@ import math
 import numpy as np
 
 from superbol import mag2flux
-from superbol import sed
 from superbol.lum import BolometricFlux
 
 class InsufficientFluxes(Exception):
@@ -21,18 +20,17 @@ class QuasiBolometricFlux(BolometricFlux):
 
 def get_quasi_bolometric_flux(integral_calculator, 
                               uncertainty_calculator, 
-                              fluxes):
+                              SED):
     """Calculate Fqbol using the supplied integration technique"""
-    SED = sed.get_SED(fluxes)
     if len(SED) < 2:
         raise InsufficientFluxes(
             "Cannot calculate quasi-bolometric flux with fewer " +
-            "than two fluxes, {0} received".format(len(fluxes)))
+            "than two fluxes in the SED, {0} received".format(len(SED)))
     
     return QuasiBolometricFlux(
             value = integral_calculator.calculate(SED),
             uncertainty = uncertainty_calculator(SED),
-            time = fluxes[0].time)
+            time = SED[0].time)
 
 class TrapezoidalIntegralCalculator(object):
     """Integrate between fluxes using the trapezoidal method"""
@@ -74,10 +72,6 @@ def uncertainty_calculator_trapezoidal(fluxes):
 
 def calculate_qbol_flux(flux_group):
     """Turn a group of fluxes into a quasi-bolometric flux"""
-    integral_calculator = TrapezoidalIntegralCalculator()
-    uncertainty_calculator = uncertainty_calculator_trapezoidal
-    
-    fqbol = get_quasi_bolometric_flux(integral_calculator,
-                                      uncertainty_calculator,
-                                      flux_group)
-    return fqbol
+    return get_quasi_bolometric_flux(TrapezoidalIntegralCalculator(),
+                                     uncertainty_calculator_trapezoidal,
+                                     flux_group)

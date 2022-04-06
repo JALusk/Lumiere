@@ -59,7 +59,7 @@ def retrieve_band_dict(band_name, path='./data/bands.json'):
         
         return file_content[band_name]
     except KeyError:
-        raise NoBandFound("The band {0} was not found in the SuperBoL band catalog.".format(band_name))
+        raise NoBandFound(f"The band {band_name} was not found in the SuperBoL band catalog.")
 
 # TODO Add default value?
 def retrieve_osc_photometry(sn_name, path=None):
