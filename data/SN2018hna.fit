@@ -1,0 +1,424 @@
+SIMPLE  =                    T / Standard FITS Format                           BITPIX  =                    8 / Character data                                 NAXIS   =                    0 / No Image --- just extension(s)                 EXTEND  =                    T / There are standard extensions                  ORIGIN  = 'xml2fits_v1.95'     / Converted from XML-Astrores to FITS                                     e-mail: question@simbad.u-strasbg.fr                   COMMENT  ARG='-rm'                                                              LONGSTRN= 'OGIP 1.0'           / Long string convention (&/CONTINUE) may be usedDATE    = '2022-04-06'         / Written on 2022-04-06:16:19:17 (GMT)                                        by: www-data@vizier.astro.unistra.fr                        **********************************************************                          EXCERPT from catalogues stored in VizieR (CDS)                                             with the following conditions:                                   **********************************************************                                                                                                      VizieR Astronomical Server vizier.u-strasbg.fr                                  Date: 2022-04-06T16:19:17 [V1.99+ (14-Oct-2013)]                                Explanations and Statistics of UCDs: See LINK below                             In case of problem, please report to: cds-question@unistra.fr                                                                                          INFO    = 'votable-version=1.99+ (14-Oct-2013)' / #                             INFO    = '-ref=VIZ624cec985b682' / #                                           INFO    = '-out.max=unlimited' / #                                              Q-PARAMS=                   17 / Number of queryParameters (followed by list)            -oc.form=dec                                                                    -out.max=unlimited                                                              #out.form=FITS (binary) Table                                                   -out.add=_r                                                                     -out.add=_RAJ,_DEJ                                                              -sort=_r                                                                        -order=I                                                                        -out.src=J/ApJ/882/L15/phot                                                     -nav=cat:J/ApJ/882/L15&tab:{J/ApJ/882/L15/phot}&key:source=J/ApJ/882/L1         5/phot&HTTPPRM:&&-ref=VIZ624cec985b682&-out.max=50&-out.form=HTML               Table&-out.add=_r&-out.add=_RAJ,_DEJ&-sort=_r&-oc.form=sexa&-order=I&-o         ut=JD&-out=Phase&-out=Filt&-out=mag&-out=e_mag&-out=Tel&-out=Inst&-file         =.&-meta.ucd=2&-meta=1&-meta.foot=1&-usenav=1&-bmark=POST&-out.src=J/Ap         J/882/L15/phot                                                                  -source=J/ApJ/882/L15/phot                                                      -out=JD                                                                         -out=Phase                                                                      -out=Filt                                                                       -out=mag                                                                        -out=e_mag                                                                      -out=Tel                                                                        -out=Inst                                                                       #                                                                               #RESOURCE=yCat_18829015                                                         #Name: J/ApJ/882/L15                                                            #Title: SN 2018hna photometry & spectroscopy obs. (Singh+,                      2019){\timesys }                                                                                                                                       END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             XTENSION= 'BINTABLE'           / Binary Table Extension                         BITPIX  =                    8 / binary data                                    NAXIS   =                    2 / Simple 2-D matrix                              NAXIS1  =                   42 / Number of bytes per record                     NAXIS2  =                  626 / Number of records                              PCOUNT  =                    0 / Get rid of random parameters                   GCOUNT  =                    1 / Only one group (isn't it obvious?)             TFIELDS =                    7 / Number of data fields (columns)                CDS-CAT = 'J/ApJ/882/L15'      / Catalogue designation in CDS nomenclature               SN 2018hna photometry & spectroscopy obs. (Singh+, 2019){\timesys }    EXTNAME = 'J_ApJ_882_L15_phot' / Identification of the table                    CDS-NAME= 'J/ApJ/882/L15/phot' / Table name in METAtab                                   Data behind Figure 1 -- Photometric observations of SN 2018hna         UCD__1  = 'time.epoch'         / ................................byte#0         TDISP1  = 'F10.2   '           / Display Fortran Format                         TFORM1  = 'D       '           / 64-bit floating-point (double precision)       TTYPE1  = 'JD      '           / Julian Day                                     TUNIT1  = 'd       '           / day                                            UCD__2  = 'time.phase'         / ................................byte#8         TDISP2  = 'F6.2    '           / Display Fortran Format                         TFORM2  = 'E       '           / 32-bit floating-point (simple precision)       TTYPE2  = 'Phase   '           / [3.8/256.9] Days since explosion; JD-2458411.3 TUNIT2  = 'd       '           / day                                            UCD__3  = 'meta.id;instr.setup;instr.filter' / ..................byte#12        TDISP3  = 'A4      '           / Display Fortran Format                         TFORM3  = '4A      '           / Ascii string                                   TTYPE3  = 'Filt    '           / Name of the Filter used                        UCD__4  = 'phot.mag'           / ................................byte#16        TDISP4  = 'F5.2    '           / Display Fortran Format                         TFORM4  = 'E       '           / 32-bit floating-point (simple precision)       TTYPE4  = 'mag     '           / [12.89/19.87] Magnitude, Vega System           TUNIT4  = 'mag     '           / magnitude                                      UCD__5  = 'stat.error;phot.mag' / ...............................byte#20        TDISP5  = 'F5.2    '           / Display Fortran Format                         TFORM5  = 'E       '           / 32-bit floating-point (simple precision)       TTYPE5  = 'e_mag   '           / [0/0.7] 1-sigma error                          TUNIT5  = 'mag     '           / magnitude                                      UCD__6  = 'instr.tel'          / ................................byte#24        TDISP6  = 'A12     '           / Display Fortran Format                         TFORM6  = '12A     '           / Ascii string                                   TTYPE6  = 'Tel     '           / Observing telescope (1) (link)                 UCD__7  = 'instr.setup'        / ................................byte#36        TDISP7  = 'A6      '           / Display Fortran Format                         TFORM7  = '6A      '           / Ascii string                                   TTYPE7  = 'Inst    '           / Instrument used                                END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ABÁ—ŒÌÌÍ@s33uvu A{×
+=\)Swift       UVOT  ABÁ—ŒÌÌÍ@s33uvw1Aˆ{>™šSwift       UVOT  ABÁ—Žzá@s×
+uvb Aƒ…=\)Swift       UVOT  ABÁ—Žzá@s×
+uvw2A†õÃ=ÌÌÍSwift       UVOT  ABÁ—\(ö@tzáuvv A‚  =õÂSwift       UVOT  ABÁ—‘ë…@uÂuvm2AŒ  >.{Swift       UVOT  ABÁ˜Â\@›×
+uvb Aƒ33=\)Swift       UVOT  ABÁ˜Â\@›×
+uvu Aƒ…=¸QìSwift       UVOT  ABÁ˜Â\@›×
+uvw2A“Â>aG®Swift       UVOT  ABÁ˜Â\@›×
+uvw1AŠ(ö>\)Swift       UVOT  ABÁ˜
+=q@œ(öuvv A€  =õÂSwift       UVOT  ABÁ˜¸Qì@ž{uvm2A”ff>k…Swift       UVOT  ABÁ˜&fff@   R   A|ÌÍ=#×
+1.5m KT     HOWPolABÁ˜p£×@½Âuvw1A”zá>£×
+Swift       UVOT  ABÁ˜ž¸Qì@¾{uvu Aˆ{>\)Swift       UVOT  ABÁ˜ž¸Qì@¾{uvv A¸=õÂSwift       UVOT  ABÁ˜ž¸Qì@¾{uvw2A™\)>³33Swift       UVOT  ABÁ˜ž¸Qì@¾{uvb A…
+==£×
+Swift       UVOT  ABÁš%¸RA×
+uvb A†Qì=£×
+Swift       UVOT  ABÁš%¸RA×
+uvu A‘\)>”záSwift       UVOT  ABÁš%¸RA×
+uvw1A“
+=>…¸Swift       UVOT  ABÁš&fffA  uvv A‚Qì=õÂSwift       UVOT  ABÁ›záG®A:\uvb A‡p¤=ÌÌÍSwift       UVOT  ABÁ›záG®A:\uvu A’=q>£×
+Swift       UVOT  ABÁ›záG®A:\uvv A33=õÂSwift       UVOT  ABÁ›³333AA™šR   A{…<£×
+2m HCT      HFOSC ABÁ›³333AA™šV   A€áH<£×
+2m HCT      HFOSC ABÁ›³333AA™šU   AõÃ=õÂ2m HCT      HFOSC ABÁ›³333AA™šI   AyG®<õÂ2m HCT      HFOSC ABÁ›³333AA™šB   Aˆ=q=#×
+2m HCT      HFOSC ABÁœ@   AS33V   A€£×=#×
+2m HCT      HFOSC ABÁœ@   AS33R   AzáH<£×
+2m HCT      HFOSC ABÁœ@   AS33I   Aw®=#×
+2m HCT      HFOSC ABÁœ@   AS33U   A‘Â>#×
+2m HCT      HFOSC ABÁœ@   AS33B   Aˆ=q=#×
+2m HCT      HFOSC ABÁœ¦fffA`  R   AxõÃ<õÂ1.5m KT     HOWPolABÁœ¦fffA`  I   Av\<£×
+1.5m KT     HOWPolABÁœ¼(õÃAb¸Ruvw1A™ë…?\Swift       UVOT  ABÁœ½p£×AbáHuvw2AžõÃ?(öSwift       UVOT  ABÁœ½p£×AbáHuvb Aˆff=áG®Swift       UVOT  ABÁœ½p£×AbáHuvu A—¸?
+=Swift       UVOT  ABÁœ½p£×AbáHuvm2Aœ\>³33Swift       UVOT  ABÁ3333Aq™šU   A’áH>8Qì2m HCT      HFOSC ABÁ3333Aq™šB   Aˆ\=LÌÍ2m HCT      HFOSC ABÁ3333Aq™šI   Av¸R=#×
+2m HCT      HFOSC ABÁ3333Aq™šR   Ayë…<£×
+2m HCT      HFOSC ABÁ3333Aq™šV   A€{<£×
+2m HCT      HFOSC ABÁž\(öAŽ\uvu A—×
+?0£×Swift       UVOT  ABÁž\(öAŽ\uvb A‡
+==õÂSwift       UVOT  ABÁž\(öAŽ\uvw1A—ë…?ÌÍSwift       UVOT  ABÁž£×
+AŽ£×uvv A~{=õÂSwift       UVOT  ABÁž£×
+AŽ£×uvm2A›®>×
+=Swift       UVOT  ABÁž¦fffA  B   Aˆ¸R<õÂ1.5m KT     HOWPolABÁž¦fffA  R   Av¸R<£×
+1.5m KT     HOWPolABÁž¦fffA  I   As×
+<õÂ1.5m KT     HOWPolABÁŸ³333A ÌÍU   A‘G®=£×
+2m HCT      HFOSC ABÁŸ³333A ÌÍR   Aw
+=<õÂ2m HCT      HFOSC ABÁŸ³333A ÌÍV   A}p¤<£×
+2m HCT      HFOSC ABÁŸ³333A ÌÍI   Ar\=#×
+2m HCT      HFOSC ABÁŸ³333A ÌÍB   A‡®<õÂ2m HCT      HFOSC ABÁ¢&fffAÈ  H   Ag…>#×
+1.5m KT     HONIR ABÁ¢&fffAÈ  Ks  AeG®=ÌÌÍ1.5m KT     HONIR ABÁ¢&fffAÈ  R   As33<£×
+1.5m KT     HOWPolABÁ¢&fffAÈ  I   Ao…<£×
+1.5m KT     HOWPolABÁ¢¦fffAÐ  I   Ao33<õÂ1.5m KT     HOWPolABÁ¢¦fffAÐ  B   A†Qì<õÂ1.5m KT     HOWPolABÁ¢¦fffAÐ  R   Ar¸R<£×
+1.5m KT     HOWPolABÁ¢³333AÐÌÍI   Ao
+=<õÂ2m HCT      HFOSC ABÁ¢³333AÐÌÍJ   Ah£×=#×
+1.5m KT     HONIR ABÁ¢³333AÐÌÍH   Aep¤<#×
+1.5m KT     HONIR ABÁ¢³333AÐÌÍKs  Ad  =uÂ1.5m KT     HONIR ABÁ¢À   AÑ™šV   Az=q<£×
+2m HCT      HFOSC ABÁ¢À   AÑ™šU   A
+=>¸2m HCT      HFOSC ABÁ¢À   AÑ™šR   As\)<õÂ2m HCT      HFOSC ABÁ¢À   AÑ™šB   A…Â=#×
+2m HCT      HFOSC ABÁ£0£×
+AØ£×g   A~{=uÂGROWTH-India---   ABÁ£0£×
+AØ£×r   AuG®=#×
+GROWTH-India---   ABÁ£0£×
+AØ£×r   AtõÃ<õÂGROWTH-India---   ABÁ£1ë…AØ¸Ri   Aup¤=LÌÍGROWTH-India---   ABÁ£1ë…AØ¸Ri   At£×=#×
+GROWTH-India---   ABÁ£°£×
+Aà£×g   A}™š<#×
+GROWTH-India---   ABÁ£°£×
+Aà£×r   AtõÃ=\)GROWTH-India---   ABÁ£°£×
+Aà£×r   At£×<õÂGROWTH-India---   ABÁ£°£×
+Aà£×r   At£×>\)GROWTH-India---   ABÁ£°£×
+Aà£×i   Atzá=\)GROWTH-India---   ABÁ£±ë…Aà¸Ri   At  =LÌÍGROWTH-India---   ABÁ£±ë…Aà¸Ri   Atzá=uÂGROWTH-India---   ABÁ¤1ë…Aè¸Rg   A|ÌÍ=ÌÌÍGROWTH-India---   ABÁ¤1ë…Aè¸Rg   A
+=>\)GROWTH-India---   ABÁ¤3333AèÌÍr   Aup¤=õÂGROWTH-India---   ABÁ¤3333AèÌÍr   Atzá<õÂGROWTH-India---   ABÁ¤®záAðzág   A|õÃ<õÂGROWTH-India---   ABÁ¤®záAðzág   A}¸<õÂGROWTH-India---   ABÁ¤®záAðzág   A}¸<õÂGROWTH-India---   ABÁ¤®záAðzár   As…<õÂGROWTH-India---   ABÁ¤®záAðzár   As®<õÂGROWTH-India---   ABÁ¤®záAðzár   As×
+<õÂGROWTH-India---   ABÁ¤¯\(öAð\i   AráH=#×
+GROWTH-India---   ABÁ¤¯\(öAð\i   As33=#×
+GROWTH-India---   ABÁ¤¯\(öAð\i   As33<õÂGROWTH-India---   ABÁ¥&fffAø  I   Al  <£×
+1.5m KT     HOWPolABÁ¥&fffAø  H   Ab\<£×
+1.5m KT     HONIR ABÁ¥&fffAø  R   Ao×
+<£×
+1.5m KT     HOWPolABÁ¥&fffAø  V   Avff=LÌÍ1.5m KT     HOWPolABÁ¥&fffAø  J   AeÂ<£×
+1.5m KT     HONIR ABÁ¥&fffAø  B   A„Qì<õÂ1.5m KT     HOWPolABÁ¥&fffAø  Ks  Aa¸=#×
+1.5m KT     HONIR ABÁ¥¦fffB   R   Ap(ö<õÂ1.5m KT     HOWPolABÁ¥¦fffB   I   Alzá<õÂ1.5m KT     HOWPolABÁ¥¦fffB   V   Av{=LÌÍ1.5m KT     HOWPolABÁ¥¦fffB   B   A„  =\)1.5m KT     HOWPolABÁ§À   BÌÍB   A‚(ö=#×
+2m HCT      HFOSC ABÁ§À   BÌÍV   As…<£×
+2m HCT      HFOSC ABÁ§À   BÌÍU   A‹p¤=¸Qì2m HCT      HFOSC ABÁ§À   BÌÍI   Ai¸<£×
+2m HCT      HFOSC ABÁ§À   BÌÍR   Am¸<£×
+2m HCT      HFOSC ABÁ¬³333B8ffB   A}Â<£×
+2m HCT      HFOSC ABÁ¬³333B8ffV   Am¸<õÂ2m HCT      HFOSC ABÁ¬³333B8ffI   AdQì=#×
+2m HCT      HFOSC ABÁ¬³333B8ffR   Ahzá<õÂ2m HCT      HFOSC ABÁ¬³333B8ffU   AˆÌÍ=£×
+2m HCT      HFOSC ABÁ®!G®BC×
+uvw1A–(ö>®{Swift       UVOT  ABÁ®*=p¤BD¸uvu A\)>aG®Swift       UVOT  ABÁ®+…¸BD(öuvw2A˜áH>¸QìSwift       UVOT  ABÁ®+…¸BD(öuvv Alzá=uÂSwift       UVOT  ABÁ®+…¸BD(öuvb A{
+==LÌÍSwift       UVOT  ABÁ¯&fffBL  I   Ac
+=>Š=q2m HCT      HFOSC ABÁ¯&fffBL  R   Ae™š=\)2m HCT      HFOSC ABÁ¯3333BLffB   A{…=£×
+2m HCT      HFOSC ABÁ¯3333BLffU   Aˆff>£×
+2m HCT      HFOSC ABÁ¯3333BLffV   Ak…=£×
+2m HCT      HFOSC ABÁ¯¦fffBP  I   Ab\=#×
+1.5m KT     HOWPolABÁ¯¦fffBP  R   AeÂ<£×
+1.5m KT     HOWPolABÁ°@   BTÌÍI   Aa™š<õÂ2m HCT      HFOSC ABÁ°@   BTÌÍB   A{
+=<£×
+2m HCT      HFOSC ABÁ°@   BTÌÍR   AdÌÍ<õÂ2m HCT      HFOSC ABÁ°@   BTÌÍV   Aj\<£×
+2m HCT      HFOSC ABÁ°«…¸BX(ög   AnáH=uÂGROWTH-India---   ABÁ°«…¸BX(ög   AnáH=\)GROWTH-India---   ABÁ°«…¸BX(ör   Af\=#×
+GROWTH-India---   ABÁ°«…¸BX(ör   Af\=#×
+GROWTH-India---   ABÁ°¬ÌÌÍBX33i   Ag\)=\)GROWTH-India---   ABÁ°¬ÌÌÍBX33i   Ag…=LÌÍGROWTH-India---   ABÁ°°£×
+BXQìuvb AyG®=LÌÍSwift       UVOT  ABÁ°°£×
+BXQìuvw2A˜Qì>®{Swift       UVOT  ABÁ°°£×
+BXQìuvu A™š>k…Swift       UVOT  ABÁ°°£×
+BXQìuvv Aië…=uÂSwift       UVOT  ABÁ±—
+=qB_…uvu AŽzá>”záSwift       UVOT  ABÁ±—
+=qB_…uvb Az=q=uÂSwift       UVOT  ABÁ±—
+=qB_…uvw1A•\)>úáHSwift       UVOT  ABÁ±—
+=qB_…uvv Aip¤=\)Swift       UVOT  ABÁ²™™šBc™šB   Ay¸<õÂ1.5m KT     HOWPolABÁ²™™šBc™šV   AhQì=LÌÍ1.5m KT     HOWPolABÁ²™™šBc™šR   Ab{<£×
+1.5m KT     HOWPolABÁ²™™šBc™šI   A_33<£×
+1.5m KT     HOWPolABÁ²#×
+=Bcë…g   AmÂ<õÂGROWTH-India---   ABÁ²%¸RBcõÃr   AeG®=#×
+GROWTH-India---   ABÁ²%¸RBcõÃi   Af{<õÂGROWTH-India---   ABÁ³"\)BkáHg   Amp¤<õÂGROWTH-India---   ABÁ³#×
+=Bkë…r   Ad(ö<õÂGROWTH-India---   ABÁ³#×
+=Bkë…i   AeÂ<õÂGROWTH-India---   ABÁ³™™™šBo™šV   Ah  =LÌÍ1.5m KT     HOWPolABÁ³™™™šBo™šB   Axzá<õÂ1.5m KT     HOWPolABÁ³™™™šBo™šI   A^¸R<£×
+1.5m KT     HOWPolABÁ³™™™šBo™šR   Aa™š<£×
+1.5m KT     HOWPolABÁ´¦fffBx  R   Ab{<õÂ2m HCT      HFOSC ABÁ´¦fffBx  B   Aw\)=LÌÍ2m HCT      HFOSC ABÁ´¦fffBx  U   A…Â>”zá2m HCT      HFOSC ABÁ´¦fffBx  V   Ah  <õÂ2m HCT      HFOSC ABÁ´¦fffBx  I   A^\<õÂ2m HCT      HFOSC ABÁ¶3333B‚33I   A]p¤=#×
+2m HCT      HFOSC ABÁ¶3333B‚33U   A…G®=¸Qì2m HCT      HFOSC ABÁ¶3333B‚33V   Ag
+==\)2m HCT      HFOSC ABÁ¶3333B‚33R   AaG®=uÂ2m HCT      HFOSC ABÁ¶3333B‚33B   Av¸R=ÌÌÍ2m HCT      HFOSC ABÁ¶Å¸RB„záuvv Af{=LÌÍSwift       UVOT  ABÁ¶Å¸RB„záuvw1Aff>W
+=Swift       UVOT  ABÁ¶Å¸RB„záuvw2Aš=q>ÌÌÍSwift       UVOT  ABÁ¶Å¸RB„záuvb Auë…=#×
+Swift       UVOT  ABÁ¶Å¸RB„záuvu A‹™š>.{Swift       UVOT  ABÁº@   B’ffB   Au¸<õÂ2m HCT      HFOSC ABÁº@   B’ffR   A_…<#×
+2m HCT      HFOSC ABÁº@   B’ffV   Ae™š<£×
+2m HCT      HFOSC ABÁº@   B’ffI   A\(ö<£×
+2m HCT      HFOSC ABÁº@   B’ffU   A„Qì=\)2m HCT      HFOSC ABÁº¸Që…B”G®uvu AŠzá>¸Swift       UVOT  ABÁº¸Që…B”G®uvw1A¸>\)Swift       UVOT  ABÁº¸Që…B”G®uvb As×
+=#×
+Swift       UVOT  ABÁº¹™™šB”LÍuvm2Až£×>ë…Swift       UVOT  ABÁº¹™™šB”LÍuvv Ae¸=#×
+Swift       UVOT  ABÁ½ŒÌÌÍBŸ™šR   A^=q<õÂ1.5m KT     HOWPolABÁ½ŒÌÌÍBŸ™šI   AZff<£×
+1.5m KT     HOWPolABÁ½™™™šBŸÌÍH   AR\=uÂ1.5m KT     HONIR ABÁ½™™™šBŸÌÍKs  APzá=\)1.5m KT     HONIR ABÁ½™™™šBŸÌÍJ   AT£×<#×
+1.5m KT     HONIR ABÁ¾&fffB¢  R   A]p¤<£×
+1.5m KT     HOWPolABÁ¾&fffB¢  I   AZff<£×
+1.5m KT     HOWPolABÁ¾xQë…B£G®uvb Ar¸R<õÂSwift       UVOT  ABÁ¾xQë…B£G®uvw2A”õÃ>8QìSwift       UVOT  ABÁ¾xQë…B£G®uvw1Aë…=õÂSwift       UVOT  ABÁ¾xQë…B£G®uvu Aˆ\=¸QìSwift       UVOT  ABÁ¾y™™šB£LÍuvm2AžõÃ>×
+=Swift       UVOT  ABÁ¾y™™šB£LÍuvv Ad  =#×
+Swift       UVOT  ABÁ¾ŒÌÌÍB£™šH   AQG®<£×
+1.5m KT     HONIR ABÁ¾ŒÌÌÍB£™šJ   ATõÃ<õÂ1.5m KT     HONIR ABÁ¾™™™šB£ÌÍI   AZ{=#×
+1.5m KT     HOWPolABÁ¾™™™šB£ÌÍV   Ac®=LÌÍ1.5m KT     HOWPolABÁ¾™™™šB£ÌÍB   As…<õÂ1.5m KT     HOWPolABÁ¾™™™šB£ÌÍR   A]¸<£×
+1.5m KT     HOWPolABÁÀ™™šB©ÌÍI   AZ=q<£×
+1.5m KT     HOWPolABÁÀ™™šB©ÌÍR   A]¸<£×
+1.5m KT     HOWPolABÁÀ™™šB©ÌÍV   Ac…=LÌÍ1.5m KT     HOWPolABÁÀ™™šB©ÌÍB   As\)<õÂ1.5m KT     HOWPolABÁÀ¦fffB¬  R   A\£×<£×
+1.5m KT     HOWPolABÁÀ¦fffB¬  V   Ac…=LÌÍ1.5m KT     HOWPolABÁÀ¦fffB¬  B   As®<õÂ1.5m KT     HOWPolABÁÀ¦fffB¬  I   AY™š<£×
+1.5m KT     HOWPolABÁÀÊ=p¤B¬\uvb Ar\=#×
+Swift       UVOT  ABÁÀÊ=p¤B¬\uvu Aˆ¸R=õÂSwift       UVOT  ABÁÀÊ=p¤B¬\uvw2A”£×>W
+=Swift       UVOT  ABÁÀÊ=p¤B¬\uvw1AŽ£×>8QìSwift       UVOT  ABÁÀË…¸B¬”{uvv Ad  =#×
+Swift       UVOT  ABÁÁÌÌÍB­™šI   AYÂ<õÂ1.5m KT     HOWPolABÁÁÌÌÍB­™šV   Ac®=LÌÍ1.5m KT     HOWPolABÁÁÌÌÍB­™šR   A\õÃ<£×
+1.5m KT     HOWPolABÁÁÜ(õÃB°×
+uvb Ar\=LÌÍSwift       UVOT  ABÁÁÝp£×B°Ü)uvv AdQì=uÂSwift       UVOT  ABÁÁÝp£×B°Ü)uvw2A—33>¸QìSwift       UVOT  ABÁÂ&fffB²  I   AZ{<£×
+1.5m KT     HOWPolABÁÂ&fffB²  R   A]™š<£×
+1.5m KT     HOWPolABÁÃ3333B¶33B   At  <õÂ1.5m KT     HOWPolABÁÃ3333B¶33V   Ac…=LÌÍ1.5m KT     HOWPolABÁÃ3333B¶33R   A\ÌÍ<£×
+1.5m KT     HOWPolABÁÃ3333B¶33I   AY™š<£×
+1.5m KT     HOWPolABÁÄ¦fffB¼  J   ATõÃ<#×
+1.5m KT     HONIR ABÁÄ¦fffB¼  H   AQp¤<õÂ1.5m KT     HONIR ABÁÄ¦fffB¼  Ks  AN=q<£×
+1.5m KT     HONIR ABÁÄ¦fffB¼  I   AYÂ<£×
+1.5m KT     HOWPolABÁÅ&fffB¾  H   AQG®<£×
+1.5m KT     HONIR ABÁÅ&fffB¾  Ks  ANáH<£×
+1.5m KT     HONIR ABÁÅ&fffB¾  J   AUë…<£×
+1.5m KT     HONIR ABÁÅ£×
+=B¿õÃuvw1A‘
+=>.{Swift       UVOT  ABÁÅ£×
+=B¿õÃuvb Avff<õÂSwift       UVOT  ABÁÅ£×
+=B¿õÃuvu A‹×
+>¸Swift       UVOT  ABÁÅ¥¸RB¿úáuvv Ae¸=#×
+Swift       UVOT  ABÁÅ¥¸RB¿úáuvw2A–=q>W
+=Swift       UVOT  ABÁÆ&fffBÂ  R   A^\<£×
+1.5m KT     HOWPolABÁÆ&fffBÂ  J   AUë…<#×
+1.5m KT     HONIR ABÁÆ&fffBÂ  H   AS…<#×
+1.5m KT     HONIR ABÁÆ&fffBÂ  I   AZ¸R<£×
+1.5m KT     HOWPolABÁÆ&fffBÂ  Ks  AO\)<£×
+1.5m KT     HONIR ABÁÆ&fffBÂ  V   AfáH=LÌÍ1.5m KT     HOWPolABÁÈ™™™šBËÌÍV   Aj\<£×
+2m HCT      HFOSC ABÁÈ™™™šBËÌÍB   A}ë…<£×
+2m HCT      HFOSC ABÁÈ™™™šBËÌÍI   A]Â<£×
+2m HCT      HFOSC ABÁÈ™™™šBËÌÍR   AbáH<õÂ2m HCT      HFOSC ABÁÈ¦fffBÌ  B   A~¸R<õÂ1.5m KT     HOWPolABÁÈ¦fffBÌ  R   Aap¤<£×
+1.5m KT     HOWPolABÁÈ¦fffBÌ  I   A\õÃ<£×
+1.5m KT     HOWPolABÁÉ    BÍffuvv Al£×=uÂSwift       UVOT  ABÁÉ    BÍffuvb A}™š=LÌÍSwift       UVOT  ABÁÉ    BÍffuvu A\>uÂSwift       UVOT  ABÁÊ™™šBÑÌÍV   Am™š=LÌÍ1.5m KT     HOWPolABÁÊ™™šBÑÌÍB   A™š<õÂ1.5m KT     HOWPolABÁÊ™™šBÑÌÍR   AdQì<£×
+1.5m KT     HOWPolABÁÊ™™šBÑÌÍI   A_\)<£×
+1.5m KT     HOWPolABÁÊ&fffBÒ  H   ATQì<#×
+1.5m KT     HONIR ABÁÊ&fffBÒ  J   AXQì<#×
+1.5m KT     HONIR ABÁÊ&fffBÒ  Ks  AQ™š<£×
+1.5m KT     HONIR ABÁÊ™™™šBÓÌÍB   A‚\<õÂ1.5m KT     HOWPolABÁÊ™™™šBÓÌÍV   AnáH=LÌÍ1.5m KT     HOWPolABÁÊ™™™šBÓÌÍR   Ae¸<£×
+1.5m KT     HOWPolABÁÊ™™™šBÓÌÍI   A`  <õÂ1.5m KT     HOWPolABÁÊ·
+=qBÔBg   Avff=#×
+GROWTH-India---   ABÁÊ·
+=qBÔBg   Av\=#×
+GROWTH-India---   ABÁÊ·
+=qBÔBr   AiG®=LÌÍGROWTH-India---   ABÁÊ¸Që…BÔG®i   Ah  <õÂGROWTH-India---   ABÁËŒÌÌÍB×™šJ   AZ¸R<#×
+1.5m KT     HONIR ABÁËŒÌÌÍB×™šKs  AS…<õÂ1.5m KT     HONIR ABÁËŒÌÌÍB×™šH   AW33<#×
+1.5m KT     HONIR ABÁË™™™šB×ÌÍB   A„  <õÂ1.5m KT     HOWPolABÁË™™™šB×ÌÍV   Aqp¤=LÌÍ1.5m KT     HOWPolABÁË™™™šB×ÌÍR   Ag\)<£×
+1.5m KT     HOWPolABÁË™™™šB×ÌÍI   Aaë…<£×
+1.5m KT     HOWPolABÁÍÌÌÍBÝ™šKs  AUp¤<õÂ1.5m KT     HONIR ABÁÍÌÌÍBÝ™šJ   A]¸<£×
+1.5m KT     HONIR ABÁÍÌÌÍBÝ™šH   AXzá=LÌÍ1.5m KT     HONIR ABÁÍ&fffBÞ  I   AdõÃ<õÂ1.5m KT     HOWPolABÁÍ&fffBÞ  V   Au™š=LÌÍ1.5m KT     HOWPolABÁÍ&fffBÞ  R   Ak
+=<£×
+1.5m KT     HOWPolABÁÍ|(õÃBßW
+uvu Aš¸R>\)Swift       UVOT  ABÁÍ|(õÃBßW
+uvb A…×
+=uÂSwift       UVOT  ABÁÍ|(õÃBßW
+uvv Au™š=uÂSwift       UVOT  ABÁÍ¦fffBà  B   A…×
+<£×
+2m HCT      HFOSC ABÁÍ¦fffBà  V   Au™š<£×
+2m HCT      HFOSC ABÁÍ¦fffBà  I   Aep¤<õÂ2m HCT      HFOSC ABÁÍ¦fffBà  R   Al  <£×
+2m HCT      HFOSC ABÁÍ¦fffBà  U   A•G®=¸Qì2m HCT      HFOSC ABÁÎÂ\Bá½qg   A}p¤<õÂGROWTH-India---   ABÁÎ
+=qBáÂr   An¸R<£×
+GROWTH-India---   ABÁÎ
+=qBáÂi   Am¸<õÂGROWTH-India---   ABÁÎ&fffBâ  V   Axzá=LÌÍ1.5m KT     HOWPolABÁÏÌÌÍBå™šB   A‡G®=uÂ1.5m KT     HOWPolABÁÏÌÌÍBå™šV   AxÌÍ=LÌÍ1.5m KT     HOWPolABÁÏÌÌÍBå™šR   Am¸<£×
+1.5m KT     HOWPolABÁÏÌÌÍBå™šI   Af\<õÂ1.5m KT     HOWPolABÁÏŒÌÌÍBç™šR   AlõÃ<õÂ1.5m KT     HOWPolABÁÏŒÌÌÍBç™šI   Ag
+==#×
+1.5m KT     HOWPolABÁÏ”záHBç¸Rg   A
+==#×
+GROWTH-India---   ABÁÏ•Â\Bç½qr   Ap  =¸QìGROWTH-India---   ABÁÏ•Â\Bç½qi   Anff=\)GROWTH-India---   ABÁÐÌÌÍBé™šI   Ag\)=uÂ1.5m KT     HOWPolABÁÐÌÌÍBé™šV   AxÌÍ=uÂ1.5m KT     HOWPolABÁÐÌÌÍBé™šB   AˆõÃ=\)1.5m KT     HOWPolABÁÐÌÌÍBé™šR   An=q=LÌÍ1.5m KT     HOWPolABÁÐ™™šBéÌÍKs  AVff=#×
+1.5m KT     HONIR ABÁÐ™™šBéÌÍH   A[
+==uÂ1.5m KT     HONIR ABÁÐ™™šBéÌÍJ   A`  <£×
+1.5m KT     HONIR ABÁÑ‘ë…Bï®g   A€zá=uÂGROWTH-India---   ABÁÑ‘ë…Bï®g   A€  =#×
+GROWTH-India---   ABÁÑ”záHBï¸Rg   A€(ö<õÂGROWTH-India---   ABÁÑ—
+=qBïÂg   A€zá<õÂGROWTH-India---   ABÁÑ—
+=qBïÂr   Arff=áG®GROWTH-India---   ABÁÑ—
+=qBïÂr   Ar=q=¸QìGROWTH-India---   ABÁÑ˜Që…BïÇ®r   Ar\=£×
+GROWTH-India---   ABÁÑ˜Që…BïÇ®i   Ap(ö=ÌÌÍGROWTH-India---   ABÁÑ˜Që…BïÇ®i   Ap  <õÂGROWTH-India---   ABÁÑ¦fffBð  H   A[…<õÂ1.5m KT     HONIR ABÁÑæfffBñ  uvw1Ap¤>×
+=Swift       UVOT  ABÁÑç®{Bñuvv A{×
+=¸QìSwift       UVOT  ABÁÑç®{Bñuvb Aˆff=¸QìSwift       UVOT  ABÁÑç®{Bñuvu Ašzá>£×
+Swift       UVOT  ABÁÒÌÌÍBñ™šI   Ag®<õÂ1.5m KT     HOWPolABÁÒÌÌÍBñ™šR   An=q=#×
+1.5m KT     HOWPolABÁÒ™™šBñÌÍKs  AX£×<õÂ1.5m KT     HONIR ABÁÒ™™šBñÌÍJ   Ab\<õÂ1.5m KT     HONIR ABÁÒ™™šBñÌÍH   A]G®=#×
+1.5m KT     HONIR ABÁÔ\(öBû£×uvu Aœ  >æffSwift       UVOT  ABÁÔ\(öBû£×uvv A|(ö=£×
+Swift       UVOT  ABÁÔ\(öBû£×uvb A‡ë…=£×
+Swift       UVOT  ABÁÕ™™™šBÿÌÍI   AhÌÍ<õÂ1.5m KT     HOWPolABÁÕ™™™šBÿÌÍR   Ao®<õÂ1.5m KT     HOWPolABÁÕ™™™šBÿÌÍV   A{…=LÌÍ1.5m KT     HOWPolABÁÕ™™™šBÿÌÍB   A‰\)=uÂ1.5m KT     HOWPolABÁÕ™™™šBÿÌÍJ   AbáH<#×
+1.5m KT     HONIR ABÁÖ&fffC  H   A]¸=LÌÍ1.5m KT     HONIR ABÁÖ3333CšI   Aj{<£×
+2m HCT      HFOSC ABÁÖ3333CšR   Ap£×<£×
+2m HCT      HFOSC ABÁÖ3333CšV   A{33<£×
+2m HCT      HFOSC ABÁÖ3333CšB   AˆáH=#×
+2m HCT      HFOSC ABÁÖŒÌÌÍCÌÍKs  AZáH<£×
+1.5m KT     HONIR ABÁÖŒÌÌÍCÌÍJ   Ab¸R<#×
+1.5m KT     HONIR ABÁÖŒÌÌÍCÌÍH   A]G®=#×
+1.5m KT     HONIR ABÁÖŒÌÌÍCÌÍI   AhõÃ<õÂ1.5m KT     HOWPolABÁÖŒÌÌÍCÌÍR   Ao®<õÂ1.5m KT     HOWPolABÁÖŒÌÌÍCÌÍV   A{\)=LÌÍ1.5m KT     HOWPolABÁÖŒÌÌÍCÌÍB   A‰G®=#×
+1.5m KT     HOWPolABÁ×333CÙšg   A‚=q<#×
+GROWTH-India---   ABÁ×333CÙšg   A®<£×
+GROWTH-India---   ABÁ×Â\CÞ¸r   Au¸<£×
+GROWTH-India---   ABÁ×™™šCæfR   Ap£×<õÂ2m HCT      HFOSC ABÁ×™™šCæfV   A{…<£×
+2m HCT      HFOSC ABÁ×™™šCæfU   A›™š=ÌÌÍ2m HCT      HFOSC ABÁ×™™šCæfB   A‰
+=<£×
+2m HCT      HFOSC ABÁ×™™šCæfI   Aj=q<£×
+2m HCT      HFOSC ABÁ×úáG®C¨öuvb AˆáH=\)Swift       UVOT  ABÁ×úáG®C¨öuvu A›×
+>\)Swift       UVOT  ABÁ×úáG®C¨öuvv A|ÌÍ=uÂSwift       UVOT  ABÁØ3333CšI   Aip¤>8Qì2m HCT      HFOSC ABÁØ3333CšR   Ar{>W
+=2m HCT      HFOSC ABÁØ3333CšV   A|ÌÍ=áG®2m HCT      HFOSC ABÁØ@   C33U   Aœ  ?
+=q2m HCT      HFOSC ABÁØ@   C33B   Aˆ£×>™š2m HCT      HFOSC ABÁÙ¦fffC  U   A›33=ÌÌÍ2m HCT      HFOSC ABÁÙ¦fffC  B   A‰×
+=LÌÍ2m HCT      HFOSC ABÁÙ¦fffC  R   AqÂ<£×
+2m HCT      HFOSC ABÁÙ¦fffC  V   A|zá<£×
+2m HCT      HFOSC ABÁÙ¦fffC  I   Ak…=#×
+2m HCT      HFOSC ABÁÛÌÌÍC
+ÌÍJ   Ad£×<#×
+1.5m KT     HONIR ABÁÛÌÌÍC
+ÌÍH   A`£×=\)1.5m KT     HONIR ABÁÛÌÌÍC
+ÌÍKs  A]¸=LÌÍ1.5m KT     HONIR ABÁÛ@   C33I   Aj¸R=LÌÍ2m HCT      HFOSC ABÁÛ@   C33R   Aq™š<õÂ2m HCT      HFOSC ABÁÛ@   C33V   A|õÃ<£×
+2m HCT      HFOSC ABÁÛ@   C33U   Aš=q=£×
+2m HCT      HFOSC ABÁÛ@   C33B   A‰™š=#×
+2m HCT      HFOSC ABÁÛŒÌÌÍCÌÍI   Aj=q<õÂ1.5m KT     HOWPolABÁÛŒÌÌÍCÌÍV   A}p¤=LÌÍ1.5m KT     HOWPolABÁÛŒÌÌÍCÌÍB   AŠ{<õÂ1.5m KT     HOWPolABÁÛŒÌÌÍCÌÍR   Aqp¤<õÂ1.5m KT     HOWPolABÁÛ\(öCÑìuvv A
+==uÂSwift       UVOT  ABÁÛ\(öCÑìuvu Až{>Ç®Swift       UVOT  ABÁÛ\(öCÑìuvb AŠ  =\)Swift       UVOT  ABÁÛ™™™šCæfKs  A]ë…=#×
+1.5m KT     HONIR ABÁÛ™™™šCæfH   Aap¤=LÌÍ1.5m KT     HONIR ABÁÝ™™šCæfR   Arff=uÂ1.5m KT     HOWPolABÁÝ¢\)CøRr   Av{<£×
+GROWTH-India---   ABÁÝ£×
+=Cúái   Av=q<£×
+GROWTH-India---   ABÁÞzáCÏ\g   Aƒ¸=£×
+GROWTH-India---   ABÁÞ\(öCÑìr   AváH<£×
+GROWTH-India---   ABÁÞ\(öCÑìi   Au¸<£×
+GROWTH-India---   ABÁÞ&fffC  U   A›
+==¸Qì2m HCT      HFOSC ABÁÞ&fffC  B   AŠff=#×
+2m HCT      HFOSC ABÁÞ&fffC  I   AlQì<õÂ2m HCT      HFOSC ABÁÞ&fffC  V   A~ff<£×
+2m HCT      HFOSC ABÁÞ&fffC  R   As33<õÂ2m HCT      HFOSC ABÁß™™™šCæfR   As33=#×
+2m HCT      HFOSC ABÁß™™™šCæfU   Aœ\>LÌÍ2m HCT      HFOSC ABÁß™™™šCæfV   A~¸R<õÂ2m HCT      HFOSC ABÁß™™™šCæfB   AŠff=#×
+2m HCT      HFOSC ABÁß™™™šCæfI   Alzá=#×
+2m HCT      HFOSC ABÁàÌÌÍCÌÍI   AlÌÍ=#×
+1.5m KT     HOWPolABÁàÌÌÍCÌÍR   AtQì=#×
+1.5m KT     HOWPolABÁà3333CšB   AŠ£×=#×
+2m HCT      HFOSC ABÁà3333CšV   A~¸R<õÂ2m HCT      HFOSC ABÁà3333CšR   As33=#×
+2m HCT      HFOSC ABÁà3333CšU   Aœzá=õÂ2m HCT      HFOSC ABÁà3333CšI   AlÌÍ<õÂ2m HCT      HFOSC ABÁá³333CšI   Amp¤<£×
+2m HCT      HFOSC ABÁá³333CšB   A‹\)=LÌÍ2m HCT      HFOSC ABÁá³333CšV   A€  =#×
+2m HCT      HFOSC ABÁá³333CšU   Aœ¸R>B\2m HCT      HFOSC ABÁá³333CšR   At  <õÂ2m HCT      HFOSC ABÁâŒÌÌÍCÌÍI   AlõÃ<õÂ1.5m KT     HOWPolABÁâŒÌÌÍCÌÍR   AtQì<õÂ1.5m KT     HOWPolABÁâŒÌÌÍCÌÍV   A€Qì>¸1.5m KT     HOWPolABÁãŒÌÌÍCÌÍJ   Ah  <õÂ1.5m KT     HONIR ABÁãŒÌÌÍCÌÍH   Ad  <õÂ1.5m KT     HONIR ABÁãŒÌÌÍCÌÍKs  A`(ö=\)1.5m KT     HONIR ABÁã™™™šCæfB   A‹™š=#×
+1.5m KT     HOWPolABÁã™™™šCæfV   A€(ö=LÌÍ1.5m KT     HOWPolABÁã™™™šCæfR   As\)<£×
+1.5m KT     HOWPolABÁã™™™šCæfI   AlQì<õÂ1.5m KT     HOWPolABÁäÌÌÍCÌÍB   A‹®=#×
+1.5m KT     HOWPolABÁäÌÌÍCÌÍV   A€£×=uÂ1.5m KT     HOWPolABÁäÌÌÍCÌÍR   At£×=#×
+1.5m KT     HOWPolABÁäÌÌÍCÌÍI   AlõÃ=#×
+1.5m KT     HOWPolABÁå™™šCæfV   A€zá<£×
+2m HCT      HFOSC ABÁå™™šCæfI   Al£×=LÌÍ2m HCT      HFOSC ABÁå™™šCæfB   A‹™š=#×
+2m HCT      HFOSC ABÁå™™šCæfR   Av{=uÂ2m HCT      HFOSC ABÁå™™šCæfU   A›×
+=£×
+2m HCT      HFOSC ABÁæ8Që…C!#×g   A„zá=£×
+GROWTH-India---   ABÁæ8Që…C!#×g   A„zá<õÂGROWTH-India---   ABÁæ8Që…C!#×r   Ay™š=uÂGROWTH-India---   ABÁæ8Që…C!#×r   Ay™š<õÂGROWTH-India---   ABÁæ9™™šC!&fi   Aw®=#×
+GROWTH-India---   ABÁæŒÌÌÍC!ÌÍKs  Ac33=¸Qì1.5m KT     HONIR ABÁæŒÌÌÍC!ÌÍJ   AiG®=#×
+1.5m KT     HONIR ABÁæ¦fffC"  V   A€ÌÍ<£×
+2m HCT      HFOSC ABÁæ¦fffC"  R   Aup¤<£×
+2m HCT      HFOSC ABÁæ¦fffC"  I   Ao33<õÂ2m HCT      HFOSC ABÁæ¦fffC"  B   A‹Â<õÂ2m HCT      HFOSC ABÁæ¦fffC"  U   Aœzá=£×
+2m HCT      HFOSC ABÁæª=p¤C"®g   A„\<£×
+GROWTH-India---   ABÁæª=p¤C"®g   A…
+=<£×
+GROWTH-India---   ABÁæ«…¸C"
+=g   A…
+=<£×
+GROWTH-India---   ABÁæ¬ÌÌÍC"Ír   AxÌÍ<£×
+GROWTH-India---   ABÁæ¬ÌÌÍC"Ír   AxÌÍ<õÂGROWTH-India---   ABÁæ®záC"\i   Ay¸=LÌÍGROWTH-India---   ABÁæ¯\(öC"ìi   Aw®<£×
+GROWTH-India---   ABÁçª=p¤C$®g   A…\)<õÂGROWTH-India---   ABÁçª=p¤C$®g   A…¸<£×
+GROWTH-India---   ABÁç«…¸C$
+=g   A…G®<£×
+GROWTH-India---   ABÁç«…¸C$
+=r   AxõÃ<£×
+GROWTH-India---   ABÁç¬ÌÌÍC$Ír   Ay¸<£×
+GROWTH-India---   ABÁç¬ÌÌÍC$Ír   AyG®=\)GROWTH-India---   ABÁç¬ÌÌÍC$Ír   Ayë…<£×
+GROWTH-India---   ABÁç®záC$\i   Ax(ö<£×
+GROWTH-India---   ABÁç®záC$\i   Ax(ö<#×
+GROWTH-India---   ABÁé    C&³3J   Ak×
+<õÂ1.5m KT     HONIR ABÁé    C&³3H   Ag…<õÂ1.5m KT     HONIR ABÁé    C&³3Ks  Ad(ö=¸Qì1.5m KT     HONIR ABÁéŒÌÌÍC'ÌÍB   AŒQì=#×
+2m HCT      HFOSC ABÁéŒÌÌÍC'ÌÍR   Auë…<õÂ2m HCT      HFOSC ABÁéŒÌÌÍC'ÌÍI   Ao33=#×
+2m HCT      HFOSC ABÁéŒÌÌÍC'ÌÍV   AG®<õÂ2m HCT      HFOSC ABÁé™™™šC'æfU   A›\)>.{2m HCT      HFOSC ABÁêÌÌÍC(ÌÍKs  Aep¤=£×
+1.5m KT     HONIR ABÁêÌÌÍC(ÌÍJ   AlQì<#×
+1.5m KT     HONIR ABÁêÌÌÍC(ÌÍH   Ah£×=ÌÌÍ1.5m KT     HONIR ABÁêp£×C(îg   A…p¤<£×
+GROWTH-India---   ABÁêp£×C(îg   A…p¤<£×
+GROWTH-India---   ABÁê"\)C(øRr   Az\<£×
+GROWTH-India---   ABÁê#×
+=C(úág   A…\)<£×
+GROWTH-India---   ABÁê“333C)Ùšr   Az¸R<£×
+GROWTH-India---   ABÁê˜Që…C)ã×g   A†=q<£×
+GROWTH-India---   ABÁë\(öC*Ñìr   AyÂ<£×
+GROWTH-India---   ABÁëë…C*×
+g   A…G®    GROWTH-India---   ABÁë@   C+33U   Aœzá=£×
+2m HCT      HFOSC ABÁë@   C+33R   Avff<£×
+2m HCT      HFOSC ABÁë@   C+33B   AŒff<õÂ2m HCT      HFOSC ABÁë@   C+33I   Ap  <£×
+2m HCT      HFOSC ABÁë@   C+33V   A™š<#×
+2m HCT      HFOSC ABÁì,ÌÌÍC-Íg   A†(ö<#×
+GROWTH-India---   ABÁì.záC-\r   A{33<£×
+GROWTH-India---   ABÁí3333C/šg   A†(ö<#×
+GROWTH-India---   ABÁí4záHC/)r   Azff<£×
+GROWTH-India---   ABÁî€   C1³3Ks  Afff=£×
+1.5m KT     HONIR ABÁî€   C1³3J   Amë…<£×
+1.5m KT     HONIR ABÁî€   C1³3H   AiÂ=¸Qì1.5m KT     HONIR ABÁîŒÌÌÍC1ÌÍR   Axzá=#×
+2m HCT      HFOSC ABÁîŒÌÌÍC1ÌÍU   Aœ=q=õÂ2m HCT      HFOSC ABÁîŒÌÌÍC1ÌÍV   A‚(ö<£×
+2m HCT      HFOSC ABÁîŒÌÌÍC1ÌÍI   Ap£×<õÂ2m HCT      HFOSC ABÁîŒÌÌÍC1ÌÍB   A¸=#×
+2m HCT      HFOSC ABÁð¸Që…C6#×g   A†õÃ=\)GROWTH-India---   ABÁð¹™™šC6&fr   A{\)<#×
+GROWTH-India---   ABÁñ333C6Ùšg   A‡¸<õÂGROWTH-India---   ABÁñ333C6Ùši   A|  =£×
+GROWTH-India---   ABÁñzáHC6Ü)r   A|(ö>\)GROWTH-India---   ABÁò¯\(öC:ìg   A‡…<õÂGROWTH-India---   ABÁò°£×
+C:{r   A|ÌÍ<#×
+GROWTH-India---   ABÁò°£×
+C:{i   A{…<#×
+GROWTH-India---   ABÁ÷ŒÌÌÍCCÌÍR   Ayë…<£×
+2m HCT      HFOSC ABÁ÷ŒÌÌÍCCÌÍV   A„  <£×
+2m HCT      HFOSC ABÁ÷ŒÌÌÍCCÌÍI   As\)<£×
+2m HCT      HFOSC ABÁ÷ŒÌÌÍCCÌÍB   AŽ\<õÂ2m HCT      HFOSC ABÁ÷™™™šCCæfU   AœÌÍ=\)2m HCT      HFOSC ABÁú€   CI³3J   As\)=¸Qì1.5m KT     HONIR ABÁú€   CI³3Ks  AmG®=õÂ1.5m KT     HONIR ABÁû“333CKÙšr   A\)=#×
+GROWTH-India---   ABÁû“333CKÙšr   A\)=#×
+GROWTH-India---   ABÁû”záHCKÜ)i   A~\<#×
+GROWTH-India---   ABÁû”záHCKÜ)i   A~ff<#×
+GROWTH-India---   ABÁû•Â\CKÞ¸g   A‰
+=<#×
+GROWTH-India---   ABÁû•Â\CKÞ¸g   A‰
+=<#×
+GROWTH-India---   ABÁý³333CPši   A33>B\GROWTH-India---   ABÁý³333CPši   A33>B\GROWTH-India---   ABÁý³333CPšg   A‰ë…=uÂGROWTH-India---   ABÁý³333CPšg   A‰ë…=uÂGROWTH-India---   ABÁý´záHCP)r   A€(ö<£×
+GROWTH-India---   ABÁý´záHCP)r   A€(ö<#×
+GROWTH-India---   ABÁþ.záCQ\i   A€=q<#×
+GROWTH-India---   ABÁþ.záCQ\i   A€(ö<#×
+GROWTH-India---   ABÁþ/\(öCQìg   A‰p¤<#×
+GROWTH-India---   ABÁþ/\(öCQìg   A‰p¤<#×
+GROWTH-India---   ABÁþ0£×
+CQ{r   A€{<£×
+GROWTH-India---   ABÁþ0£×
+CQ{r   A€{<£×
+GROWTH-India---   ABÁÿ333CRÙšg   A‰…<£×
+GROWTH-India---   ABÁÿ333CRÙšg   A‰…<£×
+GROWTH-India---   ABÁÿzáHCRÜ)i   A€{<#×
+GROWTH-India---   ABÁÿzáHCRÜ)i   A€{<#×
+GROWTH-India---   ABÁÿÂ\CRÞ¸r   A…<õÂGROWTH-India---   ABÁÿÂ\CRÞ¸r   A…<õÂGROWTH-India---   ABÁÿ£×
+CSÔ{i   A€  <#×
+GROWTH-India---   ABÁÿ£×
+CSÔ{i   A€  <#×
+GROWTH-India---   ABÁÿ‘ë…CS×
+g   AˆáH<#×
+GROWTH-India---   ABÁÿ‘ë…CS×
+g   AˆáH<#×
+GROWTH-India---   ABÁÿ“333CSÙšr   A…    GROWTH-India---   ABÁÿ“333CSÙšr   A…    GROWTH-India---   ABÁÿ¦fffCT  V   A…™š<£×
+2m HCT      HFOSC ABÁÿ¦fffCT  R   A|£×<£×
+2m HCT      HFOSC ABÁÿ¦fffCT  I   AuÂ<õÂ2m HCT      HFOSC ABÁÿ³333CTšU   A×
+>™š2m HCT      HFOSC ABÁÿ³333CTšB   A™š=LÌÍ2m HCT      HFOSC ABÂp£×CVîg   AŠ  <£×
+GROWTH-India---   ABÂ¸QìCVð¤r   A€Qì    GROWTH-India---   ABÂ¸QìCVð¤i   A€(ö<#×
+GROWTH-India---   ABÂ•Â\CWÞ¸g   A‰…<£×
+GROWTH-India---   ABÂ•Â\CWÞ¸g   A‰…<£×
+GROWTH-India---   ABÂ•Â\CWÞ¸i   A€\<#×
+GROWTH-India---   ABÂ•Â\CWÞ¸i   A€\<#×
+GROWTH-India---   ABÂ—
+=qCWáHr   A€£×    GROWTH-India---   ABÂ—
+=qCWáHr   A€\    GROWTH-India---   ABÂ£×
+CXÔ{i   A€£×<#×
+GROWTH-India---   ABÂ£×
+CXÔ{i   A€£×<#×
+GROWTH-India---   ABÂë…CX×
+r   A€(ö    GROWTH-India---   ABÂë…CX×
+r   A€(ö    GROWTH-India---   ABÂ333CXÙšg   A‰™š<#×
+GROWTH-India---   ABÂ333CXÙšg   A‰™š<#×
+GROWTH-India---   ABÂÌÌÍC\ÌÍU   AœÌÍ=£×
+2m HCT      HFOSC ABÂÌÌÍC\ÌÍI   Auë…=LÌÍ2m HCT      HFOSC ABÂÌÌÍC\ÌÍV   A…ë…=LÌÍ2m HCT      HFOSC ABÂÌÌÍC\ÌÍR   A|£×=LÌÍ2m HCT      HFOSC ABÂÌÌÍC\ÌÍB   A(ö=LÌÍ2m HCT      HFOSC ABÂ—
+=qC]áHi   Ap¤<#×
+GROWTH-India---   ABÂ—
+=qC]áHi   Ap¤<#×
+GROWTH-India---   ABÂ˜Që…C]ã×r   A
+=<#×
+GROWTH-India---   ABÂ˜Që…C]ã×r   A
+=<#×
+GROWTH-India---   ABÂ˜Që…C]ã×g   AŠ¸R<#×
+GROWTH-India---   ABÂ˜Që…C]ã×g   AŠ¸R<#×
+GROWTH-India---   ABÂzáHC^Ü)i   A33<#×
+GROWTH-India---   ABÂzáHC^Ü)i   A33<#×
+GROWTH-India---   ABÂÂ\C^Þ¸r   A€\    GROWTH-India---   ABÂÂ\C^Þ¸r   A€\    GROWTH-India---   ABÂ
+=qC^áHg   AŠ(ö<#×
+GROWTH-India---   ABÂ
+=qC^áHg   AŠ=q<#×
+GROWTH-India---   ABÂž¸QìC_ð¤g   AŠ¸R<£×
+GROWTH-India---   ABÂž¸QìC_ð¤g   AŠ¸R<£×
+GROWTH-India---   ABÂž¸QìC_ð¤i   A…<#×
+GROWTH-India---   ABÂž¸QìC_ð¤i   A…<#×
+GROWTH-India---   ABÂ    C_ó3r   A€£×    GROWTH-India---   ABÂ    C_ó3r   A€ÌÍ    GROWTH-India---   ABÂ¡G®C_õÃr   A€\    GROWTH-India---   ABÂ¡G®C_õÃr   A€ÌÍ    GROWTH-India---   ABÂ(õÃC`ë…g   AŠff<#×
+GROWTH-India---   ABÂ(õÃC`ë…g   AŠff<#×
+GROWTH-India---   ABÂ    C`ó3i   A€ÌÍ<#×
+GROWTH-India---   ABÂ    C`ó3i   A€ÌÍ<#×
+GROWTH-India---   ABÂ!G®C`õÃr   A€ÌÍ    GROWTH-India---   ABÂ!G®C`õÃr   A€ÌÍ    GROWTH-India---   ABÂ™™™šCaæfV   A†£×<£×
+2m HCT      HFOSC ABÂ™™™šCaæfI   Aw
+=<õÂ2m HCT      HFOSC ABÂ™™™šCaæfR   A}ë…<£×
+2m HCT      HFOSC ABÂœ(õÃCaë…g   AŠ\<#×
+GROWTH-India---   ABÂœ(õÃCaë…g   AŠ\<#×
+GROWTH-India---   ABÂœ(õÃCaë…r   Ap¤    GROWTH-India---   ABÂœ(õÃCaë…r   Ap¤    GROWTH-India---   ABÂp£×Caîi   A™š<#×
+GROWTH-India---   ABÂp£×Caîi   A™š<#×
+GROWTH-India---   ABÂ¦fffCb  B   AÌÍ<õÂ2m HCT      HFOSC ABÂ¦fffCb  U   A33=\)2m HCT      HFOSC ABÂ	œ(õÃCgë…i   AÂ<#×
+GROWTH-India---   ABÂ	œ(õÃCgë…i   AÂ<#×
+GROWTH-India---   ABÂ	œ(õÃCgë…g   A‹…<£×
+GROWTH-India---   ABÂ	œ(õÃCgë…g   A‹™š<£×
+GROWTH-India---   ABÂ	p£×Cgîr   A®<£×
+GROWTH-India---   ABÂ	p£×Cgîr   AÂ<£×
+GROWTH-India---   ABÂ™™šC€s3V   A‰™š<£×
+2m HCT      HFOSC ABÂ™™šC€s3U   Až(ö=£×
+2m HCT      HFOSC ABÂ™™šC€s3B   A“
+=<õÂ2m HCT      HFOSC ABÂ™™šC€s3J   A}ë…=\)1.5m KT     HONIR ABÂ™™šC€s3I   A|Qì<£×
+2m HCT      HFOSC ABÂ™™šC€s3R   AG®<£×
+2m HCT      HFOSC ABÂ™™šC€s3H   A33>\)1.5m KT     HONIR                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
