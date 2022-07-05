@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import scipy
 
 from superbol import mag2flux
 from superbol.lum import BolometricFlux
@@ -53,6 +54,31 @@ class TrapezoidalIntegralCalculator(object):
         """Return a list of flux wavelengths"""
         return [f.wavelength for f in fluxes]
 
+class SplineIntegralCalculator(object):
+    """Integrate between fluxes using a cubic spline"""
+    def calculate(self, fluxes):
+        """Calculate the integral using numpy.trapz"""
+        self._sort_fluxes_by_wavelength(fluxes)
+        flux_list = self._get_flux_list(fluxes)
+        wavelength_list = self._get_wavelength_list(fluxes)
+        print("Wavelength list: ", wavelength_list)
+        print("Flux list: ", flux_list)
+        spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list)
+        return spline.integrate(wavelength_list[0], wavelength_list[-1])
+
+    def _sort_fluxes_by_wavelength(self, fluxes):
+        """Sort the fluxes in-place by wavelength"""
+        fluxes.sort(key = lambda x: x.wavelength)
+
+    def _get_flux_list(self, fluxes):
+        """Return a list of flux values"""
+        return [f.flux for f in fluxes]
+
+    def _get_wavelength_list(self, fluxes):
+        """Return a list of flux wavelengths"""
+        return [f.wavelength for f in fluxes]
+
+
 def uncertainty_calculator_trapezoidal(fluxes):
     """Calculate uncertainty in trapezoidal integral of fluxes"""
     radicand = 0
@@ -70,8 +96,26 @@ def uncertainty_calculator_trapezoidal(fluxes):
 
     return math.sqrt(radicand)
 
+
+def uncertainty_calculator_spline(fluxes):
+    """Calculate uncertainty in spline integral of fluxes"""
+    radicand = 0
+
+    for i, flux in enumerate(fluxes):
+        if i == 0:
+            radicand += (0.5 * (fluxes[i+1].wavelength - flux.wavelength) 
+                         * flux.flux_uncertainty)**2
+        elif i == len(fluxes) - 1:
+            radicand += (0.5 * (flux.wavelength - fluxes[i-1].wavelength)
+                         * flux.flux_uncertainty)**2
+        else:
+            radicand += (0.5 * (fluxes[i+1].wavelength - fluxes[i-1].wavelength)
+                         * flux.flux_uncertainty)**2
+
+    return math.sqrt(radicand)
+
 def calculate_qbol_flux(flux_group):
     """Turn a group of fluxes into a quasi-bolometric flux"""
-    return get_quasi_bolometric_flux(TrapezoidalIntegralCalculator(),
-                                     uncertainty_calculator_trapezoidal,
+    return get_quasi_bolometric_flux(SplineIntegralCalculator(),
+                                     uncertainty_calculator_spline,
                                      flux_group)
