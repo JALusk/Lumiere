@@ -63,8 +63,8 @@ class SplineIntegralCalculator(object):
         wavelength_list = self._get_wavelength_list(fluxes)
         print("Wavelength list: ", wavelength_list)
         print("Flux list: ", flux_list)
-        spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list)
-        return spline.integrate(wavelength_list[0], wavelength_list[-1])
+        spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list, bc_type=((2,-0.3),(2,3.3)))
+        return float(spline.integrate(wavelength_list[0], wavelength_list[-1]))
 
     def _sort_fluxes_by_wavelength(self, fluxes):
         """Sort the fluxes in-place by wavelength"""

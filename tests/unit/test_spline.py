@@ -134,34 +134,38 @@ class TestSplineIntegralCalculator(unittest.TestCase):
     
     def setUp(self):
         self.integral_calculator = lqbol.SplineIntegralCalculator()
-        self.flux1 = mag2flux.MonochromaticFlux(flux = 100,
+        self.flux1 = mag2flux.MonochromaticFlux(flux = 0,
                                                 flux_uncertainty = 10,
                                                 wavelength = 0,
                                                 time = 0)
-        self.flux2 = mag2flux.MonochromaticFlux(flux = 200,
+        self.flux2 = mag2flux.MonochromaticFlux(flux = 0.5,
                                                 flux_uncertainty = 20,
-                                                wavelength= 1,
+                                                wavelength = 1,
                                                 time = 0)
-        self.flux3 = mag2flux.MonochromaticFlux(flux = 150,
+        self.flux3 = mag2flux.MonochromaticFlux(flux = 2,
                                                 flux_uncertainty = 8,
-                                                wavelength= 2,
+                                                wavelength = 2,
                                                 time = 0)
-        self.fluxes = [self.flux1, self.flux2, self.flux3]
+        self.flux4 = mag2flux.MonochromaticFlux(flux = 1.5,
+                                                flux_uncertainty = 0.1,
+                                                wavelength = 3,
+                                                time = 0)
+        self.fluxes = [self.flux1, self.flux2, self.flux3, self.flux4]
 
     def test_sort_fluxes(self):
-        fluxes = [self.flux2, self.flux1, self.flux3]
-        expected = [self.flux1, self.flux2, self.flux3]
+        fluxes = [self.flux2, self.flux1, self.flux3, self.flux4]
+        expected = [self.flux1, self.flux2, self.flux3, self.flux4]
         self.integral_calculator._sort_fluxes_by_wavelength(fluxes) 
         self.assertEqual(fluxes, expected)
     
     def test_flux_list(self):
         flux_list = self.integral_calculator._get_flux_list(self.fluxes)
-        self.assertEqual([100, 200, 150], flux_list)
+        self.assertEqual([0, 0.5, 2, 1.5], flux_list)
 
     def test_wavelength_list(self):
         wl_list = self.integral_calculator._get_wavelength_list(self.fluxes)
-        self.assertEqual([0, 1, 2], wl_list)
+        self.assertEqual([0, 1, 2, 3], wl_list)
 
     def test_spline_integral(self):
         integral = self.integral_calculator.calculate(self.fluxes)
-        self.assertEqual(325, integral)
+        self.assertAlmostEqual(3.275, integral)
