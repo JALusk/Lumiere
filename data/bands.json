@@ -1,39 +1,67 @@
 {
+    "u":{
+	    "alt_name": "CSP u Swope Site2 CCD",
+            "effective_wavelength":   3639.3,
+            "flux_conversion_factor": 875.0E-11
+        },
+    "g":{
+	    "alt_name": "CSP g Swope Site2 CCD",
+            "effective_wavelength":   4765.1,
+            "flux_conversion_factor": 490.0E-11
+        },
+    "r":{
+	    "alt_name": "CSP r Swope Site2 CCD",
+            "effective_wavelength":   6223.3,
+            "flux_conversion_factor": 287.0E-11
+        },
+    "i":{
+	    "alt_name": "CSP i Swope Site2 CCD",
+            "effective_wavelength":   7609.2,
+            "flux_conversion_factor": 188.0E-11
+        },
     "U":{
-            "alt_name": "CTIO U",
+            "alt_name": "Bessell U",
             "effective_wavelength":   3660.0,
             "flux_conversion_factor": 417.5E-11
         },
     "B":{
-            "alt_name": "CTIO B",
+            "alt_name": "Bessell B",
             "effective_wavelength":   4380.0,
             "flux_conversion_factor": 632.0E-11
         },
     "V":{
-            "alt_name": "CTIO V",
+            "alt_name": "Bessell V",
             "effective_wavelength":   5450.0,
             "flux_conversion_factor": 363.1E-11
         },
     "R":{
-            "alt_name": "CTIO R",
+            "alt_name": "Bessell R",
             "effective_wavelength":   6410.0,
             "flux_conversion_factor": 217.7E-11
         },
     "I":{
-            "alt_name": "CTIO I",
+            "alt_name": "Bessell I",
             "effective_wavelength":   7980.0,
             "flux_conversion_factor": 112.6E-11
         },
+    "Y":{
+	    "alt_name": "CSP Y Swope RetroCam",
+            "effective_wavelength":   10350.8,
+            "flux_conversion_factor": 38.8E-11
+        },
     "J":{
-            "alt_name": "2MASS J",
+            "alt_name": "Bessell J",
             "effective_wavelength":   12200.0,
             "flux_conversion_factor": 31.46E-11
         },
     "H":{
-            "alt_name": "2MASS H",
+            "alt_name": "Bessell H",
             "effective_wavelength":   16300.0,
             "flux_conversion_factor": 11.38E-11
+        },
+    "K":{
+	    "alt_name": "Bessell K",
+            "effective_wavelength":   21900.0,
+            "flux_conversion_factor": 3.961E-11
         }
-
-
 }
