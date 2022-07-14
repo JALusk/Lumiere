@@ -17,9 +17,9 @@ sn00cb_photometry = os.path.join(dirname, '../../data/SN2000cb.json')
 class TestQuasiBolometricLightcurve(unittest.TestCase):
 
     def setUp(self):
-        sn00cb_osc_photometry = read_osc.retrieve_osc_photometry('SN2000cb,' path=sn00cb_photometry)
+        sn00cb_osc_photometry = read_osc.retrieve_osc_photometry('SN2000cb', path=sn00cb_photometry)
         fluxes = []
-        for photometry_dict in sn18hna_osc_photometry:
+        for photometry_dict in sn00cb_osc_photometry:
             try:
                 observed_magnitude = read_osc.get_observed_magnitude(photometry_dict)
                 extinction_value = extinction.get_extinction_by_name(extinction_table, observed_magnitude.band)
@@ -31,7 +31,7 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
         distance = lum.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
         self.lc_00cb = lightcurve.calculate_lightcurve(fluxes, distance, lqbol.calculate_qbol_flux)
    
-   def test_00cb_qbol_lightcurve(self):
+    def test_00cb_qbol_lightcurve(self):
         print("")
         for luminosity in self.lc_00cb:
             print("{0:9.2f}, {1:5.2f}, 4.1, {2:4.2E}, {3:4.2E}".format(luminosity.time + 2400000.5, luminosity.time + 2400000.5 - 2451656, luminosity.value, luminosity.uncertainty))
