@@ -57,13 +57,14 @@ class TrapezoidalIntegralCalculator(object):
 class SplineIntegralCalculator(object):
     """Integrate between fluxes using a cubic spline"""
     def calculate(self, fluxes):
-        """Calculate the integral using numpy.trapz"""
+        """Take a cubic spline of the fluxes and wavelengths and integrate"""
         self._sort_fluxes_by_wavelength(fluxes)
         flux_list = self._get_flux_list(fluxes)
         wavelength_list = self._get_wavelength_list(fluxes)
         print("Wavelength list: ", wavelength_list)
         print("Flux list: ", flux_list)
-        spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list, bc_type=((2,-0.3),(2,3.3)))
+        spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list) 
+                #bc_type=((2,-0.3),(2,3.3)))
         integrated_spline = float(spline.integrate(wavelength_list[0], wavelength_list[-1]))
         return integrated_spline
 
@@ -99,21 +100,17 @@ def uncertainty_calculator_trapezoidal(fluxes):
 
 
 def uncertainty_calculator_spline(fluxes):
-    """Calculate uncertainty in spline integral of fluxes"""
-    radicand = 0
+    """Take cubic spline of the flux uncertainties"""
+    
+    flux_uncertainty_list = self._get_flux_uncertainty_list(fluxes)
 
-    for i, flux in enumerate(fluxes):
-        if i == 0:
-            radicand += (0.5 * (fluxes[i+1].wavelength - flux.wavelength) 
-                         * flux.flux_uncertainty)**2
-        elif i == len(fluxes) - 1:
-            radicand += (0.5 * (flux.wavelength - fluxes[i-1].wavelength)
-                         * flux.flux_uncertainty)**2
-        else:
-            radicand += (0.5 * (fluxes[i+1].wavelength - fluxes[i-1].wavelength)
-                         * flux.flux_uncertainty)**2
+    uncertainty_spline = scipy.interpolate.CubicSpline(wavelength_list, flux_uncertainty_list)
 
-    return math.sqrt(radicand)
+    def _get_flux_uncertainty_list(self, fluxes)
+        """Return a list of the flux uncertainties"""
+        return [f.uncertainty for f in fluxes]
+    #TODO What format should this be returned in?
+    return uncertainty_spline
 
 def calculate_qbol_flux(flux_group):
     """Turn a group of fluxes into a quasi-bolometric flux"""
