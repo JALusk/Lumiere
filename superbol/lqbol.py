@@ -63,8 +63,8 @@ class SplineIntegralCalculator(object):
         wavelength_list = self._get_wavelength_list(fluxes)
         print("Wavelength list: ", wavelength_list)
         print("Flux list: ", flux_list)
-        spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list) 
-                #bc_type=((2,-0.3),(2,3.3)))
+        spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list, bc_type='natural') 
+        #print([x for x in spline])
         integrated_spline = float(spline.integrate(wavelength_list[0], wavelength_list[-1]))
         return integrated_spline
 
@@ -102,15 +102,33 @@ def uncertainty_calculator_trapezoidal(fluxes):
 def uncertainty_calculator_spline(fluxes):
     """Take cubic spline of the flux uncertainties"""
     
-    flux_uncertainty_list = self._get_flux_uncertainty_list(fluxes)
-
-    uncertainty_spline = scipy.interpolate.CubicSpline(wavelength_list, flux_uncertainty_list)
-
-    def _get_flux_uncertainty_list(self, fluxes)
+    def _get_flux_uncertainty_list(fluxes):
         """Return a list of the flux uncertainties"""
-        return [f.uncertainty for f in fluxes]
-    #TODO What format should this be returned in?
-    return uncertainty_spline
+        return [f.flux_uncertainty for f in fluxes]
+    
+    def _get_wavelength_list(fluxes):
+        """Return a list of flux wavelengths"""
+        return [f.wavelength for f in fluxes]
+
+    def _get_flux_list(fluxes):
+        """Return a list of flux wavelengths"""
+        return [f.flux for f in fluxes]
+    
+    wavelength_list = _get_wavelength_list(fluxes)
+    flux_uncertainty_list = _get_flux_uncertainty_list(fluxes)
+    flux_list = _get_flux_list(fluxes)
+    flux_plus_uncertainty = np.add(flux_list, flux_uncertainty_list)
+
+    uncertainty_spline = scipy.interpolate.CubicSpline(wavelength_list, flux_plus_uncertainty, bc_type='natural')
+    uncertainty_integrated = float(uncertainty_spline.integrate(wavelength_list[0], wavelength_list[-1]))
+
+    flux_spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list, bc_type='natural') 
+    flux_integrated = float(flux_spline.integrate(wavelength_list[0], wavelength_list[-1]))
+    
+    qbolflux_uncertainty = uncertainty_integrated - flux_integrated
+    ratio_uncertainty = qbolflux_uncertainty / flux_integrated
+
+    return ratio_uncertainty
 
 def calculate_qbol_flux(flux_group):
     """Turn a group of fluxes into a quasi-bolometric flux"""
