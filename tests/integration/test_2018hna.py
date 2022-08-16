@@ -27,7 +27,8 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
                 observed_magnitude = read_osc.get_observed_magnitude(photometry_dict)
                 extinction_value = extinction.get_extinction_by_name(extinction_table, observed_magnitude.band)
                 observed_magnitude.magnitude = extinction.correct_observed_magnitude(observed_magnitude, extinction_value)
-                fluxes.append(observed_magnitude.convert_to_flux())
+                if observed_magnitude.band.name not in ['H', 'J', 'K']:
+                    fluxes.append(observed_magnitude.convert_to_flux())
             except:
                 pass
         
@@ -36,7 +37,7 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
     #Put this stuff into a file
     def test_18hna_qbol_lightcurve(self):
         print("")
-        with open('luminosity_2018hna.txt', 'w') as f:
+        with open('luminosity_2018hna_nouv_spline.txt', 'w') as f:
             with redirect_stdout(f):
                 for luminosity in self.lc_18hna:
                     print("{0:9.2f}, {1:5.2f}, 4.1, {2:4.2E}, {3:4.2E}".format(luminosity.time, luminosity.time - 2458411.3, luminosity.value, luminosity.uncertainty))
