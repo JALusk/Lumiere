@@ -191,14 +191,13 @@ class TestInterpolateSED(unittest.TestCase):
         next_flux = sed.get_next_flux(monochromatic_lc, unobserved_time)
         self.assertEqual(self.flux22, next_flux)
 
-    # TODO Test not running bc it has the same name as the one above
-    def test_get_gap_size(self):
+    def test_get_gap_size_small_gap(self):
         times = [0, 1, 3, 6]
         unobserved_time = 2
         max_delta = sed.get_gap_size(times, unobserved_time)
         self.assertEqual(2, max_delta)
 
-    def test_get_gap_size(self):
+    def test_get_gap_size_larger_gap(self):
         times = [0, 1, 3, 6]
         unobserved_time = 4
         max_delta = sed.get_gap_size(times, unobserved_time)

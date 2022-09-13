@@ -132,6 +132,7 @@ def uncertainty_calculator_spline(fluxes):
 
 def calculate_qbol_flux(flux_group):
     """Turn a group of fluxes into a quasi-bolometric flux"""
+    print(flux_group[0].time)
     return get_quasi_bolometric_flux(SplineIntegralCalculator(),
                                      uncertainty_calculator_spline,
                                      flux_group)
