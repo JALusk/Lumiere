@@ -9,7 +9,7 @@ def calculate_lightcurve(fluxes, distance, flux_calculator):
     SEDs = [sed.get_SED(flux_group)
             for flux_group in grouped_fluxes if len(flux_group) > 2]
 
-#    sed.interpolate_missing_fluxes(SEDs)
+    sed.interpolate_missing_fluxes(SEDs)
 
     return [flux_calculator(SED).to_lbol(distance) for SED in SEDs]
 

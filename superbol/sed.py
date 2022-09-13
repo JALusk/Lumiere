@@ -75,8 +75,14 @@ def group_fluxes(fluxes, keyfunc=math.floor):
 
     Fluxes with the same return value for keyfunc(flux.time) will be 
     part of the same group."""
-    return [list(it) for k, it in groupby(
+    grouped_fluxes = [list(it) for k, it in groupby(
         fluxes, lambda x: keyfunc(x.time))]
+
+    for flux_group in grouped_fluxes:
+        for flux in flux_group:
+            flux.time = keyfunc(flux.time)
+
+    return grouped_fluxes
 
 
 def interpolate_missing_fluxes(SEDs):
