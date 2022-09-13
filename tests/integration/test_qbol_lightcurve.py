@@ -27,10 +27,10 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
                 fluxes.append(observed_magnitude.convert_to_flux())
             except:
                 pass
-        
+
         distance = lum.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
         self.lc_00cb = lightcurve.calculate_lightcurve(fluxes, distance, lqbol.calculate_qbol_flux)
-
+   
     def test_00cb_qbol_lightcurve(self):
         print("")
         for luminosity in self.lc_00cb:
