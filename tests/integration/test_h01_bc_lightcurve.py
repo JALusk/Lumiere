@@ -6,7 +6,7 @@ from .context import superbol
 from astropy.table import Table
 from superbol import read_osc
 from superbol import lightcurve
-from superbol import lbc
+from superbol import fbc
 from superbol import lum
 from superbol import extinction
 
@@ -31,7 +31,7 @@ class TestBolometricCorrectionLightcurve(unittest.TestCase):
                 pass
 
         distance = lum.Distance(3.135E7 * 3.086E18, 4.62E6 * 3.086E18)
-        self.lc_00cb = lightcurve.calculate_bc_lightcurve(observed_magnitudes, distance, lbc.calculate_bc_flux_h01)
+        self.lc_00cb = lightcurve.calculate_bc_lightcurve(observed_magnitudes, distance, fbc.calculate_bc_flux_h01)
 
     def test_no_negative_luminosities(self):
         print("")

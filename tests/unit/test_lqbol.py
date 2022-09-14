@@ -6,7 +6,7 @@ from unittest.mock import Mock
 
 from .context import superbol
 from superbol import mag2flux
-from superbol import lqbol
+from superbol import fqbol
 
 class TestGetQuasiBolometricFlux(unittest.TestCase):
     def setUp(self):
@@ -15,8 +15,8 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
         self.time = 1234.5
 
     def test_no_fluxes(self):
-        with self.assertRaises(lqbol.InsufficientFluxes):
-            lqbol.get_quasi_bolometric_flux(
+        with self.assertRaises(fqbol.InsufficientFluxes):
+            fqbol.get_quasi_bolometric_flux(
                 integral_calculator = self.integral_calculator,
                 uncertainty_calculator = self.uncertainty_calculator,
                 SED=[])
@@ -27,8 +27,8 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
                                           wavelength = 1,
                                           time = self.time)
 
-        with self.assertRaises(lqbol.InsufficientFluxes):
-            lqbol.get_quasi_bolometric_flux(
+        with self.assertRaises(fqbol.InsufficientFluxes):
+            fqbol.get_quasi_bolometric_flux(
                 integral_calculator = self.integral_calculator,
                 uncertainty_calculator = self.uncertainty_calculator,
                 SED=[flux])
@@ -52,7 +52,7 @@ class TestGetQuasiBolometricFlux(unittest.TestCase):
         expected_value = 100
         expected_uncertainty = 10
 
-        result = lqbol.get_quasi_bolometric_flux(
+        result = fqbol.get_quasi_bolometric_flux(
             integral_calculator = self.integral_calculator,
             uncertainty_calculator = self.uncertainty_calculator,
             SED = two_fluxes)
@@ -77,7 +77,7 @@ class TestUncertaintyCalculatorTrapezoidal(unittest.TestCase):
                                            time = 0)
 
         expected_uncertainty = 0
-        result = lqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1, flux2])
+        result = fqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1, flux2])
         self.assertEqual(expected_uncertainty, result)
 
     def test_equal_flux_equal_uncertainty(self):
@@ -92,7 +92,7 @@ class TestUncertaintyCalculatorTrapezoidal(unittest.TestCase):
                                            time = 0)
 
         expected_uncertainty = math.sqrt(50)
-        result = lqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1,flux2])
+        result = fqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1,flux2])
         self.assertEqual(expected_uncertainty, result)
 
     def test_unequal_flux_unequal_uncertainty(self):
@@ -107,7 +107,7 @@ class TestUncertaintyCalculatorTrapezoidal(unittest.TestCase):
                                            time = 0)
 
         expected_uncertainty = math.sqrt(125)
-        result = lqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1,flux2])
+        result = fqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1,flux2])
         self.assertEqual(expected_uncertainty, result)
 
     def test_three_fluxes(self):
@@ -127,13 +127,13 @@ class TestUncertaintyCalculatorTrapezoidal(unittest.TestCase):
                                            time = 0)
 
         expected_uncertainty = math.sqrt(441)
-        result = lqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1,flux2,flux3])
+        result = fqbol.uncertainty_calculator_trapezoidal(fluxes=[flux1,flux2,flux3])
         self.assertEqual(expected_uncertainty, result)
 
 class TestTrapezoidalIntegralCalculator(unittest.TestCase):
     
     def setUp(self):
-        self.integral_calculator = lqbol.TrapezoidalIntegralCalculator()
+        self.integral_calculator = fqbol.TrapezoidalIntegralCalculator()
         self.flux1 = mag2flux.MonochromaticFlux(flux = 100,
                                                 flux_uncertainty = 10,
                                                 wavelength = 0,

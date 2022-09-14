@@ -9,9 +9,9 @@ from unittest.mock import patch
 
 from superbol import read_osc
 from superbol import lightcurve
-from superbol import lqbol
+from superbol import fqbol
 from superbol import lum
-from superbol import lbc
+from superbol import fbc
 from superbol import extinction
 
 dirname = os.path.dirname(__file__)
@@ -487,7 +487,7 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
 
         distance = lum.Distance(3.0e7 * 3.086e18, 7.0e6 * 3.086e18)
         self.lc_00cb = lightcurve.calculate_lightcurve(
-            fluxes, distance, lqbol.calculate_qbol_flux
+            fluxes, distance, fqbol.calculate_qbol_flux
         )
 
     def test_qbol_lightcurve(self):
@@ -514,10 +514,10 @@ class TestBolometricCorrectionLightcurve(unittest.TestCase):
 
         distance = lum.Distance(3.0e7 * 3.086e18, 7.0e6 * 3.086e18)
         self.lc_00cb_bh09 = lightcurve.calculate_bc_lightcurve(
-            observed_magnitudes, distance, lbc.calculate_bc_flux_bh09
+            observed_magnitudes, distance, fbc.calculate_bc_flux_bh09
         )
         self.lc_00cb_h01 = lightcurve.calculate_bc_lightcurve(
-            observed_magnitudes, distance, lbc.calculate_bc_flux_h01
+            observed_magnitudes, distance, fbc.calculate_bc_flux_h01
         )
 
     def test_no_negatives_in_bh09_lightcurve(self):

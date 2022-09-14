@@ -1,7 +1,7 @@
 import unittest
 
 from .context import superbol
-from superbol import laug
+from superbol import faug
 from superbol import mag2flux
 from superbol import blackbody
 
@@ -33,13 +33,13 @@ class TestTrimSED(unittest.TestCase):
 
     def test_trim_SED_5000_angstroms(self):
         expected = [self.flux3, self.flux4, self.flux5]
-        result = laug.trim_SED(self.SED, 5000.0)
+        result = faug.trim_SED(self.SED, 5000.0)
         
         self.assertEqual(expected, result)
 
     def test_trim_SED_7000_angstroms(self):
         expected = [self.flux5]
-        result = laug.trim_SED(self.SED, 7000.0)
+        result = faug.trim_SED(self.SED, 7000.0)
 
         self.assertEqual(expected, result)
 

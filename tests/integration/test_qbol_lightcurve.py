@@ -5,7 +5,7 @@ from .context import superbol
 from astropy.table import Table
 from superbol import read_osc
 from superbol import lightcurve
-from superbol import lqbol
+from superbol import fqbol
 from superbol import lum
 from superbol import extinction
 
@@ -29,7 +29,7 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
                 pass
 
         distance = lum.Distance(3.0E7 * 3.086E18, 7.0E6 * 3.086E18)
-        self.lc_00cb = lightcurve.calculate_lightcurve(fluxes, distance, lqbol.calculate_qbol_flux)
+        self.lc_00cb = lightcurve.calculate_lightcurve(fluxes, distance, fqbol.calculate_qbol_flux)
    
     def test_00cb_qbol_lightcurve(self):
         print("")
