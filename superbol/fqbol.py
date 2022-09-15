@@ -126,9 +126,9 @@ def uncertainty_calculator_spline(fluxes):
     flux_integrated = float(flux_spline.integrate(wavelength_list[0], wavelength_list[-1]))
     
     qbolflux_uncertainty = uncertainty_integrated - flux_integrated
-    ratio_uncertainty = qbolflux_uncertainty / flux_integrated
+    #ratio_uncertainty = qbolflux_uncertainty / flux_integrated
 
-    return ratio_uncertainty
+    return qbolflux_uncertainty
 
 def calculate_qbol_flux(flux_group):
     """Turn a group of fluxes into a quasi-bolometric flux"""
