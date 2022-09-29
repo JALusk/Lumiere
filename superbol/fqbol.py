@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from matplotlib import pyplot as plt
 import scipy
 
 from superbol import mag2flux
@@ -66,6 +67,12 @@ class SplineIntegralCalculator(object):
         spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list, bc_type='natural') 
         #print([x for x in spline])
         integrated_spline = float(spline.integrate(wavelength_list[0], wavelength_list[-1]))
+        
+        #Plots spline for reference or poster
+        new_wavel = np.linspace(wavelength_list[0], wavelength_list[-1], 200)
+        plt.plot(new_wavel, spline(new_wavel))
+        plt.savefig('../Desktop/spline_qbol.png')
+
         return integrated_spline
 
     def _sort_fluxes_by_wavelength(self, fluxes):
