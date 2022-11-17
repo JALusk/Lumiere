@@ -8,9 +8,8 @@ class ObservedMagnitude(object):
         self.band = band
         self.time = time
 
-    # TODO No test written
     def __str__(self):
-        return str(self.__dict__)
+        return f'ObservedMagnitude({self.band.name}, {self.magnitude} +/- {self.uncertainty}, {self.time})'
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
@@ -38,9 +37,8 @@ class MonochromaticFlux(object):
         self.wavelength = wavelength
         self.time = time
 
-    # TODO No test written
     def __str__(self):
-        return str(self.__dict__)
+        return f'MonochromaticFlux({self.flux} +/- {self.flux_uncertainty}, {self.wavelength}, {self.time})'
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
