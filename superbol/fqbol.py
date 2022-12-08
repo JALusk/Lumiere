@@ -120,7 +120,6 @@ def uncertainty_calculator_spline(fluxes):
     uncertainty_integrated = float(uncertainty_spline.integrate(wavelength_list[0], wavelength_list[-1]))
 
     flux_spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list, bc_type='natural')
-    deriv = flux_spline.derivative()
     flux_integrated = float(flux_spline.integrate(wavelength_list[0], wavelength_list[-1]))
     
     qbolflux_uncertainty = uncertainty_integrated - flux_integrated
