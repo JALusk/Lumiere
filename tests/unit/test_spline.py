@@ -126,7 +126,7 @@ class TestUncertaintyCalculatorSpline(unittest.TestCase):
                                            wavelength= 2,
                                            time = 0)
 
-        expected_uncertainty = math.sqrt(441)
+        expected_uncertainty = 31.75
         result = fqbol.uncertainty_calculator_spline(fluxes=[flux1,flux2,flux3])
         self.assertEqual(expected_uncertainty, result)
 
@@ -168,4 +168,4 @@ class TestSplineIntegralCalculator(unittest.TestCase):
 
     def test_spline_integral(self):
         integral = self.integral_calculator.calculate(self.fluxes)
-        self.assertAlmostEqual(3.275, integral)
+        self.assertAlmostEqual(3.35, integral)
