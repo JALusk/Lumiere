@@ -91,6 +91,7 @@ class TestUncertaintyCalculatorSpline(unittest.TestCase):
                                            wavelength= 1,
                                            time = 0)
 
+        #This should be 10 lol, one long and ten high
         expected_uncertainty = 10
         result = fqbol.uncertainty_calculator_spline(fluxes=[flux1,flux2])
         self.assertEqual(expected_uncertainty, result)
@@ -126,6 +127,9 @@ class TestUncertaintyCalculatorSpline(unittest.TestCase):
                                            wavelength= 2,
                                            time = 0)
 
+        """Test value calulated by first generating a cubic spline using
+        tools.timodenk.com/cubic-spline-interpolation, then integrated 
+        using integral-calculator.com"""
         expected_uncertainty = 31.75
         result = fqbol.uncertainty_calculator_spline(fluxes=[flux1,flux2,flux3])
         self.assertEqual(expected_uncertainty, result)
@@ -168,4 +172,7 @@ class TestSplineIntegralCalculator(unittest.TestCase):
 
     def test_spline_integral(self):
         integral = self.integral_calculator.calculate(self.fluxes)
-        self.assertAlmostEqual(3.35, integral)
+        """Test value calulated by first generating a cubic spline using
+        tools.timodenk.com/cubic-spline-interpolation, then integrated 
+        using integral-calculator.com"""
+        self.assertAlmostEqual(3.35, integral, 2)
