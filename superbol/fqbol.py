@@ -62,10 +62,7 @@ class SplineIntegralCalculator(object):
         self._sort_fluxes_by_wavelength(fluxes)
         flux_list = self._get_flux_list(fluxes)
         wavelength_list = self._get_wavelength_list(fluxes)
-        print("Wavelength list: ", wavelength_list)
-        print("Flux list: ", flux_list)
         spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list, bc_type='natural') 
-        #print([x for x in spline])
         integrated_spline = float(spline.integrate(wavelength_list[0], wavelength_list[-1]))
         
         #Plots spline for reference or poster
@@ -134,7 +131,7 @@ def uncertainty_calculator_spline(fluxes):
     uncertainty_spline = scipy.interpolate.CubicSpline(wavelength_list, flux_plus_uncertainty, bc_type='natural')
     uncertainty_integrated = float(uncertainty_spline.integrate(wavelength_list[0], wavelength_list[-1]))
 
-    flux_spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list, bc_type='natural') 
+    flux_spline = scipy.interpolate.CubicSpline(wavelength_list, flux_list, bc_type='natural')
     flux_integrated = float(flux_spline.integrate(wavelength_list[0], wavelength_list[-1]))
     
     qbolflux_uncertainty = uncertainty_integrated - flux_integrated
@@ -144,7 +141,6 @@ def uncertainty_calculator_spline(fluxes):
 
 def calculate_qbol_flux(flux_group):
     """Turn a group of fluxes into a quasi-bolometric flux"""
-    print(flux_group[0].time)
     return get_quasi_bolometric_flux(SplineIntegralCalculator(),
                                      uncertainty_calculator_spline,
                                      flux_group)

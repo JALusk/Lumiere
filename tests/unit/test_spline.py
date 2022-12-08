@@ -91,8 +91,8 @@ class TestUncertaintyCalculatorSpline(unittest.TestCase):
                                            wavelength= 1,
                                            time = 0)
 
-        expected_uncertainty = 10
         #This should be 10 lol, one long and ten high
+        expected_uncertainty = 10
         result = fqbol.uncertainty_calculator_spline(fluxes=[flux1,flux2])
         self.assertEqual(expected_uncertainty, result)
 
