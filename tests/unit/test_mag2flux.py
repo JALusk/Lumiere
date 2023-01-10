@@ -99,3 +99,11 @@ class TestMagnitudeToFluxConverterConvertMethod(unittest.TestCase):
         expected = mag2flux.MonochromaticFlux(0, 0, self.band.effective_wavelength, self.time)
         result = self.converter.convert(self.observed_mag)
         self.assertEqual(expected.wavelength, result.wavelength)
+
+class TestEquateMonochromaticFluxes(unittest.TestCase):
+    def setUp(self):
+        self.flux01 = mag2flux.MonochromaticFlux(100, 2, 1, 0)
+        self.flux02 = mag2flux.MonochromaticFlux(100, 2, 1, 0)
+    
+    def test_two_equal_monochromatic_fluxes(self):
+        self.assertEqual(self.flux01, self.flux02)
