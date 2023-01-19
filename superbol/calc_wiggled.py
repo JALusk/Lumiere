@@ -1,3 +1,4 @@
+#calc_wiggled.py
 import numpy as np
 from superbol import flux_wiggler
 from superbol import fqbol
