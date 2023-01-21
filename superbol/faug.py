@@ -55,16 +55,16 @@ def get_augmented_bolometric_flux(SED):
 
     bbfit.fit_to_SED(SED)   # Fit the blackbody to the SED 
 
+
+    min_flux = find_min_flux(SED)
+    min_wavelength = min_flux.wavelength
+    
     # Calculate the IR correction. (Integration from 0 to ∞) - (0 to max_wavelength)
     # Integrates from max_flux_wavelength to ∞ (Infrared range)
+
     uv_correction = bb_flux_integrated(min_wavelength, bbfit.temperature, bbfit.angular_radius)
 
     ir_correction = (bb_total_flux(bbfit.temperature, bbfit.angular_radius) - uv_correction)
 
     # Integrate straight line from shortest wavelength (original SED, not trimmed) down to 0 at 2k angstroms
-    min_flux = find_min_flux(SED)
-    min_wavelength = min_flux.wavelength
-
-    # How to specify 2000 angstroms? 
-
-    return ir_correction + uv_correction + quasi_bol_flux
+    return uv_correction + quasi_bol_flux + ir_correction
