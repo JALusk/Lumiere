@@ -13,7 +13,7 @@ class MissingFluxOutOfBounds(Exception):
 
 
 def get_SED(fluxes):
-    """Return a list of MonochromaticFluxes with duplicates averaged"""
+    """Return a wavelength-sorted list of MonochromaticFluxes with duplicates averaged"""
     return sorted([combine_fluxes(flux) for flux in yield_fluxes_at_each_observed_wavelength(fluxes)], key=attrgetter("wavelength"))
 
 
@@ -24,7 +24,7 @@ def yield_fluxes_at_each_observed_wavelength(fluxes):
 
 
 def combine_fluxes(fluxes):
-    """Combine a list of MonochromaticFluxes using a weighted average"""
+    """Combine a list of MonochromaticFluxes at the same wavelength using a weighted average"""
     values = get_flux_values(fluxes)
     uncertainties = get_flux_uncertainties(fluxes)
     combined_flux = weighted_average(values, uncertainties)
