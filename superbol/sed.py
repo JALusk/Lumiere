@@ -3,6 +3,7 @@ import numpy as np
 
 from itertools import groupby
 from superbol import mag2flux
+from operator import attrgetter
 
 from scipy.interpolate import interp1d
 
@@ -13,7 +14,7 @@ class MissingFluxOutOfBounds(Exception):
 
 def get_SED(fluxes):
     """Return a list of MonochromaticFluxes with duplicates averaged"""
-    return [combine_fluxes(flux) for flux in yield_fluxes_at_each_observed_wavelength(fluxes)]
+    return sorted([combine_fluxes(flux) for flux in yield_fluxes_at_each_observed_wavelength(fluxes)], key=attrgetter("wavelength"))
 
 
 def yield_fluxes_at_each_observed_wavelength(fluxes):

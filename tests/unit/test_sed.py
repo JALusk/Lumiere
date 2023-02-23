@@ -104,6 +104,21 @@ class TestCombineFluxes(unittest.TestCase):
                 result[i].flux_uncertainty, expected[i].flux_uncertainty
             )
 
+    def test_get_SED_if_input_is_out_of_order(self):
+        result = sed.get_SED([self.flux1, self.flux3, self.flux2, self.flux5, self.flux4])
+        expected = [
+            mag2flux.MonochromaticFlux(150, np.sqrt(200) / 2.0, 1, 0),
+            self.flux3,
+            mag2flux.MonochromaticFlux(55.0, np.sqrt(128) / 2.0, 3, 0),
+        ]
+
+        # Ugly
+        for i, flux in enumerate(result):
+            self.assertAlmostEqual(result[i].flux, expected[i].flux)
+            self.assertAlmostEqual(
+                result[i].flux_uncertainty, expected[i].flux_uncertainty
+            )            
+
     def test_weighted_average(self):
         expected = 10.4
         result = sed.weighted_average([10.0, 12.0], [0.5, 1.0])
