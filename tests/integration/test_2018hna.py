@@ -41,7 +41,3 @@ class TestQuasiBolometricLightcurve(unittest.TestCase):
             with redirect_stdout(f):
                 for luminosity in self.lc_18hna:
                     print("{0:9.2f}, {1:5.2f}, 4.1, {2:4.2E}, {3:4.2E}".format(luminosity.time, luminosity.time - 2458411.3, luminosity.value, luminosity.uncertainty))
-
-
-
-

@@ -1,6 +1,8 @@
 import random
 
 from superbol import lightcurve
+# Parallelize using MPI
+
 
 #Make a copy of the existing list of fluxes
 def copy_flux_list(fluxes, distance, flux_calculator):
