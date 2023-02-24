@@ -5,7 +5,7 @@ from superbol.blackbody import *
 from superbol import mag2flux
 from operator import attrgetter
 
-def trim_SED(SED, min_wavelength):
+def trim_SED(SED, wavelength = 0):
     """
     Trim SED to only include fluxes greater than the `min_wavelength`
     
@@ -17,12 +17,13 @@ def trim_SED(SED, min_wavelength):
         list: SEDs that meet minimum wavelength
 
     """
-    trimmedSED =  [flux for flux in SED if flux.wavelength >= min_wavelength]
+    if not wavelength:
+        trimmedSED = trim_SED_to_peak(SED)
+    else:
+        trimmedSED =  [flux for flux in SED if flux.wavelength >= wavelength]
     return trimmedSED
-    # ^^ Trims everything shorter than the max flux's wavelength
     
 # A function to find the max wavelength in the list of SEDs
-# 2 readings with SAME FLUX: use shortest wavelength (Max is fine, then. Wavelengths sorted already).
 def find_max_flux(SED):
     ''' Find the max flux in list SEDs. '''
     max_flux = max(SED, key= attrgetter('flux'))
@@ -52,13 +53,9 @@ def trim_SED_to_peak(SED):
     return [flux for flux in SED if flux.wavelength >= max_flux.wavelength]
 
 def get_UV(SED):
-    # UV correction = 1/2(B*H)
-    max_flux = find_max_flux(SED)
-    longest_wavelength = max_flux.wavelength
-    base = int(longest_wavelength) - 2000
-    height = find_min_flux(SED)
-    uv_correction = (0.5 * (base * int(height.flux)))
-
+    shortest_wavelength = find_shortest_wavelength(SED)
+    bluest_flux = find_min_flux(SED)
+    uv_correction = 0.5(shortest_wavelength * bluest_flux)
     return uv_correction
 
 def get_IR(SED):
@@ -71,10 +68,6 @@ def get_IR(SED):
                     - bb_flux_integrated(longest_wavelength, bbfit.temperature, bbfit.angular_radius))
 
     return f_ir_trimmed
-
-
-
-
 
 def get_augmented_bolometric_flux(SED):
 
@@ -108,3 +101,6 @@ def get_augmented_bolometric_flux(SED):
     # dont worry about augmented bol flux yet. That'll go in a different file/hierarchy
 
     return uv_correction + quasi_bol_flux + ir_correction
+
+
+# To do: modify trim_sed to allow for 1) wavelength 2) nothing (default peak?) 3) "peak"
