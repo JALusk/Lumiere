@@ -18,7 +18,7 @@ def wiggle_fluxes_n_times(sed):
 
 def calc_avg_stdev(sed):
     average_qbol_flux = np.average(wiggle_fluxes_n_times(sed))
-    print("Average wiggled quasibolometric flux: ", average_qbol_flux)
+    #print("Average wiggled quasibolometric flux: ", average_qbol_flux)
     stdev_qbol_flux = np.std(wiggle_fluxes_n_times(sed))
-    print("STDEV of wiggled quasibolometric fluxes: ", stdev_qbol_flux)
+    #print("STDEV of wiggled quasibolometric fluxes: ", stdev_qbol_flux)
     return [average_qbol_flux, stdev_qbol_flux]
