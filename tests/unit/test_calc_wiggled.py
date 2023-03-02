@@ -23,12 +23,12 @@ class TestCalcWiggled(unittest.TestCase):
 
     def test_average_qbol_flux_above_min(self):
         result = calc_wiggled.calc_avg_stdev(self.sed01)[0]
-        min_avg = 321
+        min_avg = 339.75 #calculated directly from test values with spline
         self.assertGreaterEqual(result, min_avg)
 
     def test_average_qbol_flux_below_max(self):
         result = calc_wiggled.calc_avg_stdev(self.sed01)[0]
-        max_avg = 329
+        max_avg = 347.75 #calculated directly from test values with spline
         self.assertLessEqual(result, max_avg)
 
     def test_stdev_above_min(self):
