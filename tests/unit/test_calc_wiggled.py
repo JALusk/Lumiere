@@ -15,11 +15,13 @@ class TestCalcWiggled(unittest.TestCase):
 
     def test_wiggled_qbol_fluxes_is_list(self):
         result = calc_wiggled.wiggle_fluxes_n_times(self.sed01)
-        self.assertEqual(type(result), type([]))
+        #print("result is ", result)
+        self.assertEqual(type(result[0]), type([]))
 
     def test_wiggled_qbol_fluxes_is_n_long(self):
         result = calc_wiggled.wiggle_fluxes_n_times(self.sed01)
-        self.assertEqual(len(result), calc_wiggled.num_wiggled_seds)
+        #print("result is ", result)
+        self.assertEqual(len(result[0]), calc_wiggled.num_wiggled_seds)
 
     def test_average_qbol_flux_above_min(self):
         result = calc_wiggled.calc_avg_stdev(self.sed01)[0]
@@ -40,3 +42,13 @@ class TestCalcWiggled(unittest.TestCase):
         result = calc_wiggled.calc_avg_stdev(self.sed01)[1]
         max_stdev = 1600
         self.assertLessEqual(result, max_stdev)
+
+    def test_wiggling_runtime_above_min(self):
+        result = calc_wiggled.wiggle_in_parallel(self.sed01)
+        min_runtime = 0
+        self.assertGreaterEqual(result, min_runtime)
+    
+    def test_num_processors_above_min(self):
+        result = calc_wiggled.wiggle_fluxes_n_times(self.sed01)[1]
+        min_processors = 2
+        self.assertGreaterEqual(result, min_processors)

@@ -15,23 +15,30 @@ num_wiggled_seds = 10
 #Parallel via MPI
 def wiggle_fluxes_n_times(sed):
     wiggled_qbol_fluxes = [None] * num_wiggled_seds
-    for i in range(num_wiggled_seds):
-        #Make a copy of the original sed
-        sed_copy = flux_wiggler.copy_flux_list(sed)
-        #Wiggle each flux at each time point in sed
-        wiggled_sed = flux_wiggler.wiggle_fluxes(sed_copy)
-        #Integrate wiggled sed to get wiggled qbol flux
-        wiggled_qbol_fluxes[i] = fqbol.SplineIntegralCalculator().calculate(wiggled_sed)
-    return wiggled_qbol_fluxes
+    pool = Pool() #pulls in MPI infrastructure
+    if COMM_WORLD.Get_rank() == 0: #Does this only run sometimes?
+        for i in range(num_wiggled_seds):
+            #Make a copy of the original sed
+            sed_copy = flux_wiggler.copy_flux_list(sed)
+            #Wiggle each flux at each time point in sed
+            wiggled_sed = flux_wiggler.wiggle_fluxes(sed_copy)
+            #Integrate wiggled sed to get wiggled qbol flux
+            wiggled_qbol_fluxes[i] = fqbol.SplineIntegralCalculator().calculate(wiggled_sed)
+    else:
+        pool.wait()
+    
+    processors = pool.P
+    
+    return wiggled_qbol_fluxes, processors
 
 #Once at the end - nonparallel
-def calc_avg_stdev(sed): #This shouldn't be running wiggle_fluxes_... again
+def calc_avg_stdev(sed): 
     wiggled_qbol_fluxes = [None] * num_wiggled_seds
-    wiggled_qbol_fluxes = wiggle_fluxes_n_times(sed)
+    wiggled_qbol_fluxes = wiggle_fluxes_n_times(sed)[0]
     average_qbol_flux = np.average(wiggled_qbol_fluxes)
-    #print("Average wiggled quasibolometric flux: ", average_qbol_flux)
+    print("Average wiggled quasibolometric flux: ", average_qbol_flux)
     stdev_qbol_flux = np.std(wiggled_qbol_fluxes)
-    #print("STDEV of wiggled quasibolometric fluxes: ", stdev_qbol_flux)
+    print("STDEV of wiggled quasibolometric fluxes: ", stdev_qbol_flux)
     return [average_qbol_flux, stdev_qbol_flux]
 
 #MPI set-up, see p. 302 in Eff. Comp.
@@ -39,7 +46,7 @@ class Pool(object):
     """Process pool using MPI."""
     def __init__(self):
         self.f = None
-        self.P = COMM_WORLD.Get_size()
+        self.P = COMM_WORLD.Get_size() #number of processors?
         self.rank = COMM_WORLD.Get_rank()
 
     def wait(self):
@@ -90,11 +97,17 @@ class Pool(object):
                 COMM_WORLD.isend(False, dest=p)
 
 #Wiggle fluxes in parallel with MPI and test runtime
-def test_wiggling_runtime(sed):
+def wiggle_in_parallel(sed):
     start = time.time()
+
     if __name__ == '__main__':
-        wiggle_fluxes_n_times(sed) #Oughta do the wiggling in parallel
-    calc_avg_stdev(sed) #Does this do all the wiggling over again linearly...?
+        processors = wiggle_fluxes_n_times(sed)[1] #wiggling in parallel
+        print("\nNumber of processors: ", processors)
+
+    calc_avg_stdev(sed)
+    
     stop = time.time()
     runtime = stop - start
-    print("Runtime (s) for rank ", COMM_WORLD.Get_rank(), " is ", runtime)
+
+    print("\nRuntime (sec) for rank ", COMM_WORLD.Get_rank(), " is ", runtime)
+    return runtime
