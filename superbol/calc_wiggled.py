@@ -16,29 +16,29 @@ num_wiggled_seds = 10
 def wiggle_fluxes_n_times(sed):
     wiggled_qbol_fluxes = [None] * num_wiggled_seds
     pool = Pool() #pulls in MPI infrastructure
-    if COMM_WORLD.Get_rank() == 0: #Does this only run sometimes?
-        for i in range(num_wiggled_seds):
-            #Make a copy of the original sed
-            sed_copy = flux_wiggler.copy_flux_list(sed)
-            #Wiggle each flux at each time point in sed
-            wiggled_sed = flux_wiggler.wiggle_fluxes(sed_copy)
-            #Integrate wiggled sed to get wiggled qbol flux
-            wiggled_qbol_fluxes[i] = fqbol.SplineIntegralCalculator().calculate(wiggled_sed)
-    else:
-        pool.wait()
+    for i in range(num_wiggled_seds):
+        #Make a copy of the original sed
+        sed_copy = flux_wiggler.copy_flux_list(sed)
+        #Wiggle each flux at each time point in sed
+        wiggled_sed = flux_wiggler.wiggle_fluxes(sed_copy)
+        #Integrate wiggled sed to get wiggled qbol flux
+        wiggled_qbol_fluxes[i] = fqbol.SplineIntegralCalculator().calculate(wiggled_sed)
     
-    processors = pool.P
+    print("Rank ", COMM_WORLD.Get_rank(), "has this list of wiggled fluxes: ", wiggled_qbol_fluxes)
+    
+    processors = pool.P #P should equal highest rank + 1
     
     return wiggled_qbol_fluxes, processors
 
 #Once at the end - nonparallel
 def calc_avg_stdev(sed): 
-    wiggled_qbol_fluxes = [None] * num_wiggled_seds
-    wiggled_qbol_fluxes = wiggle_fluxes_n_times(sed)[0]
-    average_qbol_flux = np.average(wiggled_qbol_fluxes)
-    print("Average wiggled quasibolometric flux: ", average_qbol_flux)
-    stdev_qbol_flux = np.std(wiggled_qbol_fluxes)
-    print("STDEV of wiggled quasibolometric fluxes: ", stdev_qbol_flux)
+    pool = Pool()
+    #Gather all the wiggled fluxes from each node onto the head node
+    all_wiggled_qbol_fluxes = COMM_WORLD.gather(wiggle_fluxes_n_times(sed)[0], root=0)
+    #Calculate avg, stdev
+    average_qbol_flux = np.average(all_wiggled_qbol_fluxes)
+    stdev_qbol_flux = np.std(all_wiggled_qbol_fluxes)
+
     return [average_qbol_flux, stdev_qbol_flux]
 
 #MPI set-up, see p. 302 in Eff. Comp.
@@ -98,6 +98,10 @@ class Pool(object):
 
 #Wiggle fluxes in parallel with MPI and test runtime
 def wiggle_in_parallel(sed):
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+
     start = time.time()
 
     if __name__ == '__main__':
