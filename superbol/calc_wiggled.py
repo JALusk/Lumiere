@@ -36,9 +36,11 @@ def calc_avg_stdev(sed):
     #Gather all the wiggled fluxes from each node onto the head node
     all_wiggled_qbol_fluxes = COMM_WORLD.gather(wiggle_fluxes_n_times(sed)[0], root=0)
     #Calculate avg, stdev
+    print("Rank ", COMM_WORLD.Get_rank(), "has all the fluxes together, ", all_wiggled_qbol_fluxes)
+    
     average_qbol_flux = np.average(all_wiggled_qbol_fluxes)
     stdev_qbol_flux = np.std(all_wiggled_qbol_fluxes)
-
+    
     return [average_qbol_flux, stdev_qbol_flux]
 
 #MPI set-up, see p. 302 in Eff. Comp.
@@ -96,6 +98,7 @@ class Pool(object):
             for p in range(1, self.P):
                 COMM_WORLD.isend(False, dest=p)
 
+
 #Wiggle fluxes in parallel with MPI and test runtime
 def wiggle_in_parallel(sed):
     comm = MPI.COMM_WORLD
@@ -105,13 +108,13 @@ def wiggle_in_parallel(sed):
     start = time.time()
 
     if __name__ == '__main__':
-        processors = wiggle_fluxes_n_times(sed)[1] #wiggling in parallel
+        wiggled_qbol_fluxes, processors = wiggle_fluxes_n_times(sed) #wiggling in parallel
         print("\nNumber of processors: ", processors)
-
-    calc_avg_stdev(sed)
+        if rank == 0:
+            average, stdev = calc_avg_stdev(sed)
     
     stop = time.time()
     runtime = stop - start
 
     print("\nRuntime (sec) for rank ", COMM_WORLD.Get_rank(), " is ", runtime)
-    return runtime
+    return average, stdev
