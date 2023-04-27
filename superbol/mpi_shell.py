@@ -83,7 +83,7 @@ if __name__ == '__main__':
     wiggled_qbol_fluxes = calc_wiggled.wiggle_fluxes_n_times(sed)
     #print("\nNumber of processors: ", processors)
     if rank == 0:
-        average, stdev = calc_wiggled.calc_avg_stdev(wiggled_qbol_fluxes)
+        average, stdev = calc_wiggled.calc_avg_stdev(sed)
         print("Average across all wiggles: ", average)
         print("STDEV across all wiggles: ", stdev)
 stop = time.time()
