@@ -15,17 +15,17 @@ class TestCalcWiggled(unittest.TestCase):
     
     def test_wiggled_qbol_fluxes_is_list(self):
         result = calc_wiggled.wiggle_fluxes_n_times(self.sed01)
-        print("result is ", result)
-        self.assertEqual(type(result[0]), type([]))
+        print("\nresult is ", result)
+        self.assertEqual(type(result), type([]))
 
     def test_wiggled_qbol_fluxes_is_n_long(self):
         result = calc_wiggled.wiggle_fluxes_n_times(self.sed01)
-        print("result is ", result)
-        self.assertEqual(len(result[0]), calc_wiggled.num_wiggled_seds)
+        print("\nresult is ", result)
+        self.assertEqual(len(result), calc_wiggled.num_wiggled_seds)
     
     def test_average_qbol_flux_above_min(self):
         result = calc_wiggled.calc_avg_stdev(self.sed01)[0]
-        print("Average wiggled quasibolometric flux: ", result)
+        print("\nAverage wiggled quasibolometric flux: ", result)
         min_avg = 339.75 #calculated directly from test values with spline
         self.assertGreaterEqual(result, min_avg)
 
@@ -36,7 +36,7 @@ class TestCalcWiggled(unittest.TestCase):
 
     def test_stdev_above_min(self):
         result = calc_wiggled.calc_avg_stdev(self.sed01)[1]
-        print("STDEV of wiggled quasibolometric fluxes: ", result)
+        print("\nSTDEV of wiggled quasibolometric fluxes: ", result)
         min_stdev = 0
         self.assertGreaterEqual(result, min_stdev)
     
