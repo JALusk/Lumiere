@@ -3,8 +3,8 @@ import unittest
 from .context import superbol
 from superbol import faug
 from superbol import mag2flux
-from decimal import Decimal
 from superbol.blackbody import *
+from superbol import fqbol
 
 class TestTrimSED(unittest.TestCase):
 
@@ -115,10 +115,10 @@ class TestTrimSED(unittest.TestCase):
         result = faug.trim_SED_to_peak(self.SED)
         self.assertEqual(expected, result) 
     
-    def test_find_min_flux(self):
+    def test_find_bluest_flux(self):
         self.flux1.flux = 1
         expected = self.flux1
-        result = faug.find_min_flux(self.SED)
+        result = faug.find_bluest_flux(self.SED)
         self.assertEqual(expected, result)
 
     def test_get_IR(self):
@@ -130,12 +130,6 @@ class TestTrimSED(unittest.TestCase):
         result = faug.get_IR(self.SED)
 
         self.assertEqual(expected, result)
-
-# TODO Add tests
-
-#class TestIRCorrection(unittest.TestCase):
-#    pass
-
 
 class TestTrimRealSED(unittest.TestCase):
     
@@ -192,8 +186,8 @@ class TestTrimRealSED(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_find_real_SED_min_flux(self):
-        expected = self.flux6
-        result = faug.find_min_flux(self.SED)
+        expected = self.flux1
+        result = faug.find_bluest_flux(self.SED)
         self.assertEqual(expected, result)
 
 
@@ -227,28 +221,18 @@ class Test_UV_IR_Corrections(unittest.TestCase):
                                                 time = self.time)
         self.SED = [self.flux1, self.flux2, self.flux3, self.flux4, self.flux5, self.flux6]
 
-    def fit_blackbody(self):
+    def test_fit_blackbody(self):
         test_bbfit = BlackbodyFit()
-        test_trimSED = faug.trim_SED(self.SED)  # Trimmed to peak of SED
+        test_trimSED = faug.trim_SED(self.SED) 
         test_bbfit.fit_to_SED(test_trimSED)
 
-        return test_bbfit   # returns blackbody fit of the trimmed SED
-
-    def trim_IR(self):
-        pass
+        self.assertAlmostEqual(test_bbfit.temperature, 6421.8, 1)
 
     def test_get_UV(self):
-        base = self.flux1.wavelength
+        base = (self.flux1.wavelength - 2000)
         height = self.flux1.flux
         expected = (0.5 * (base * height))
         result = faug.get_UV(self.SED)
 
         self.assertAlmostEqual(expected, result)
-
-        # base is flux.wavelength (minimum wavelength)
-        # height is flux.flux; leftmost point
-
-        # area = 1/2BH
-
-    def test_get_IR(self):
-        pass
+        self.assertEqual(expected, result)
