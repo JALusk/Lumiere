@@ -33,7 +33,7 @@ def bb_flux_nounits(wavelength, temperature, angular_radius):
     return bb_flux(wavelength, temperature, angular_radius).value
 
 
-def bb_total_flux(self):
+def bb_total_flux(temperature, angular_radius):
     # TODO No test written
     """Integrate the planck function from :math:`\\lambda = 0` to
        :math:`\\lambda = \\infty`, then convert result to observed flux.
@@ -49,7 +49,8 @@ def bb_total_flux(self):
     Returns:
         float: The value of :math:`\\sigma \\frac{R^2}{D^2} T^4`
     """
-    bb_total_flux = const.sigma_sb * self.angular_radius**2 * self.temperature**4
+    temperature = temperature * u.K
+    bb_total_flux = const.sigma_sb * angular_radius**2 * temperature**4
     bb_total_flux = bb_total_flux.to(u.erg / (u.s * u.cm**2))
     return bb_total_flux.value
 

@@ -3,7 +3,8 @@ import unittest
 from .context import superbol
 from superbol import faug
 from superbol import mag2flux
-from superbol import blackbody
+from decimal import Decimal
+from superbol.blackbody import *
 
 class TestTrimSED(unittest.TestCase):
 
@@ -43,28 +44,68 @@ class TestTrimSED(unittest.TestCase):
 
         self.assertEqual(expected, result)
 
-    # Finds the max flux from SED
+    def test_trim_SED_no_wavelength(self):
+        expected = [self.flux3, self.flux4, self.flux5]
+        result = faug.trim_SED(self.SED)
+        
+        self.assertEqual(expected, result)
+
     def test_find_max_flux(self):
-        self.flux4.flux = 10    # temporary spike in flux to test the max function
-        expected = self.flux4 # change to max(self.SED)
+        self.flux4.flux = 10  
+        expected = self.flux4
         result = faug.find_max_flux(self.SED)
         self.assertEqual(expected, result)
 
-    # Gets the trimmed SED; all fluxes with wavelength >= the max flux- (3, 4, 5)
+    def test_find_longest_wavelength_is_flux5(self):
+        self.flux5.wavelength = 10000
+        expected = self.flux5.wavelength
+        result = faug.find_longest_wavelength(self.SED)
+        self.assertEqual(expected, result)
+
+    def test_find_longest_wavelength_is_flux3(self):
+        self.flux3.wavelength = 10000
+        expected = self.flux3.wavelength
+        result = faug.find_longest_wavelength(self.SED)
+        self.assertEqual(expected, result)
+
+    def test_find_longest_wavelength_is_flux1(self):
+        self.flux1.wavelength = 10000
+        expected = self.flux1.wavelength
+        result = faug.find_longest_wavelength(self.SED)
+        self.assertEqual(expected, result)
+
+    def test_find_shortest_wavelength_is_flux5(self):
+        self.flux5.wavelength = 1
+        expected = self.flux5.wavelength
+        result = faug.find_shortest_wavelength(self.SED)
+        self.assertEqual(expected, result)
+
+    def test_find_shortest_wavelength_is_flux3(self):
+        self.flux3.wavelength = 1
+        expected = self.flux3.wavelength
+        result = faug.find_shortest_wavelength(self.SED)
+        self.assertEqual(expected, result)
+
+    def test_find_shortest_wavelength_is_flux1(self):
+        self.flux1.wavelength = 1
+        expected = self.flux1.wavelength
+        result = faug.find_shortest_wavelength(self.SED)
+        self.assertEqual(expected, result)
+
     def test_get_max_flux_wavelength(self):
         ''' Test if trimming left of max flux works'''
-        max_flux = faug.find_max_flux(self.SED) # gets max flux
-        max_flux_wavelength = max_flux.wavelength   # max flux's wavelength
+        max_flux = faug.find_max_flux(self.SED)
+        max_flux_wavelength = max_flux.wavelength   
 
-        expected = [self.flux3, self.flux4, self.flux5] # This is what should remain after trim
+        expected = [self.flux3, self.flux4, self.flux5]
         result = faug.trim_SED(self.SED, max_flux_wavelength)   
         self.assertEqual(expected, result)
 
     def test_equal_max_fluxes(self):
         ''' If there are 2 'max' fluxes, return the first one'''
-        self.flux3.flux = 10    # Set flux 3 and 4 to be max flux
+        self.flux3.flux = 10    
         self.flux4.flux = 10
-        expected = self.flux3   # Should return the first in the list (sorted by wavelength)
+        expected = self.flux3
         result = faug.find_max_flux(self.SED)
         self.assertEqual(expected, result)
 
@@ -75,11 +116,20 @@ class TestTrimSED(unittest.TestCase):
         self.assertEqual(expected, result) 
     
     def test_find_min_flux(self):
-        self.flux1.flux = 1    # temporary spike in flux to test the min function
+        self.flux1.flux = 1
         expected = self.flux1
         result = faug.find_min_flux(self.SED)
         self.assertEqual(expected, result)
 
+    def test_get_IR(self):
+        self.flux5.wavelength = 10000
+        bbfit = BlackbodyFit()
+        bbfit.fit_to_SED(self.SED)
+        expected = (bb_total_flux(bbfit.temperature, bbfit.angular_radius) 
+                    - bb_flux_integrated(self.flux5.wavelength, bbfit.temperature, bbfit.angular_radius))
+        result = faug.get_IR(self.SED)
+
+        self.assertEqual(expected, result)
 
 # TODO Add tests
 
@@ -147,3 +197,58 @@ class TestTrimRealSED(unittest.TestCase):
         self.assertEqual(expected, result)
 
 
+class Test_UV_IR_Corrections(unittest.TestCase):
+    def setUp(self):
+        # Read data from SN 2018hna
+        self.time = 2458493.0
+        self.flux1 = mag2flux.MonochromaticFlux(flux = 5.354E-15,
+                                                flux_uncertainty = 1.479E-16,
+                                                wavelength = 4380.0,
+                                                time = self.time)
+        self.flux2 = mag2flux.MonochromaticFlux(flux = 7.586E-15,
+                                                flux_uncertainty = 3.494E-16,
+                                                wavelength = 5450.0,
+                                                time = self.time)
+        self.flux3 = mag2flux.MonochromaticFlux(flux = 6.593E-15,
+                                                flux_uncertainty = 1.214E-16,
+                                                wavelength = 6410.0,
+                                                time = self.time)
+        self.flux4 = mag2flux.MonochromaticFlux(flux = 4.040E-15,
+                                                flux_uncertainty = 1.488E-16,
+                                                wavelength = 7980.0,
+                                                time = self.time)
+        self.flux5 = mag2flux.MonochromaticFlux(flux = 1.503E-15,
+                                                flux_uncertainty = 4.153E-17,
+                                                wavelength = 12200.0,
+                                                time = self.time)
+        self.flux6 = mag2flux.MonochromaticFlux(flux = 6.701E-16,
+                                                flux_uncertainty = 1.234E-17,
+                                                wavelength = 16300.0,
+                                                time = self.time)
+        self.SED = [self.flux1, self.flux2, self.flux3, self.flux4, self.flux5, self.flux6]
+
+    def fit_blackbody(self):
+        test_bbfit = BlackbodyFit()
+        test_trimSED = faug.trim_SED(self.SED)  # Trimmed to peak of SED
+        test_bbfit.fit_to_SED(test_trimSED)
+
+        return test_bbfit   # returns blackbody fit of the trimmed SED
+
+    def trim_IR(self):
+        pass
+
+    def test_get_UV(self):
+        base = self.flux1.wavelength
+        height = self.flux1.flux
+        expected = (0.5 * (base * height))
+        result = faug.get_UV(self.SED)
+
+        self.assertAlmostEqual(expected, result)
+
+        # base is flux.wavelength (minimum wavelength)
+        # height is flux.flux; leftmost point
+
+        # area = 1/2BH
+
+    def test_get_IR(self):
+        pass
