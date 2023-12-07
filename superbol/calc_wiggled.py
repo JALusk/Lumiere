@@ -8,7 +8,8 @@ import time
 from mpi4py import MPI
 from mpi4py.MPI import COMM_WORLD
 from types import FunctionType
-from multiprocessing import Pool
+# from multiprocessing import Pool
+from superbol.mpi_shell import Pool
 
 num_wiggled_seds = 10
 
@@ -27,9 +28,8 @@ def wiggle_fluxes_n_times(sed):
     else:
         pool.wait()
     
-    processors = pool.P
-    
-    return wiggled_qbol_fluxes, processors
+    num_processors = COMM_WORLD.Get_size()
+    return wiggled_qbol_fluxes, num_processors
 
 #Once at the end - nonparallel
 def calc_avg_stdev(sed): 
@@ -40,61 +40,6 @@ def calc_avg_stdev(sed):
     stdev_qbol_flux = np.std(wiggled_qbol_fluxes)
     print("STDEV of wiggled quasibolometric fluxes: ", stdev_qbol_flux)
     return [average_qbol_flux, stdev_qbol_flux]
-
-#MPI set-up, see p. 302 in Eff. Comp.
-class Pool(object):
-    """Process pool using MPI."""
-    def __init__(self):
-        self.f = None
-        self.P = COMM_WORLD.Get_size() #number of processors?
-        self.rank = COMM_WORLD.Get_rank()
-
-    def wait(self):
-        if self.rank == 0:
-            raise RuntimeError("Proc 0 cannot wait!")
-        status = MPI.Status()
-        while True:
-            task = COMM_WORLD.recv(source=0, tag=MPI.ANY_TAG, status=status)
-            if not task:
-                break
-            if isinstance(task, FunctionType):
-                self.f = task
-                continue
-            result = self.f(task)
-            COMM_WORLD.isend(result, dest=0, tag=status.tag)
-
-    def map(self, f, tasks):
-        N = len(tasks)
-        P = self.P #number of worker ranks
-        Pless1 = P - 1
-        if self.rank != 0:
-            self.wait()
-            return
-
-        if f is not self.f:
-            self.f = f
-            requests = []
-            for p in range(1, self.P):
-                r = COMM_WORLD.isend(f, dest=p)
-                requests.append(r)
-            MPI.Request.waitall(requests)
-
-        requests = []
-        for i, task in enumerate(tasks):
-            r = COMM_WORLD.isend(task, dest=(i%Pless1)+1, tag=i)
-            requests.append(r)
-        MPI.Request.waitall(requests)
-
-        results = []
-        for i in range(N):
-            result = COMM_WORLD.recv(source=(i%Pless1)+1, tag=i)
-            results.append(result)
-        return results
-
-    def __del__(self):
-        if self.rank == 0:
-            for p in range(1, self.P):
-                COMM_WORLD.isend(False, dest=p)
 
 #Wiggle fluxes in parallel with MPI and test runtime
 def wiggle_in_parallel(sed):

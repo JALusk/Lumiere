@@ -1,9 +1,11 @@
 import unittest
+import sys
+sys.path.insert(0, '/c/Users/eriks/Desktop/Lusk/SuperBoL/env/Lib/site-packages')
 
-from .context import superbol
+# from .context import superbol
 from superbol import calc_wiggled
 from superbol import mag2flux
-
+from superbol.mpi_shell import Pool
 class TestCalcWiggled(unittest.TestCase):
     
     def setUp(self):
@@ -51,4 +53,9 @@ class TestCalcWiggled(unittest.TestCase):
     def test_num_processors_above_min(self):
         result = calc_wiggled.wiggle_fluxes_n_times(self.sed01)[1]
         min_processors = 2
+        pool = Pool()
+        size = pool.getProcessors()
+        print("P size", size)
+        print("Type: ", type(size))
+        
         self.assertGreaterEqual(result, min_processors)

@@ -24,6 +24,9 @@ class Pool(object):
         self.P = COMM_WORLD.Get_size() #number of processors?
         self.rank = COMM_WORLD.Get_rank()
 
+    def getProcessors(self):
+        return self.P
+    
     def wait(self):
         if self.rank == 0:
             raise RuntimeError("Proc 0 cannot wait!")
@@ -72,20 +75,21 @@ class Pool(object):
                 COMM_WORLD.isend(False, dest=p)
 
 
-pool = Pool()
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-size = comm.Get_size()
 
-#start timer
-start = time.time()
 if __name__ == '__main__':
+    pool = Pool()
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    print("Helloooo")
+    #start timer
+    start = time.time()
     wiggled_qbol_fluxes = calc_wiggled.wiggle_fluxes_n_times(sed)
     #print("\nNumber of processors: ", processors)
     if rank == 0:
         average, stdev = calc_wiggled.calc_avg_stdev(sed)
         print("Average across all wiggles: ", average)
         print("STDEV across all wiggles: ", stdev)
-stop = time.time()
-runtime = stop - start
-print("\nRuntime (sec) is ", runtime)
+    stop = time.time()
+    runtime = stop - start
+    print("\nRuntime (sec) is ", runtime)
