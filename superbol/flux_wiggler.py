@@ -3,8 +3,6 @@ import random
 import copy
 
 from superbol import lightcurve
-# Parallelize using MPI
-
 
 #Make a copy of the existing list of fluxes
 def copy_flux_list(sed):

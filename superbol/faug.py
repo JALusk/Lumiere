@@ -24,41 +24,43 @@ def trim_SED(SED, wavelength = 0):
     return trimmedSED
     
 def find_max_flux(SED):
-    ''' Find the max flux in list SEDs. '''
+    ''' Find the max flux-value in list SEDs.'''
     max_flux = max(SED, key= attrgetter('flux'))
     # IMPORTANT: Max() returns the FIRST instance it encounters.
     return max_flux
 
 def find_longest_wavelength(SED):
+    ''' Find the longest wavelength and its associated flux-value'''
     list1 = sorted(flux.wavelength for flux in SED)
     return list1[-1]
 
 def find_shortest_wavelength(SED):
+    ''' Find the shortest wavelength and its associated flux-value'''
     list1 = sorted(flux.wavelength for flux in SED)
     return list1[0]
 
 
-def find_min_flux(SED):
+def find_bluest_flux(SED):
     ''' Finds the minimum flux in list SEDs.'''
-    min_flux = min(SED, key= attrgetter('flux'))
+    min_flux = min(SED, key= attrgetter('wavelength'))
 
     return min_flux
 
 def trim_SED_to_peak(SED):
-    ''' Trims SED to keep only the fluxes whose wavelengths are greater/equal to that
-        of the peak'''
-
+    ''' Trims SED to keep only the fluxes whose wavelengths are greater/equal to that of the peak'''
     max_flux = find_max_flux(SED)
     return [flux for flux in SED if flux.wavelength >= max_flux.wavelength]
 
 def get_UV(SED):
+    ''' Calculate the UV correction'''
     shortest_wavelength = find_shortest_wavelength(SED)
-    bluest_flux = find_min_flux(SED)
+    bluest_flux = find_bluest_flux(SED)
     
-    uv_correction = 0.5 * (shortest_wavelength * bluest_flux.flux)
+    uv_correction = 0.5 * ((shortest_wavelength - 2000) * bluest_flux.flux)
     return uv_correction
 
 def get_IR(SED):
+    '''Calculate the IR correction'''
     longest_wavelength = find_longest_wavelength(SED)
 
     bbfit = BlackbodyFit()
@@ -70,6 +72,9 @@ def get_IR(SED):
 
     return f_ir_trimmed
 
-def get_augmented_bolometric_flux(SED):
-    pass
+# take quasi + SED as arguments and add UV and IR
+def get_augmented_bolometric_flux(SED, fqbol):
+    #UV + quasi + IR
+    #fqbol "get_quasi..."
+    return get_IR(SED) + fqbol + get_UV(SED)
 

@@ -6,4 +6,3 @@ integrate:
 
 parallelwiggle:
 	mpiexec -n 5 python3 -m superbol.mpi_shell -v
-
